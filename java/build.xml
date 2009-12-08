@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+<project name="rprotobuf-java-httpserver" default="all" basedir=".">
+
+	<property file="build.properties" />
+	<property name="build.dir" value="build" />
+	<property name="javadoc.dir" value="javadoc" />
+	<property name="jar.dir" value="jar" />
+
+  
+	<target name="clean">
+		<delete dir="${build.dir}" />
+		<delete dir="${javadoc.dir}" />
+		<delete dir="${jar.dir}" />
+	</target>
+
+	<target name="init" depends="clean"> 	
+		<mkdir dir="${build.dir}" />
+		<mkdir dir="${javadoc.dir}" />
+		<mkdir dir="${jar.dir}" />
+	</target>
+	
+	<target name="build" depends="init">
+		<javac srcdir="src" 
+			destdir="${build.dir}"  
+			includeJavaRuntime="yes"
+			debug="${compiler.debug}"
+      debuglevel="${compiler.debuglevel}"
+      optimize="${compiler.optimize}"
+      deprecation="${compiler.deprecation}"
+      verbose="${compiler.verbose}"
+      nowarn="${compiler.nowarn}"
+      target="${compiler.target}"
+      source="${compiler.source}" >
+		</javac>	
+		
+		<jar jarfile="${jar.dir}/RProtoBuf-java-http.jar">
+			<fileset dir="${build.dir}" />
+		</jar>
+		
+	</target>
+	
+	<target name="all" depends="build" />
+	
+	
+</project>
+
