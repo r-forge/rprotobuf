@@ -1,0 +1,12 @@
+
+this implements a very basic java server using protobuf rpc over http protocol
+
+==== How to compile ====
+
+$ ant
+
+==== How to run ====
+
+$ java -cp jar/RProtoBuf-java-http.jar org.rproject.rprotobuf.ProtobufHttpServer 
+
+

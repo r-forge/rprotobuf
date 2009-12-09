@@ -20,54 +20,36 @@ import java.util.Set;
  */
 public class ProtobufHttpServer {
   
-	public static void main(String[] args) throws IOException {
-    HttpServer server = HttpServer.create(new InetSocketAddress(4444), 0);
+	/**
+	 * default port
+	 */
+	public static final int DEFAULT_PORT = 4444 ;
+	
+	/**
+	 * starts the server. It attempts to use the first argument
+	 * as the port number and uses the default port otherwise
+	 */
+	public static void main(String[] args){
+    int port = DEFAULT_PORT ;
+		if( args == null || args.length == 0 ){
+			try{
+				port = Integer.parseInt( args[0] ) ;
+			} catch( Exception e){ /* just use the default */ }
+		}
+		try{
+			startServer( port ) ;
+		} catch( Exception e){
+			e.printStackTrace() ;
+		}
+  }
+  
+  /** 
+   * start the server on the specified port
+   */
+  public static void startServer( int port) throws IOException {
+  	HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
     server.createContext("/", new ProtobufHandler());
     server.start();
   }
-}
-
-class ProtobufHandler implements HttpHandler {
-	  
-  	public void handle(HttpExchange xchg) throws IOException {
-	    System.out.println( "ProtobufHandler >> handle" ) ;
-  		String http_method = xchg.getRequestMethod() ;
-  		/* TODO: check it is POST and send unimplemented otherwise */
-  		
-  		System.out.println( "http method : " + http_method ) ;
-  		
-  		Headers headers = xchg.getRequestHeaders();
-  		
-  		  Set<Map.Entry<String, List<String>>> entries = headers.entrySet();
-  		  for (Map.Entry<String, List<String>> entry : entries)
-      		System.out.println(entry.toString());
-
-  		
-	    int contentLength = Integer.parseInt( headers.getFirst("Content-Length").replace( " " ,"") ) ;
-	    
-	    String uri = xchg.getRequestURI().toString() ;
-	    StringTokenizer tok = new StringTokenizer( uri, "/" ) ;
-	    String service = tok.nextToken() ;
-	    String method = tok.nextToken() ;
-	    
-	    byte[] body = new byte[contentLength] ;
-	    InputStream input = xchg.getRequestBody() ;
-	    
-	    int n = 0 ;
-	    int r ;
-	    while( n<contentLength ){
-	    	r = input.read( body, n, (contentLength-n) ) ;
-	    	if( r <= 0 ) break ;
-	    	System.out.println( " read " + r + " bytes" ) ;
-	    	n += r ;
-	    }
-	    System.out.println( "finished reading body" ) ; 
-	    
-	  	xchg.sendResponseHeaders(200, body.length );
-	  	OutputStream os = xchg.getResponseBody();
-	  	os.write( body );
-	  	input.close() ;
-	    os.close();
-	  }
-	}
   
+}
