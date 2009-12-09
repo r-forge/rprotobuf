@@ -11,7 +11,7 @@ public class ProtobufMethodPool {
 	
 	private static HashMap<String,ProtobufMethodInvoker> init(){
 		HashMap<String,ProtobufMethodInvoker> m = new HashMap<String,ProtobufMethodInvoker>() ;
-		m.put( "tutorial.EchoService.Echo", new EchoInvoker() ) ;
+		register( "tutorial.EchoService.Echo", new EchoInvoker() ) ;
 		return m ;
 	}
 	
@@ -33,6 +33,10 @@ public class ProtobufMethodPool {
 	 */
 	public static ProtobufMethodInvoker get(String method){
 		return map.get( method ) ;
+	}
+	
+	public static register( String method, ProtobufMethodInvoker invoker ){
+		map.put( method, invoker ) ;
 	}
 	
 }
