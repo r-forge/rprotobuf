@@ -7,6 +7,5 @@ $ ant
 
 ==== How to run ====
 
-$ java -cp jar/RProtoBuf-java-http.jar org.rproject.rprotobuf.ProtobufHttpServer 
-
+$ ./start.sh 
 

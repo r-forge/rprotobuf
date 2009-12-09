@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.protobuf.Message ;
+
 /**
  * handles a protobuf rpc over http request
  */
@@ -59,32 +61,24 @@ public class ProtobufHandler implements HttpHandler {
     if( invoker == null ){
     	/* we don't even bother reading the body since we don't know what to do with it */
     	xchg.sendResponseHeaders( 501, 0 ) ;
+    	xchg.close() ;
     	return ;
     }
-    
-    
-    byte[] body = new byte[contentLength] ;
     InputStream input = xchg.getRequestBody() ;
-    
-    int n = 0 ;
-    int r ;
-    while( n<contentLength ){
-    	r = input.read( body, n, (contentLength-n) ) ;
-    	if( r <= 0 ) break ;
-    	if( verbose ) System.out.println( " read " + r + " bytes" ) ;
-    	n += r ;
+    Message result  = null ;
+    try{
+    	result = invoker.invoke( input ) ;
+    } catch( IOException e){
+    	xchg.sendResponseHeaders( 500, 0 ) ;
+    	xchg.close() ;
+    	return ;
     }
-    if( verbose ) System.out.println( "finished reading body" ) ; 
-    
-    byte[] result = invoker.invoke( body ) ;
-    
-    if( verbose ) System.out.println( "sending result : " + result.length + " bytes" ) ;
-    
-  	xchg.sendResponseHeaders(200, result.length );
-  	OutputStream os = xchg.getResponseBody();
-  	os.write( result );
-  	input.close() ;
-    os.close();
+    xchg.sendResponseHeaders(200, result.getSerializedSize() );
+    OutputStream os = xchg.getResponseBody();
+    result.writeTo( os ) ;
+    input.close() ;
+    os.close() ;
+    xchg.close() ;
   }
 }
 

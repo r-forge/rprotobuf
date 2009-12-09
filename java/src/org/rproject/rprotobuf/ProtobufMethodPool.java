@@ -11,12 +11,7 @@ public class ProtobufMethodPool {
 	
 	private static HashMap<String,ProtobufMethodInvoker> init(){
 		HashMap<String,ProtobufMethodInvoker> m = new HashMap<String,ProtobufMethodInvoker>() ;
-		m.put( "tutorial.EchoService.Echo", new ProtobufMethodInvoker(){
-				/* dummy implementation, only returns its input */
-				public byte[] invoke( byte[] input){
-					return input ;
-				}
-		} ) ;
+		m.put( "tutorial.EchoService.Echo", new EchoInvoker() ) ;
 		return m ;
 	}
 	

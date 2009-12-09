@@ -5,21 +5,53 @@
 	<property name="build.dir" value="build" />
 	<property name="javadoc.dir" value="javadoc" />
 	<property name="jar.dir" value="jar" />
-
-  
+	<property name="lib.dir" value="lib" />
+	
+	<property name="protobuf.jar" value="${lib.dir}/protobuf-java-2.2.0.jar" />
+	<property name="generated.dir" value="generated" />
+	
+	<path id="classpath">
+		<pathelement location="${protobuf.jar}" />
+	</path>
+	
 	<target name="clean">
 		<delete dir="${build.dir}" />
 		<delete dir="${javadoc.dir}" />
 		<delete dir="${jar.dir}" />
+		<delete dir="${generated.dir}" />
 	</target>
 
 	<target name="init" depends="clean"> 	
 		<mkdir dir="${build.dir}" />
 		<mkdir dir="${javadoc.dir}" />
 		<mkdir dir="${jar.dir}" />
+		<mkdir dir="${generated.dir}" />
 	</target>
 	
-	<target name="build" depends="init">
+	<target name="generate-classes">
+		 <exec executable="protoc">
+		 	<arg value="--java_out=${generated.dir}" />
+		 	<arg value="-I../pkg/inst/proto/" />
+		 	<arg value="../pkg/inst/proto/addressbook.proto" />
+		 </exec>
+	</target>
+	
+	<target name="build" depends="init,generate-classes">
+		
+		<javac srcdir="${generated.dir}" 
+			destdir="${build.dir}"  
+			includeJavaRuntime="yes"
+			debug="${compiler.debug}"
+      debuglevel="${compiler.debuglevel}"
+      optimize="${compiler.optimize}"
+      deprecation="${compiler.deprecation}"
+      verbose="${compiler.verbose}"
+      nowarn="${compiler.nowarn}"
+      target="${compiler.target}"
+      source="${compiler.source}" >
+      <classpath refid="classpath" />
+		</javac>	
+		
 		<javac srcdir="src" 
 			destdir="${build.dir}"  
 			includeJavaRuntime="yes"
@@ -31,6 +63,7 @@
       nowarn="${compiler.nowarn}"
       target="${compiler.target}"
       source="${compiler.source}" >
+      <classpath refid="classpath" />
 		</javac>	
 		
 		<jar jarfile="${jar.dir}/RProtoBuf-java-http.jar">
