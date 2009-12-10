@@ -7,12 +7,10 @@ import java.util.HashMap ;
  */
 public class ProtobufMethodPool {
 
-	private static HashMap<String,ProtobufMethodInvoker> map = init() ;
-	
-	private static HashMap<String,ProtobufMethodInvoker> init(){
-		HashMap<String,ProtobufMethodInvoker> m = new HashMap<String,ProtobufMethodInvoker>() ;
-		m.put( "tutorial.EchoService.Echo", new EchoInvoker() ) ;
-		return m ;
+	private static HashMap<String,ProtobufMethodInvoker> map = 
+		new HashMap<String,ProtobufMethodInvoker>() ;
+	static{
+		register("tutorial.EchoService.Echo", new EchoInvoker() ) ;
 	}
 	
 	/**
@@ -38,5 +36,6 @@ public class ProtobufMethodPool {
 	public static void register( String method, ProtobufMethodInvoker invoker ){
 		map.put( method, invoker ) ;
 	}
+	
 	
 }
