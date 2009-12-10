@@ -11,6 +11,7 @@ public class ProtobufMethodPool {
 		new HashMap<String,ProtobufMethodInvoker>() ;
 	static{
 		register("tutorial.EchoService.Echo", new EchoInvoker() ) ;
+		register("rprotobuf.HelloWorldService.HelloWorld", new HelloWorldInvoker() ) ;
 	}
 	
 	/**

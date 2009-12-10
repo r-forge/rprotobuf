@@ -34,6 +34,11 @@
 		 	<arg value="-Iproto/" />
 		 	<arg value="proto/addressbook.proto" />
 		 </exec>
+		 <exec executable="protoc">
+		 	<arg value="--java_out=${generated.dir}" />
+		 	<arg value="-Iproto/" />
+		 	<arg value="proto/helloworld.proto" />
+		 </exec>
 	</target>
 	
 	<target name="build" depends="init,generate-classes">

@@ -39,7 +39,11 @@ public abstract class ProtobufMethodInvoker<INPUT_TYPE extends Message,OUTPUT_TY
 		INPUT_TYPE input_default_instance = getInputDefaultInstance() ;
 		Builder input_builder = input_default_instance.newBuilderForType() ;
 		input_builder.mergeFrom( input ) ;
-		OUTPUT_TYPE output_message = invoke( (INPUT_TYPE)input_builder.buildPartial() ) ;
+		INPUT_TYPE input_message = (INPUT_TYPE)input_builder.buildPartial() ;
+		if( ProtobufHandler.verbose ){
+			System.out.println( "input message  : \n==================\n" + input_message  + "\n========================\n") ;
+		}
+		OUTPUT_TYPE output_message = invoke( input_message ) ;
 		return output_message ;
 	}
 	

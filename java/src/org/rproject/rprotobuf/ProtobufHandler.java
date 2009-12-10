@@ -75,6 +75,9 @@ public class ProtobufHandler implements HttpHandler {
     }
     xchg.sendResponseHeaders(200, result.getSerializedSize() );
     OutputStream os = xchg.getResponseBody();
+    if( verbose ){
+    	System.out.println( "output message : \n==================\n" + result  + "\n========================\n") ;
+    }
     result.writeTo( os ) ;
     input.close() ;
     os.close() ;
