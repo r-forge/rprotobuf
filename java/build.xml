@@ -31,8 +31,8 @@
 	<target name="generate-classes">
 		 <exec executable="protoc">
 		 	<arg value="--java_out=${generated.dir}" />
-		 	<arg value="-I../pkg/inst/proto/" />
-		 	<arg value="../pkg/inst/proto/addressbook.proto" />
+		 	<arg value="-Iproto/" />
+		 	<arg value="proto/addressbook.proto" />
 		 </exec>
 	</target>
 	

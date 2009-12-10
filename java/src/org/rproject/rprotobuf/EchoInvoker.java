@@ -1,18 +1,16 @@
 package org.rproject.rprotobuf ;
 
 import com.example.tutorial.AddressBookProtos.Person ;
-import com.google.protobuf.Descriptors.MethodDescriptor ;
 import com.google.protobuf.Message ;
-import java.io.IOException ;
 
-public class EchoInvoker extends ProtobufMethodInvoker{
+public class EchoInvoker extends ProtobufMethodInvoker<Person,Person>{
 	
-	public Message invoke(Message person){
+	public Person invoke(Person person){
 		return person ;
 	}
 	
-	public Message.Builder getInputMessageBuilder() {
-		return com.example.tutorial.AddressBookProtos.Person.newBuilder() ;
+	public Person getInputDefaultInstance(){
+		return com.example.tutorial.AddressBookProtos.Person.getDefaultInstance() ;
 	}
 	
 }

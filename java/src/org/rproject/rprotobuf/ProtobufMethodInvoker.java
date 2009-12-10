@@ -15,28 +15,31 @@ import java.io.IOException ;
 /**
  * invokes a protobuf rpc method
  */
-public abstract class ProtobufMethodInvoker {
+public abstract class ProtobufMethodInvoker<INPUT_TYPE extends Message,OUTPUT_TYPE extends Message> {
 	
 	/**
-	 * invokes a protobuf rpc method and returns the result payload
-	 * 
-	 * @param input the input message payload
+	 * invokes the method
 	 *
-	 * @return the result message payload
+	 * @param input input message
+	 * @return the result of the rpc method
 	 */
-	public abstract Message invoke( Message input ) ;
+	public abstract OUTPUT_TYPE invoke( INPUT_TYPE input ) ;
 	
-	public abstract Builder getInputMessageBuilder() ;
+	/**
+	 * returns a prototype of the input type
+	 */
+	public abstract INPUT_TYPE getInputDefaultInstance() ;
 	
 	/**
 	 * Reads the input message from the input stream and 
 	 * write the output message to the output stream
 	 */
-	public Message invoke( InputStream input ) throws IOException {
-		Builder input_builder = getInputMessageBuilder() ;
+	@SuppressWarnings("unchecked")
+	public OUTPUT_TYPE invoke( InputStream input ) throws IOException {
+		INPUT_TYPE input_default_instance = getInputDefaultInstance() ;
+		Builder input_builder = input_default_instance.newBuilderForType() ;
 		input_builder.mergeFrom( input ) ;
-		Message input_message = input_builder.buildPartial() ;
-		Message output_message = invoke( input_message ) ;
+		OUTPUT_TYPE output_message = invoke( (INPUT_TYPE)input_builder.buildPartial() ) ;
 		return output_message ;
 	}
 	
