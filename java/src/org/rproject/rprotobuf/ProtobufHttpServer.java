@@ -25,19 +25,28 @@ public class ProtobufHttpServer {
 	 */
 	public static final int DEFAULT_PORT = 4444 ;
 	
+	public static final String DEFAULT_ROOT = "/" ;
+	
 	/**
 	 * starts the server. It attempts to use the first argument
 	 * as the port number and uses the default port otherwise
 	 */
 	public static void main(String[] args){
     int port = DEFAULT_PORT ;
-		if( args == null || args.length == 0 ){
+    String root = DEFAULT_ROOT ;
+    
+		if( args != null && args.length >= 0 ){
 			try{
 				port = Integer.parseInt( args[0] ) ;
 			} catch( Exception e){ /* just use the default */ }
 		}
+		
+		if(args != null || args.length >= 1 ){
+			root = args[1]; 
+		}
+		
 		try{
-			startServer( port ) ;
+			startServer( root, port ) ;
 		} catch( Exception e){
 			e.printStackTrace() ;
 		}
@@ -46,9 +55,10 @@ public class ProtobufHttpServer {
   /** 
    * start the server on the specified port
    */
-  public static void startServer( int port) throws IOException {
+  public static void startServer( String root, int port) throws IOException {
+  	/* TODO: check that root starts and ends with / */
   	HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
-    server.createContext("/", new ProtobufHandler());
+    server.createContext(root, new ProtobufHandler());
     server.start();
   }
   
