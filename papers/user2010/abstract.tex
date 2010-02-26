@@ -1,0 +1,56 @@
+\documentclass[11pt]{article}
+\usepackage{url}
+\usepackage{vmargin}
+\setpapersize{USletter}
+\setmarginsrb{1in}{1in}{1in}{1in}{0pt}{0mm}{0pt}{0mm}
+\usepackage{charter}
+
+\newcommand{\proglang}[1]{\textsf{#1}}
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
+
+\author{
+Romain Fran\c{c}ois\\ {\small \url{romain@r-enthusiasts.com} } \and
+Dirk Eddelbuettel\\ {\small \url{edd@debian.org} }
+}
+
+\title{\pkg{RProtoBuf}: Protocol Buffers for R }
+\date{Abstract submitted for \textsl{useR! 2010}}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\begin{abstract}
+  \addtolength{\parskip}{\baselineskip} 	% add a little vertical space
+  \noindent % no ident for first paragraph
+  Protocol buffers are a flexible, efficient, 
+  automated mechanism for serializing structured data---think XML, but 
+  smaller, faster, and simpler. 
+  You define how you want your data to be structured once, then you can use 
+  special generated source code to easily write and read your structured 
+  data to and from a variety of data streams and using a 
+  variety of officially supported languages---
+  \proglang{Java}, \proglang{C++}, or \proglang{Python}---or 
+  third party implementations for languages such as \proglang{C\#}, 
+  \proglang{Perl}, \proglang{Ruby}, \proglang{Visual Basic}, and now 
+  \proglang{R} via the \pkg{RProtoBuf} package.
+  
+  The \pkg{RProtoBuf} package implements R bindings to the C++
+  protobuf library from Google. It uses features of the protocol 
+  buffer library to support creation, manipulation, parsing and serialization
+  of protocol buffers messages. The \pkg{RProtoBuf} package uses S4 classes
+  and external pointers to expose objects that look and feel like standard 
+  R lists, but constrained by the language agnostic definition of the 
+  message type.
+  
+  
+  
+  \noindent \textbf{Keywords:}  
+  \proglang{R}, \proglang{C++}, Serialization, Data Interchange
+\end{abstract}
+\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
