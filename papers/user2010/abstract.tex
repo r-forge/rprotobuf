@@ -40,11 +40,14 @@ Dirk Eddelbuettel\\ {\small \url{edd@debian.org} }
   serialization of protocol buffers messages. Taking advantage of facilities
   in the \pkg{Rcpp} package, \pkg{RProtoBuf} uses S4 classes and external
   pointers to expose objects that look and feel like standard \proglang{R}
-  lists, but constrained by the language-agnostic definition of the message
+  lists, but conforming to the language-agnostic definition of the message
   type.
   % [Dirk] what does that last half-sentence mean? constrained as in conforming
-  
+  % [Romain] yes. updated. I also wanted to say that the actual memory of the object
+  %          is managed by the C++ library and not R, but I can't manage to spell it.  
+
   % [Dirk] ok to add 'forward-looking' statements?
+  % [Romain] fine by me.
   As the protocal buffers library does not offer any built-in support
   for networked access to protocol buffer streams, we intend to take
   advantage on ongoing changes to the \proglang{R} system to expose a native
