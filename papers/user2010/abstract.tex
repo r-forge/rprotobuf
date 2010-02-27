@@ -9,8 +9,8 @@
 \newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
 
 \author{
-Romain Fran\c{c}ois\\ {\small \url{romain@r-enthusiasts.com} } \and
-Dirk Eddelbuettel\\ {\small \url{edd@debian.org} }
+  Romain Fran\c{c}ois\\ {\small \url{romain@r-enthusiasts.com} } \and
+  Dirk Eddelbuettel\\ {\small \url{edd@debian.org} }
 }
 
 \title{\pkg{RProtoBuf}: Protocol Buffers for R }
@@ -40,19 +40,20 @@ Dirk Eddelbuettel\\ {\small \url{edd@debian.org} }
   serialization of protocol buffers messages. Taking advantage of facilities
   in the \pkg{Rcpp} package, \pkg{RProtoBuf} uses S4 classes and external
   pointers to expose objects that look and feel like standard \proglang{R}
-  lists, but conforming to the language-agnostic definition of the message
-  type.
+  lists, yet are managed by the underlying C++ library. These objects also
+  conform to the language-agnostic definition of the message type allowing
+  access to their content from other supported languages.
   % [Dirk] what does that last half-sentence mean? constrained as in conforming
   % [Romain] yes. updated. I also wanted to say that the actual memory of the object
-  %          is managed by the C++ library and not R, but I can't manage to spell it.  
+  %          is managed by the C++ library and not R, but I can't manage to
+  %          spell it.  
+  % [Dirk] Ok, here is a try.  May be getting to detailed.
 
-  % [Dirk] ok to add 'forward-looking' statements?
-  % [Romain] fine by me.
   As the protocal buffers library does not offer any built-in support
   for networked access to protocol buffer streams, we intend to take
   advantage on ongoing changes to the \proglang{R} system to expose a native
-  \proglang{R} server. This is work-in-progress that we hope to report on at
-  the conference.
+  \proglang{R} server. This is work-in-progress, but we hope to be able to
+  report on this at the conference.
 
   \noindent \textbf{Keywords:}  
   \proglang{R}, \proglang{C++}, Serialization, Data Interchange, Data Formats
