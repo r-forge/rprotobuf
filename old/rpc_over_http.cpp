@@ -26,12 +26,15 @@ namespace rprotobuf{
 	 */
 	SEXP invoke_method_http( SEXP method_xp, SEXP message_xp, SEXP host_xp, SEXP port_xp, SEXP root_xp ){
 		
+		using namespace Rcpp ;
+		
 		/* grab parameters */
-		GPB::MethodDescriptor* method = (GPB::MethodDescriptor*)EXTPTR_PTR(method_xp) ;
-		GPB::Message* input = (GPB::Message*)EXTPTR_PTR( message_xp); 
-		int port = INTEGER(port_xp)[0]; 
-		const char* host = CHAR( STRING_ELT( host_xp, 0) ) ;
-		const char* root = CHAR( STRING_ELT( root_xp, 0) ) ;
+		XPtr<GPB::MethodDescriptor> method(method_xp) ;
+		XPtr<GPB::Message> input(message_xp) ;
+		
+		int port = as<int>(port_xp); 
+		std::string host = as<std::string>(host_xp) ;
+		std::string root = as<std::string>(root_xp) ;
 		
 		/* setup the socket */
 		int socket_id = - 1 ;
@@ -41,7 +44,7 @@ namespace rprotobuf{
 		memset(&sa,0,sizeof(SAIN));
 	  	sa.sin_family=AF_INET;
 	  	sa.sin_port=htons(port);
-	  	sa.sin_addr.s_addr=(host)?inet_addr(host):htonl(INADDR_ANY);
+	  	sa.sin_addr.s_addr=(host.c_str()) ? inet_addr(host.c_str()) : htonl(INADDR_ANY);
 	  	
 		if( setsockopt( socket_id , IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt)) ){
 			RESET( "setting socket options") ;
@@ -56,30 +59,35 @@ namespace rprotobuf{
 		char buf[33] ;
 		int input_size = input->ByteSize() ;
 		sprintf( buf, "%d", input_size ) ;
+		DBG(Rprintf( "input message size: %d\n", input_size )) ;  
 		
 		std::string header = "POST " ;
 		header += root ; /* we know root starts and ends with a / */
 		header += method->service()->full_name();
 		header += "?method=" ;
 		header += method->name() ;
-		header += " HTTP/1.0\r\nConnection: close\r\nHost:\r\nContent-Type:application/x-protobuf\r\nContent-Length: " ;
+		header += " HTTP/1.1\r\nConnection: close\r\nHost: 127.0.0.1:9000\r\nContent-Type:application/x-protobuf\r\nContent-Length:" ;
 		header += buf ;
-		header += "\r\n\r\n" ;
+		header += "\r\n" ;
 		
 		/* send the header */
 		DBG(Rprintf( "sending http request\n" )) ;  
 		int sent = 0 ;
 		int total_sent = 0;
-		int total = header.length() ;
+		int total = header.size() + 1 ;
 		const char* c_str = header.c_str() ;
 		char* p = (char*)c_str ;
 		while( total_sent < total ){
 			sent = send( socket_id, p, (total-total_sent), 0 ) ;
 			total_sent = total_sent + sent ;
 			DBG(Rprintf( "headers : sent %d bytes\n", total_sent )) ;  
-			DBG(Rprintf( "%s\n", header.c_str() )) ;  
+			DBG(Rprintf( "==========================\n" )) ;  
+			DBG(Rprintf( "%s\n", header.c_str() )) ;
+			DBG(Rprintf( "==========================\n" )) ;  
 			p = p + sent ;
 		}
+		
+		DBG(Rprintf( "sending body\n" )) ;  
 		
 		/* send the message payload */
 		char payload[ input_size ] ;
@@ -89,9 +97,11 @@ namespace rprotobuf{
 		while( total_sent < input_size ){
 			sent = send( socket_id, p, (input_size-total_sent), 0 ) ;
 			total_sent = total_sent + sent ;
-			DBG(Rprintf( "input message : sent %d bytes\n", total_sent ) );  
+			DBG(Rprintf( "input message : sent %d bytes\n", total_sent ) );
 			p = p + sent ;
 		}
+		
+		DBG(Rprintf( "done\n" )) ;  
 		
 		/* make sure this is enough to read all the headers */
 		char buffer[LINE_BUF_SIZE] ;
@@ -99,6 +109,7 @@ namespace rprotobuf{
 		int content_length = 0 ;
 		int success = 0 ;
 		
+		DBG(Rprintf( "recv\n" )) ;  
 		int n = recv( socket_id, buffer, LINE_BUF_SIZE, 0 ) ;
 		DBG(Rprintf( "reading %d bytes\n", n )) ;
 		
@@ -217,7 +228,8 @@ namespace rprotobuf{
 		return R_NilValue ;
 	}
 	
-	
+#undef DBG
+#undef RESET
 	
 } // namespace rprotobuf
 

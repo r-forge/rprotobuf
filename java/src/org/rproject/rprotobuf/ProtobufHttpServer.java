@@ -35,13 +35,13 @@ public class ProtobufHttpServer {
     int port = DEFAULT_PORT ;
     String root = DEFAULT_ROOT ;
     
-		if( args != null && args.length >= 0 ){
+		if( args != null && args.length > 0 ){
 			try{
 				port = Integer.parseInt( args[0] ) ;
 			} catch( Exception e){ /* just use the default */ }
 		}
 		
-		if(args != null || args.length >= 1 ){
+		if(args != null && args.length > 1 ){
 			root = args[1]; 
 		}
 		
