@@ -28,18 +28,12 @@
   National Institute of Standards and Technology (NIST)\\
   Gaithersburg, Maryland, USA}
 
-%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{images/millau-bright.jpg}}
-
 \begin{document}
-
-%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{images/bridge-2.png}}
-%\setbeamertemplate{navigation symbols}{}
 
 \begin{frame}
   \titlepage
 \end{frame}
 
-%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{images/bridge-white.png}}
 \begin{frame}
   \frametitle{Outline}
   \tableofcontents[hideallsubsections]
@@ -65,6 +59,28 @@
       languages such as \proglang{C\#}, \proglang{Perl}, \proglang{Ruby},
       \proglang{Haskell}, and now \proglang{R} via the \pkg{RProtoBuf} package.
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Features}
+
+  \begin{columns}
+    \begin{column}{3in}
+      \begin{figure}
+        \includegraphics[width=2.9in]{figures/ProtobufFeatures.png}
+        \label{fig:pbfeatures}
+        \begin{tiny}
+          Source: \url{http://http://www.slideshare.net/kevinweil/protocol-buffers-and-hadoop-at-twitter}
+        \end{tiny}
+      \end{figure}
+    \end{column}
+    \begin{column}{1.75in}
+      Protocol Buffers compare favourably against a number of competing data
+      / messaging formats.
+    \end{column}
+  \end{columns}
+
+
 \end{frame}
 
 \subsection{Example}
