@@ -1,0 +1,440 @@
+\documentclass[compress]{beamer}
+%\usepackage{beamerthemebars}
+%\usepackage{pgfpages}
+%\pgfpagesuselayout{2 on 1}[letterpaper,border shrink=5mm]
+%\pgfpagesuselayout{4 on 1}[letterpaper,border shrink=5mm]
+%\pgfpagesuselayout{2 on 1}[a4,border shrink=5mm]
+
+\include{setup}  %% has all definitions etc
+\newcommand{\Pause}{\pause}
+%\newcommand{\Pause}{}
+% If you wish to uncover everything in a step-wise fashion, uncomment the following command:
+%\beamerdefaultoverlayspecification{<+->}
+
+\newcommand{\proglang}[1]{\textsf{\color{myDarkBlue} #1}}
+\newcommand{\pkg}[1]{{\fontseries{b}\selectfont #1}}
+
+\title[\pkg{RProtoBuf}: Protocol Buffers for R  @ \textsl{useR! 2010}]{\pkg{RProtoBuf}: Protocol Buffers for R}
+\author[Romain Fran\c{c}ois and Dirk Eddelbuettel]{Romain Fran\c{c}ois\inst{1} \and Dirk Eddelbuettel\inst{2} }
+\institute[R Enthusiasts and Debian]{
+  \inst{1}%
+  R Enthusiasts
+  \and
+  \inst{2}
+  Debian Project
+}
+
+\date[\textsl{useR! 2010}]{ \textsl{useR! 2010} \\
+  National Institute of Standards and Technology (NIST)\\
+  Gaithersburg, Maryland, USA}
+
+%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{images/millau-bright.jpg}}
+
+\begin{document}
+
+%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{images/bridge-2.png}}
+%\setbeamertemplate{navigation symbols}{}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%\usebackgroundtemplate{\includegraphics[width=\paperwidth]{images/bridge-white.png}}
+\begin{frame}
+  \frametitle{Outline}
+  \tableofcontents[hideallsubsections]
+\end{frame}
+
+\section{Protocol Buffers}
+
+\subsection{Overview}
+
+\begin{frame}
+  \frametitle{Brief Description}
+  \framesubtitle{FIXME ?}
+
+  \begin{itemize}
+    \item Google's Protocol Buffers are a flexible, efficient, automated mechanism for
+      serializing structured data---think XML, but smaller, faster, and simpler.
+    \item Users define the data structures in a \texttt{proto} file, and then
+      use special generated source code.
+    \item This permits to easily write and read structured data to and from a
+      variety of data streams, and using a variety of officially supported
+      languages--- \proglang{Java}, \proglang{C++}, or \proglang{Python}.
+    \item Or one can use third-party implementations for
+      languages such as \proglang{C\#}, \proglang{Perl}, \proglang{Ruby},
+      \proglang{Haskell}, and now \proglang{R} via the \pkg{RProtoBuf} package.
+  \end{itemize}
+\end{frame}
+
+\subsection{Example}
+
+\begin{frame}
+  \frametitle{Example \texttt{proto} file from Tutorial}
+  %\framesubtitle{FIXME ?}
+
+  \begin{footnotesize}
+<<lang=cpp>>=
+package tutorial;
+message Person {
+ required string name = 1;
+ required int32 id = 2;        // Unique ID number for person.
+ optional string email = 3;
+ enum PhoneType {
+   MOBILE = 0; HOME = 1; WORK = 2;
+ }
+ message PhoneNumber {
+   required string number = 1;
+   optional PhoneType type = 2 [default = HOME];
+ }
+ repeated PhoneNumber phone = 4;
+}
+// Our address book file is just one of these.
+message AddressBook {
+  repeated Person person = 1;
+}
+@
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example C++ usage}
+
+  \begin{footnotesize}
+<<lang=cpp>>=
+#include "addressbook.pb.h"
+using namespace std;
+
+// Iterates though all people in the AddressBook
+// and prints info about them.
+void ListPeople(const tutorial::AddressBook& address_book) {
+  for (int i=0; i < address_book.person_size(); i++) {
+    const tutorial::Person& person =
+        address_book.person(i);
+
+    cout << "Person ID: " << person.id() << endl;
+    cout << "  Name: " << person.name() << endl;
+    if (person.has_email()) {
+      cout << "  E-mail address: "
+           << person.email() << endl;
+    }
+@
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example C++ usage (cont.)}
+
+  \begin{footnotesize}
+<<lang=cpp>>=
+    for (int j = 0; j < person.phone_size(); j++) {
+      const tutorial::Person::PhoneNumber
+         &phone_number = person.phone(j);
+
+      switch (phone_number.type()) {
+        case tutorial::Person::MOBILE:
+          cout << "  Mobile phone #: ";
+          break;
+        case tutorial::Person::HOME:
+          cout << "  Home phone #: ";
+          break;
+        case tutorial::Person::WORK:
+          cout << "  Work phone #: ";
+          break;
+      }
+      cout << phone_number.number() << endl;
+    }
+  }
+}
+@
+\end{footnotesize}
+
+\end{frame}
+
+\section{RProtoBuf}
+
+\subsection{Overview}
+
+\begin{frame}
+  \frametitle{Brief Description}
+  \framesubtitle{FIXME !!}
+
+  \begin{itemize}
+  \item The \pkg{RProtoBuf} package implements \proglang{R} bindings to the
+    \proglang{C++} protobuf library from Google.
+  \item \pkg{RProtoBuf} uses features of the
+    protocol buffer library to support creation, manipulation, parsing and
+    serialization of protocol buffers messages.
+  \item Taking advantage of facilities
+    in the \pkg{Rcpp} package, \pkg{RProtoBuf} uses S4 classes and external
+    pointers to expose objects that look and feel like standard \proglang{R}
+    lists, yet are managed by the underlying C++ library.
+  \item These objects also
+    conform to the language-agnostic definition of the message type allowing
+    access to their content from other supported languages.
+  \end{itemize}
+\end{frame}
+
+% \begin{frame}
+%   \frametitle{Brief Description}
+%   \framesubtitle{FIXME !!}
+%   As the protocal buffers library does not offer any built-in support
+%   for networked access to protocol buffer streams, we intend to take
+%   advantage on ongoing changes to the \proglang{R} system to expose a native
+%   \proglang{R} server. This is work-in-progress, but we hope to be able to
+%   report on this at the conference.
+% \end{frame}
+
+\subsection{Example}
+\begin{frame}
+  \frametitle{Example \texttt{proto} file for Financial Data}
+
+  \begin{small}
+<<lang=cpp>>=
+// Namespace
+package TradeData;
+
+// A simple Fill, ie a completed trade
+message Fill {
+  required double timestamp = 1;
+  required string symbol = 2;
+  required double price = 3;
+  required int32 size = 4;
+}
+
+// A sequence of Fills
+message Trades {
+  repeated Fill fill = 1;
+}
+@
+\end{small}
+
+\tiny See \texttt{inst/examples/HighFrequencyFinance/} in the \pkg{RProtoBuf} package.
+\end{frame}
+
+
+\subsection{Writer}
+\begin{frame}
+  \frametitle{Example C++ data creator}
+
+% #include "TradeData.pb.h"       // auto-generated ProtoBuffer data structure accessor
+% #include <iostream>
+% #include <fstream>
+
+% #define MATHLIB_STANDALONE 1    // so that we get set_seed()
+% #include <Rmath.h>              // to use R's RNGs and random distribution functions
+
+%    // Verify that the version of the library that we linked against is
+%    // compatible with the version of the headers we compiled against.
+%    GOOGLE_PROTOBUF_VERIFY_VERSION;
+
+  \begin{tiny}
+<<lang=cpp>>=
+int main(int argc, char **argv) {
+  const char* pbfile = "trades.pb";
+  const int N = 1000;
+  set_seed(123, 456);
+  double tstamp = 1277973000;     // 2010-07-01 08:30:00
+  double tprice = 100.0;          // gotta start somewhere
+  char sym[] = "ABC";
+  TradeData::Trades tr;
+  for (int i=0; i<N; i++) {
+    TradeData::Fill *fill = tr.add_fill();
+    tstamp += runif(0.000, 0.100);
+    tprice += round(rt(5) * 0.01 * 100)/100;
+    int tsize = 100 + round(runif(0,9))*100;
+    fill->set_timestamp(tstamp);
+    fill->set_price(tprice);
+    fill->set_symbol(sym);
+    fill->set_size(tsize);
+  }
+  std::fstream output(pbfile, std::ios::out | std::ios::binary);
+  if (!tr.SerializeToOstream(&output)) {
+      std::cerr << "Failed to write data." << std::endl;
+      return -1;
+  }
+  return 0;
+}
+
+@
+\end{tiny}
+\tiny See \texttt{inst/examples/HighFrequencyFinance/protoCreate.cpp}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Extensibility}
+
+  We could add this to the \texttt{proto} file:
+
+  \begin{small}
+<<lang=cpp>>=
+ enum exchType {
+   NYSE = 0; NASDAQ = 1; ARCS = 2; BATS = 3;
+ }
+ optional exchType exchange = 5 [default = NYSE];
+@
+
+  \begin{quote}
+    If you want your new buffers to be backwards-compatible, and your old
+    buffers to be forward-compatible [...]:
+    \begin{itemize}
+    \item you must not change the tag [...] of any existing fields.
+    \item you must not add or delete any required fields.
+    \item you may delete optional or repeated fields.
+    \item you may add new optional or repeated fields but you must use fresh tag numbers [...]
+    \end{itemize}
+  \end{quote}
+  See \url{http://code.google.com/apis/protocolbuffers/docs/cpptutorial.html}
+\end{small}
+
+\end{frame}
+
+\subsection{R Readers}
+
+\begin{frame}
+  \frametitle{Example R reader: Simple}
+  \begin{footnotesize}
+<<lang=R>>=
+basicUse <- function(verbose=TRUE) {
+  readProtoFiles("TradeData.proto")
+  x <- read( TradeData.Trades, "trades.pb")
+  xl <- as.list(x)
+  df <- do.call(rbind,
+                lapply(as.list(xl$fill),
+                       function(.)
+                       as.data.frame(as.list(.))))
+  df[,1] <- as.POSIXct(df[,1], origin="1970-01-01")
+  if (verbose) print(summary(df))
+  invisible(df)
+}
+@
+\end{footnotesize}
+\tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example R reader: Smarter}
+  \begin{footnotesize}
+<<lang=R>>=
+betterUse <- function(verbose=TRUE, file = "trades.pb") {
+  readProtoFiles("TradeData.proto")
+  x <- read( TradeData.Trades, "trades.pb")
+  xl <- lapply( x$fill, as.list )
+
+  df <- data.frame(timestamp= as.POSIXct(sapply(xl,
+                      "[[", "timestamp" ),
+                      origin="1970-01-01"),
+                   symbol = sapply(xl,"[[","symbol"),
+                   price  = sapply(xl,"[[","price"),
+                   size   = sapply(xl,"[[","size"))
+  if (verbose) print(summary(df))
+  invisible(df)
+}
+@
+\end{footnotesize}
+\tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example R reader: Manual via Rcpp}
+  \begin{footnotesize}
+<<lang=R>>=
+compiled <- function(verbose=FALSE, file="trades.pb") {
+
+    stopifnot(file.exists(file))
+
+    df <- .Call("pbload", file);
+
+    if (verbose) print(summary(df))
+
+    invisible(df)
+}
+@
+\end{footnotesize}
+\tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Example R reader: C++ support}
+  \begin{tiny}
+<<lang=C++>>=
+extern "C" SEXP pbload(SEXP b) {
+  std::string pbfile = Rcpp::as<std::string>(b);
+  TradeData::Trades tr;
+  std::fstream fs(pbfile.c_str(), std::ios::in | std::ios::binary);
+  if (!tr.ParseFromIstream(&fs)) {
+    std::cerr << "Trouble parsing..." << std::cout;
+    return R_NilValue;
+  }
+  int n = tr.fill_size();
+  Rcpp::DatetimeVector timestamp(n);
+  Rcpp::CharacterVector tsym(n);
+  Rcpp::NumericVector tprice(n);
+  Rcpp::IntegerVector tsize(n);
+  for (int i=0; i<n; i++) {
+    const TradeData::Fill &fill = tr.fill(i);
+    timestamp[i] = fill.timestamp();
+    tsym[i]      = fill.symbol();
+    tprice[i]    = fill.price();
+    tsize[i]     = fill.size();
+  }
+  return Rcpp::DataFrame::create(Rcpp::Named("times")  = timestamp,
+                                 Rcpp::Named("symbol") = tsym,
+                                 Rcpp::Named("price")  = tprice,
+                                 Rcpp::Named("size")   = tsize);
+}
+@
+\end{tiny}
+\tiny See \texttt{inst/examples/HighFrequencyFinance/protoModule.cpp}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Timing comparison}
+
+  Running the script \code{loadInR.r} from the aforementioned examples
+  directory in the \pkg{RProtoBuf} package:
+
+  \begin{table}
+    \small
+    \begin{tabular}{lrr}
+      \toprule
+      Version & Elapsed Time & Relative \\
+      \cmidrule{2-3}
+      Compiled & 0.006 & 1.0000 \\
+      betterUse & 0.138 & 23.0000 \\
+      basicUse & 4.606 & 767.6667 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+
+  \small Times are total in seconds from on three replications each on
+  relatively recent server, using the \pkg{rbenchmark} package.
+\end{frame}
+
+\section{Summary / Outlook}
+\begin{frame}
+  \frametitle{Summary and Outlook}
+
+  \begin{itemize}
+  \item We have introduced the Google \textsl{Protocol Buffers} library as a
+    means to generating efficient data interfacing code: fast, auto-generated
+    and extensible.
+  \item We illustrated its use via our nascent \pkg{RProtoBuf} package.
+  \item \pkg{RProtoBuf} brings autogenerated accessors to \proglang{R},
+    albeit at a (currently) less-than-glamarous performance (mainly due to overheads within \proglang{R}).
+  \item The \pkg{Rcpp} package makes it easy to \textsl{manually} add Protocol
+    Buffers capabilities to our \proglang{R} analyses.
+  \item Goal: Use the new \textsl{Modules} feature in \pkg{Rcpp} to get at
+    (almost) auto-generated yet very efficient (\proglang{C++}-based) access
+    from \proglang{R}.
+  \item Second Goal: Add networking capabilities, maybe via \proglang{R}'s
+    built-in http server, or maybe by hijacking the connections interface.
+  \end{itemize}
+\end{frame}
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
+
