@@ -428,8 +428,9 @@ extern "C" SEXP pbload(SEXP b) {
 \end{frame}
 
 \section{Summary / Outlook}
+\subsection{Summary}
 \begin{frame}
-  \frametitle{Summary and Outlook}
+  \frametitle{Summary}
 
   \begin{itemize}
   \item We have introduced the Google \textsl{Protocol Buffers} library as a
@@ -440,6 +441,14 @@ extern "C" SEXP pbload(SEXP b) {
     albeit at a (currently) less-than-glamorous performance (mainly due to overheads within \proglang{R}).
   \item The \pkg{Rcpp} package makes it easy to \textsl{manually} add Protocol
     Buffers capabilities to our \proglang{R} analyses.
+  \end{itemize}
+\end{frame}
+
+\subsection{Outlook}
+\begin{frame}
+  \frametitle{Outlook}
+
+  \begin{itemize}
   \item Goal: Use the new \textsl{Modules} feature in \pkg{Rcpp} to get at
     (almost) auto-generated yet very efficient (\proglang{C++}-based) access
     from \proglang{R}.
