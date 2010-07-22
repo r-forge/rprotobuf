@@ -28,6 +28,39 @@
   National Institute of Standards and Technology (NIST)\\
   Gaithersburg, Maryland, USA}
 
+\newsavebox{\tinyhlboxclosebrace}%
+\newsavebox{\tinyhlboxopenbrace}%
+\newsavebox{\tinyhlboxbackslash}%
+\newsavebox{\tinyhlboxlessthan}%
+\newsavebox{\tinyhlboxgreaterthan}%
+\newsavebox{\tinyhlboxdollar}%
+\newsavebox{\tinyhlboxunderscore}%
+\newsavebox{\tinyhlboxand}%
+\newsavebox{\tinyhlboxhash}%
+\newsavebox{\tinyhlboxat}%
+\newsavebox{\tinyhlboxpercent}% 
+\newsavebox{\tinyhlboxhat}%
+\newsavebox{\tinyhlboxsinglequote}%
+\newsavebox{\tinyhlboxbacktick}%
+
+\setbox\tinyhlboxopenbrace=\hbox{\begin{tiny}\verb.{.\end{tiny}}%
+\setbox\tinyhlboxclosebrace=\hbox{\begin{tiny}\verb.}.\end{tiny}}%
+\setbox\tinyhlboxlessthan=\hbox{\begin{tiny}\verb.<.\end{tiny}}%
+\setbox\tinyhlboxdollar=\hbox{\begin{tiny}\verb.$.\end{tiny}}%
+\setbox\tinyhlboxunderscore=\hbox{\begin{tiny}\verb._.\end{tiny}}%
+\setbox\tinyhlboxand=\hbox{\begin{tiny}\verb.&.\end{tiny}}%
+\setbox\tinyhlboxhash=\hbox{\begin{tiny}\verb.#.\end{tiny}}%
+\setbox\tinyhlboxat=\hbox{\begin{tiny}\verb.@.\end{tiny}}%
+\setbox\tinyhlboxbackslash=\hbox{\begin{tiny}\verb.\.\end{tiny}}%
+\setbox\tinyhlboxgreaterthan=\hbox{\begin{tiny}\verb.>.\end{tiny}}%
+\setbox\tinyhlboxpercent=\hbox{\begin{tiny}\verb.%.\end{tiny}}%
+\setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
+\setbox\tinyhlboxsinglequote=\hbox{\begin{tiny}\verb.'.\end{tiny}}%
+\setbox\tinyhlboxbacktick=\hbox{\begin{tiny}\verb.`.\end{tiny}}%
+\setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
+% \def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}%
+  
+  
 \begin{document}
 
 \begin{frame}
@@ -82,7 +115,7 @@
 
 
 \end{frame}
-
+         
 \subsection{Example}
 
 \begin{frame}
@@ -314,7 +347,8 @@ message Trades {
 %    // compatible with the version of the headers we compiled against.
 %    GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-  \begin{tiny}
+%%% <TINY>
+\begin{tiny}  
 <<lang=cpp>>=
 int main(int argc, char **argv) {
   const char* pbfile = "trades.pb";
@@ -344,6 +378,8 @@ int main(int argc, char **argv) {
 
 @
 \end{tiny}
+%%% </TINY>
+
 \tiny See \texttt{inst/examples/HighFrequencyFinance/protoCreate.cpp}
 \end{frame}
 
@@ -442,7 +478,9 @@ compiled <- function(verbose=FALSE, file="trades.pb") {
 
 \begin{frame}
   \frametitle{Example R reader: C++ support}
-  \begin{tiny}
+
+%%% <TINY>  
+\begin{tiny}
 <<lang=C++>>=
 extern "C" SEXP pbload(SEXP b) {
   std::string pbfile = Rcpp::as<std::string>(b);
@@ -469,8 +507,10 @@ extern "C" SEXP pbload(SEXP b) {
                                  Rcpp::Named("price")  = tprice,
                                  Rcpp::Named("size")   = tsize);
 }
-@
+@ 
 \end{tiny}
+%%% </TINY>
+
 \tiny See \texttt{inst/examples/HighFrequencyFinance/protoModule.cpp}
 \end{frame}
 

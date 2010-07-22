@@ -23,6 +23,14 @@ tex[ endboxes - 1 ] <- sprintf( "%s \\mbox{}",
 	sub( "\\\\\\\\$", "", tex[ endboxes - 1 ] ) )
 tex[ endboxes ] <- ""
 
+start <- grep( "<TINY>", tex )
+end <- grep( "</TINY>", tex )
+for( i in seq_along( start ) ){
+	lines <- tex[ seq( start[i], end[i] ) ]
+	lines <- gsub( "\\usebox{\\hlbox", "\\usebox{\\tinyhlbox", lines, fixed = TRUE )
+	tex[ seq( start[i], end[i] ) ] <- lines
+}
+
 writeLines( tex, texfile )
 tools::texi2dvi( texfile, pdf = TRUE, clean = TRUE )
 
