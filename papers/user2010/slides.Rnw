@@ -60,6 +60,36 @@
 \setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
 % \def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}%
   
+\newsavebox{\foothlboxclosebrace}%
+\newsavebox{\foothlboxopenbrace}%
+\newsavebox{\foothlboxbackslash}%
+\newsavebox{\foothlboxlessthan}%
+\newsavebox{\foothlboxgreaterthan}%
+\newsavebox{\foothlboxdollar}%
+\newsavebox{\foothlboxunderscore}%
+\newsavebox{\foothlboxand}%
+\newsavebox{\foothlboxhash}%
+\newsavebox{\foothlboxat}%
+\newsavebox{\foothlboxpercent}% 
+\newsavebox{\foothlboxhat}%
+\newsavebox{\foothlboxsinglequote}%
+\newsavebox{\foothlboxbacktick}%
+
+\setbox\foothlboxopenbrace=\hbox{\begin{footnotesize}\verb.{.\end{footnotesize}}%
+\setbox\foothlboxclosebrace=\hbox{\begin{footnotesize}\verb.}.\end{footnotesize}}%
+\setbox\foothlboxlessthan=\hbox{\begin{footnotesize}\verb.<.\end{footnotesize}}%
+\setbox\foothlboxdollar=\hbox{\begin{footnotesize}\verb.$.\end{footnotesize}}%
+\setbox\foothlboxunderscore=\hbox{\begin{footnotesize}\verb._.\end{footnotesize}}%
+\setbox\foothlboxand=\hbox{\begin{footnotesize}\verb.&.\end{footnotesize}}%
+\setbox\foothlboxhash=\hbox{\begin{footnotesize}\verb.#.\end{footnotesize}}%
+\setbox\foothlboxat=\hbox{\begin{footnotesize}\verb.@.\end{footnotesize}}%
+\setbox\foothlboxbackslash=\hbox{\begin{footnotesize}\verb.\.\end{footnotesize}}%
+\setbox\foothlboxgreaterthan=\hbox{\begin{footnotesize}\verb.>.\end{footnotesize}}%
+\setbox\foothlboxpercent=\hbox{\begin{footnotesize}\verb.%.\end{footnotesize}}%
+\setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
+\setbox\foothlboxsinglequote=\hbox{\begin{footnotesize}\verb.'.\end{footnotesize}}%
+\setbox\foothlboxbacktick=\hbox{\begin{footnotesize}\verb.`.\end{footnotesize}}%
+\setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
   
 \begin{document}
 
@@ -122,7 +152,8 @@
   \frametitle{Example \texttt{proto} file from Tutorial}
   %\framesubtitle{FIXME ?}
 
-  \begin{footnotesize}
+% <FOOT>
+\begin{footnotesize}
 <<lang=cpp>>=
 package tutorial;
 message Person {
@@ -144,12 +175,14 @@ message AddressBook {
 }
 @
 \end{footnotesize}
+% </FOOT>
 \end{frame}
 
 \begin{frame}
   \frametitle{Example C++ usage}
 
-  \begin{footnotesize}
+% <FOOT>
+\begin{footnotesize}
 <<lang=cpp>>=
 #include "addressbook.pb.h"
 using namespace std;
@@ -169,12 +202,14 @@ void ListPeople(const tutorial::AddressBook& address_book) {
     }
 @
 \end{footnotesize}
+% </FOOT>
 \end{frame}
 
 \begin{frame}
   \frametitle{Example C++ usage (cont.)}
 
-  \begin{footnotesize}
+% <FOOT>
+\begin{footnotesize}
 <<lang=cpp>>=
     for (int j = 0; j < person.phone_size(); j++) {
       const tutorial::Person::PhoneNumber
@@ -197,6 +232,7 @@ void ListPeople(const tutorial::AddressBook& address_book) {
 }
 @
 \end{footnotesize}
+% </FOOT>
 
 \end{frame}
 
@@ -415,7 +451,8 @@ int main(int argc, char **argv) {
 
 \begin{frame}
   \frametitle{Example R reader: Simple}
-  \begin{footnotesize}
+% <FOOT>
+\begin{footnotesize}
 <<lang=R>>=
 basicUse <- function(verbose=TRUE) {
   readProtoFiles("TradeData.proto")
@@ -431,12 +468,14 @@ basicUse <- function(verbose=TRUE) {
 }
 @
 \end{footnotesize}
+% </FOOT>
 \tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
 \end{frame}
 
 \begin{frame}
   \frametitle{Example R reader: Smarter}
-  \begin{footnotesize}
+% <FOOT>
+\begin{footnotesize}
 <<lang=R>>=
 betterUse <- function(verbose=TRUE, file = "trades.pb") {
   readProtoFiles("TradeData.proto")
@@ -454,12 +493,14 @@ betterUse <- function(verbose=TRUE, file = "trades.pb") {
 }
 @
 \end{footnotesize}
+% </FOOT>
 \tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
 \end{frame}
 
 \begin{frame}
   \frametitle{Example R reader: Manual via Rcpp}
-  \begin{footnotesize}
+% <FOOT>
+\begin{footnotesize}
 <<lang=R>>=
 compiled <- function(verbose=FALSE, file="trades.pb") {
 
@@ -473,6 +514,7 @@ compiled <- function(verbose=FALSE, file="trades.pb") {
 }
 @
 \end{footnotesize}
+% </FOOT>
 \tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
 \end{frame}
 

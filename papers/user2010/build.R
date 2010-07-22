@@ -31,6 +31,16 @@ for( i in seq_along( start ) ){
 	tex[ seq( start[i], end[i] ) ] <- lines
 }
 
+start <- grep( "<FOOT>", tex )
+end <- grep( "</FOOT>", tex )
+
+for( i in seq_along( start ) ){
+	lines <- tex[ seq( start[i], end[i] ) ]
+	lines <- gsub( "\\usebox{\\hlbox", "\\usebox{\\foothlbox", lines, fixed = TRUE )
+	tex[ seq( start[i], end[i] ) ] <- lines
+}
+
+
 writeLines( tex, texfile )
 tools::texi2dvi( texfile, pdf = TRUE, clean = TRUE )
 
