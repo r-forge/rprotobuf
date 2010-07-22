@@ -38,7 +38,7 @@
 \newsavebox{\tinyhlboxand}%
 \newsavebox{\tinyhlboxhash}%
 \newsavebox{\tinyhlboxat}%
-\newsavebox{\tinyhlboxpercent}% 
+\newsavebox{\tinyhlboxpercent}%
 \newsavebox{\tinyhlboxhat}%
 \newsavebox{\tinyhlboxsinglequote}%
 \newsavebox{\tinyhlboxbacktick}%
@@ -59,38 +59,6 @@
 \setbox\tinyhlboxbacktick=\hbox{\begin{tiny}\verb.`.\end{tiny}}%
 \setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
 % \def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}%
-  
-\newsavebox{\foothlboxclosebrace}%
-\newsavebox{\foothlboxopenbrace}%
-\newsavebox{\foothlboxbackslash}%
-\newsavebox{\foothlboxlessthan}%
-\newsavebox{\foothlboxgreaterthan}%
-\newsavebox{\foothlboxdollar}%
-\newsavebox{\foothlboxunderscore}%
-\newsavebox{\foothlboxand}%
-\newsavebox{\foothlboxhash}%
-\newsavebox{\foothlboxat}%
-\newsavebox{\foothlboxpercent}% 
-\newsavebox{\foothlboxhat}%
-\newsavebox{\foothlboxsinglequote}%
-\newsavebox{\foothlboxbacktick}%
-
-\setbox\foothlboxopenbrace=\hbox{\begin{footnotesize}\verb.{.\end{footnotesize}}%
-\setbox\foothlboxclosebrace=\hbox{\begin{footnotesize}\verb.}.\end{footnotesize}}%
-\setbox\foothlboxlessthan=\hbox{\begin{footnotesize}\verb.<.\end{footnotesize}}%
-\setbox\foothlboxdollar=\hbox{\begin{footnotesize}\verb.$.\end{footnotesize}}%
-\setbox\foothlboxunderscore=\hbox{\begin{footnotesize}\verb._.\end{footnotesize}}%
-\setbox\foothlboxand=\hbox{\begin{footnotesize}\verb.&.\end{footnotesize}}%
-\setbox\foothlboxhash=\hbox{\begin{footnotesize}\verb.#.\end{footnotesize}}%
-\setbox\foothlboxat=\hbox{\begin{footnotesize}\verb.@.\end{footnotesize}}%
-\setbox\foothlboxbackslash=\hbox{\begin{footnotesize}\verb.\.\end{footnotesize}}%
-\setbox\foothlboxgreaterthan=\hbox{\begin{footnotesize}\verb.>.\end{footnotesize}}%
-\setbox\foothlboxpercent=\hbox{\begin{footnotesize}\verb.%.\end{footnotesize}}%
-\setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
-\setbox\foothlboxsinglequote=\hbox{\begin{footnotesize}\verb.'.\end{footnotesize}}%
-\setbox\foothlboxbacktick=\hbox{\begin{footnotesize}\verb.`.\end{footnotesize}}%
-\setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
-  
 \begin{document}
 
 \begin{frame}
@@ -145,7 +113,7 @@
 
 
 \end{frame}
-         
+
 \subsection{Example}
 
 \begin{frame}
@@ -384,7 +352,7 @@ message Trades {
 %    GOOGLE_PROTOBUF_VERIFY_VERSION;
 
 %%% <TINY>
-\begin{tiny}  
+\begin{tiny}
 <<lang=cpp>>=
 int main(int argc, char **argv) {
   const char* pbfile = "trades.pb";
@@ -453,7 +421,7 @@ int main(int argc, char **argv) {
   \frametitle{Example R reader: Simple}
 % <FOOT>
 \begin{footnotesize}
-<<lang=R>>=
+<<eval=FALSE>>=
 basicUse <- function(verbose=TRUE) {
   readProtoFiles("TradeData.proto")
   x <- read( TradeData.Trades, "trades.pb")
@@ -476,7 +444,7 @@ basicUse <- function(verbose=TRUE) {
   \frametitle{Example R reader: Smarter}
 % <FOOT>
 \begin{footnotesize}
-<<lang=R>>=
+<<eval=FALSE>>=
 betterUse <- function(verbose=TRUE, file = "trades.pb") {
   readProtoFiles("TradeData.proto")
   x <- read( TradeData.Trades, "trades.pb")
@@ -501,7 +469,7 @@ betterUse <- function(verbose=TRUE, file = "trades.pb") {
   \frametitle{Example R reader: Manual via Rcpp}
 % <FOOT>
 \begin{footnotesize}
-<<lang=R>>=
+<<eval=FALSE>>=
 compiled <- function(verbose=FALSE, file="trades.pb") {
 
     stopifnot(file.exists(file))
@@ -521,7 +489,7 @@ compiled <- function(verbose=FALSE, file="trades.pb") {
 \begin{frame}
   \frametitle{Example R reader: C++ support}
 
-%%% <TINY>  
+%%% <TINY>
 \begin{tiny}
 <<lang=C++>>=
 extern "C" SEXP pbload(SEXP b) {
@@ -549,7 +517,7 @@ extern "C" SEXP pbload(SEXP b) {
                                  Rcpp::Named("price")  = tprice,
                                  Rcpp::Named("size")   = tsize);
 }
-@ 
+@
 \end{tiny}
 %%% </TINY>
 
