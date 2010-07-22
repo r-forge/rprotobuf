@@ -45,7 +45,7 @@
 
 \begin{frame}
   \frametitle{Brief Description}
-  \framesubtitle{FIXME ?}
+  %\framesubtitle{FIXME ?}
 
   \begin{itemize}
     \item Google's Protocol Buffers are a flexible, efficient, automated mechanism for
@@ -173,7 +173,7 @@ void ListPeople(const tutorial::AddressBook& address_book) {
 
 \begin{frame}
   \frametitle{Brief Description}
-  \framesubtitle{FIXME !!}
+  %\framesubtitle{FIXME !!}
 
   \begin{itemize}
   \item The \pkg{RProtoBuf} package implements \proglang{R} bindings to the
@@ -201,7 +201,76 @@ void ListPeople(const tutorial::AddressBook& address_book) {
 %   report on this at the conference.
 % \end{frame}
 
-\subsection{Example}
+\subsection{Examples}
+
+\subsubsection{Adressbook}
+\begin{frame}
+  \frametitle{Addressbook example from R}
+  \framesubtitle{See \texttt{demo(addressbook)}}
+
+  \begin{small}
+<<eval=FALSE>>=
+# load the package
+require( RProtoBuf )
+
+# read the proto file
+readProtoFiles( files="addressbook.proto" )
+
+# create a prototype with a call to new
+# on the descriptor for the Person type,
+# then update the message # with fields
+romain <- update( new( tutorial.Person ),
+   email = "romain@r-enthusiasts.com",
+   id = 1, name = "Romain Francois",
+   phone = new(tutorial.Person.PhoneNumber,
+     number = "+33(0)...", type = "MOBILE"))
+# continued on next slide...
+#
+@
+\end{small}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Addressbook example from R (cont)}
+
+  \begin{small}
+<<eval=FALSE>>=
+# directly supply parameters to the ctor
+dirk <- new( tutorial.Person,
+   email = "edd@debian.org",
+   id = 2, name = "Dirk Eddelbuettel" )
+
+# update the phone repeated field with list
+dirk$phone <- list(
+  new( tutorial.Person.PhoneNumber,
+       number = "+01...", type = "MOBILE" ),
+  new( tutorial.Person.PhoneNumber ,
+       number = "+01...", type = "HOME" ) )
+@
+\end{small}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Addressbook example from R (cont)}
+
+  \begin{small}
+<<eval=FALSE>>=
+# build the address book
+book <- new( tutorial.AddressBook,
+             person = list( romain, dirk ) )
+
+# debug content -- this is not wire content
+writeLines( as.character( book ) )
+
+# the serialized message,
+# see also the io demo
+serialize( book, NULL )
+@
+\end{small}
+\end{frame}
+
+\subsubsection{(Stylized) High-Frequency Financial Data}
 \begin{frame}
   \frametitle{Example \texttt{proto} file for Financial Data}
 
