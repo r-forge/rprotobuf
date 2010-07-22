@@ -218,8 +218,9 @@ readProtoFiles( files="addressbook.proto" )
 
 # create a prototype with a call to new
 # on the descriptor for the Person type,
-# then update the message # with fields
-romain <- update( new( tutorial.Person ),
+romain <- new( tutorial.Person )
+# then update the message
+romain <- update( romain ,
    email = "romain@r-enthusiasts.com",
    id = 1, name = "Romain Francois",
    phone = new(tutorial.Person.PhoneNumber,
