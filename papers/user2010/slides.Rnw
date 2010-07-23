@@ -504,7 +504,8 @@ betterUse <- function(verbose=TRUE,
 % <FOOT>
 \begin{footnotesize}
 <<eval=FALSE>>=
-compiled <- function(verbose=FALSE, file="trades.pb") {
+compiled <- function(verbose=FALSE,
+                     file="trades.pb") {
 
     stopifnot(file.exists(file))
 
@@ -607,7 +608,7 @@ extern "C" SEXP pbload(SEXP b) {
     (almost) auto-generated yet very efficient (\proglang{C++}-based) access
     from \proglang{R}.
   \item Second Goal: Add networking capabilities, maybe via \proglang{R}'s
-    built-in http server, or maybe by hijacking the connections interface.
+    built-in http server.
   \end{itemize}
 \end{frame}
 \end{document}
