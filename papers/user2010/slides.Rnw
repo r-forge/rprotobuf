@@ -27,70 +27,70 @@
 \date[\textsl{useR! 2010}]{ \textsl{useR! 2010} \\
   National Institute of Standards and Technology (NIST)\\
   Gaithersburg, Maryland, USA}
-
-\newsavebox{\tinyhlboxclosebrace}%
-\newsavebox{\tinyhlboxopenbrace}%
-\newsavebox{\tinyhlboxbackslash}%
-\newsavebox{\tinyhlboxlessthan}%
-\newsavebox{\tinyhlboxgreaterthan}%
-\newsavebox{\tinyhlboxdollar}%
-\newsavebox{\tinyhlboxunderscore}%
-\newsavebox{\tinyhlboxand}%
-\newsavebox{\tinyhlboxhash}%
-\newsavebox{\tinyhlboxat}%
-\newsavebox{\tinyhlboxpercent}%
-\newsavebox{\tinyhlboxhat}%
-\newsavebox{\tinyhlboxsinglequote}%
-\newsavebox{\tinyhlboxbacktick}%
-
-\setbox\tinyhlboxopenbrace=\hbox{\begin{tiny}\verb.{.\end{tiny}}%
-\setbox\tinyhlboxclosebrace=\hbox{\begin{tiny}\verb.}.\end{tiny}}%
-\setbox\tinyhlboxlessthan=\hbox{\begin{tiny}\verb.<.\end{tiny}}%
-\setbox\tinyhlboxdollar=\hbox{\begin{tiny}\verb.$.\end{tiny}}%
-\setbox\tinyhlboxunderscore=\hbox{\begin{tiny}\verb._.\end{tiny}}%
-\setbox\tinyhlboxand=\hbox{\begin{tiny}\verb.&.\end{tiny}}%
-\setbox\tinyhlboxhash=\hbox{\begin{tiny}\verb.#.\end{tiny}}%
-\setbox\tinyhlboxat=\hbox{\begin{tiny}\verb.@.\end{tiny}}%
-\setbox\tinyhlboxbackslash=\hbox{\begin{tiny}\verb.\.\end{tiny}}%
-\setbox\tinyhlboxgreaterthan=\hbox{\begin{tiny}\verb.>.\end{tiny}}%
-\setbox\tinyhlboxpercent=\hbox{\begin{tiny}\verb.%.\end{tiny}}%
-\setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
-\setbox\tinyhlboxsinglequote=\hbox{\begin{tiny}\verb.'.\end{tiny}}%
-\setbox\tinyhlboxbacktick=\hbox{\begin{tiny}\verb.`.\end{tiny}}%
-\setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
-% \def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}%
-
-\newsavebox{\foothlboxclosebrace}%
-\newsavebox{\foothlboxopenbrace}%
-\newsavebox{\foothlboxbackslash}%
-\newsavebox{\foothlboxlessthan}%
-\newsavebox{\foothlboxgreaterthan}%
-\newsavebox{\foothlboxdollar}%
-\newsavebox{\foothlboxunderscore}%
-\newsavebox{\foothlboxand}%
-\newsavebox{\foothlboxhash}%
-\newsavebox{\foothlboxat}%
-\newsavebox{\foothlboxpercent}%
-\newsavebox{\foothlboxhat}%
-\newsavebox{\foothlboxsinglequote}%
-\newsavebox{\foothlboxbacktick}%
-
-\setbox\foothlboxopenbrace=\hbox{\begin{footnotesize}\verb.{.\end{footnotesize}}%
-\setbox\foothlboxclosebrace=\hbox{\begin{footnotesize}\verb.}.\end{footnotesize}}%
-\setbox\foothlboxlessthan=\hbox{\begin{footnotesize}\verb.<.\end{footnotesize}}%
-\setbox\foothlboxdollar=\hbox{\begin{footnotesize}\verb.$.\end{footnotesize}}%
-\setbox\foothlboxunderscore=\hbox{\begin{footnotesize}\verb._.\end{footnotesize}}%
-\setbox\foothlboxand=\hbox{\begin{footnotesize}\verb.&.\end{footnotesize}}%
-\setbox\foothlboxhash=\hbox{\begin{footnotesize}\verb.#.\end{footnotesize}}%
-\setbox\foothlboxat=\hbox{\begin{footnotesize}\verb.@.\end{footnotesize}}%
-\setbox\foothlboxbackslash=\hbox{\begin{footnotesize}\verb.\.\end{footnotesize}}%
-\setbox\foothlboxgreaterthan=\hbox{\begin{footnotesize}\verb.>.\end{footnotesize}}%
-\setbox\foothlboxpercent=\hbox{\begin{footnotesize}\verb.%.\end{footnotesize}}%
-\setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
-\setbox\foothlboxsinglequote=\hbox{\begin{footnotesize}\verb.'.\end{footnotesize}}%
-\setbox\foothlboxbacktick=\hbox{\begin{footnotesize}\verb.`.\end{footnotesize}}%
-\setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
-
+% 
+% \newsavebox{\tinyhlboxclosebrace}%
+% \newsavebox{\tinyhlboxopenbrace}%
+% \newsavebox{\tinyhlboxbackslash}%
+% \newsavebox{\tinyhlboxlessthan}%
+% \newsavebox{\tinyhlboxgreaterthan}%
+% \newsavebox{\tinyhlboxdollar}%
+% \newsavebox{\tinyhlboxunderscore}%
+% \newsavebox{\tinyhlboxand}%
+% \newsavebox{\tinyhlboxhash}%
+% \newsavebox{\tinyhlboxat}%
+% \newsavebox{\tinyhlboxpercent}%
+% \newsavebox{\tinyhlboxhat}%
+% \newsavebox{\tinyhlboxsinglequote}%
+% \newsavebox{\tinyhlboxbacktick}%
+% 
+% \setbox\tinyhlboxopenbrace=\hbox{\begin{tiny}\verb.{.\end{tiny}}%
+% \setbox\tinyhlboxclosebrace=\hbox{\begin{tiny}\verb.}.\end{tiny}}%
+% \setbox\tinyhlboxlessthan=\hbox{\begin{tiny}\verb.<.\end{tiny}}%
+% \setbox\tinyhlboxdollar=\hbox{\begin{tiny}\verb.$.\end{tiny}}%
+% \setbox\tinyhlboxunderscore=\hbox{\begin{tiny}\verb._.\end{tiny}}%
+% \setbox\tinyhlboxand=\hbox{\begin{tiny}\verb.&.\end{tiny}}%
+% \setbox\tinyhlboxhash=\hbox{\begin{tiny}\verb.#.\end{tiny}}%
+% \setbox\tinyhlboxat=\hbox{\begin{tiny}\verb.@.\end{tiny}}%
+% \setbox\tinyhlboxbackslash=\hbox{\begin{tiny}\verb.\.\end{tiny}}%
+% \setbox\tinyhlboxgreaterthan=\hbox{\begin{tiny}\verb.>.\end{tiny}}%
+% \setbox\tinyhlboxpercent=\hbox{\begin{tiny}\verb.%.\end{tiny}}%
+% \setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
+% \setbox\tinyhlboxsinglequote=\hbox{\begin{tiny}\verb.'.\end{tiny}}%
+% \setbox\tinyhlboxbacktick=\hbox{\begin{tiny}\verb.`.\end{tiny}}%
+% \setbox\tinyhlboxhat=\hbox{\begin{tiny}\verb.^.\end{tiny}}%
+% % \def\urltilda{\kern -.15em\lower .7ex\hbox{\~{}}\kern .04em}%
+% 
+% \newsavebox{\foothlboxclosebrace}%
+% \newsavebox{\foothlboxopenbrace}%
+% \newsavebox{\foothlboxbackslash}%
+% \newsavebox{\foothlboxlessthan}%
+% \newsavebox{\foothlboxgreaterthan}%
+% \newsavebox{\foothlboxdollar}%
+% \newsavebox{\foothlboxunderscore}%
+% \newsavebox{\foothlboxand}%
+% \newsavebox{\foothlboxhash}%
+% \newsavebox{\foothlboxat}%
+% \newsavebox{\foothlboxpercent}%
+% \newsavebox{\foothlboxhat}%
+% \newsavebox{\foothlboxsinglequote}%
+% \newsavebox{\foothlboxbacktick}%
+% 
+% \setbox\foothlboxopenbrace=\hbox{\begin{footnotesize}\verb.{.\end{footnotesize}}%
+% \setbox\foothlboxclosebrace=\hbox{\begin{footnotesize}\verb.}.\end{footnotesize}}%
+% \setbox\foothlboxlessthan=\hbox{\begin{footnotesize}\verb.<.\end{footnotesize}}%
+% \setbox\foothlboxdollar=\hbox{\begin{footnotesize}\verb.$.\end{footnotesize}}%
+% \setbox\foothlboxunderscore=\hbox{\begin{footnotesize}\verb._.\end{footnotesize}}%
+% \setbox\foothlboxand=\hbox{\begin{footnotesize}\verb.&.\end{footnotesize}}%
+% \setbox\foothlboxhash=\hbox{\begin{footnotesize}\verb.#.\end{footnotesize}}%
+% \setbox\foothlboxat=\hbox{\begin{footnotesize}\verb.@.\end{footnotesize}}%
+% \setbox\foothlboxbackslash=\hbox{\begin{footnotesize}\verb.\.\end{footnotesize}}%
+% \setbox\foothlboxgreaterthan=\hbox{\begin{footnotesize}\verb.>.\end{footnotesize}}%
+% \setbox\foothlboxpercent=\hbox{\begin{footnotesize}\verb.%.\end{footnotesize}}%
+% \setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
+% \setbox\foothlboxsinglequote=\hbox{\begin{footnotesize}\verb.'.\end{footnotesize}}%
+% \setbox\foothlboxbacktick=\hbox{\begin{footnotesize}\verb.`.\end{footnotesize}}%
+% \setbox\foothlboxhat=\hbox{\begin{footnotesize}\verb.^.\end{footnotesize}}%
+% 
 \begin{document}
 
 \begin{frame}
@@ -153,9 +153,7 @@
   \frametitle{Example \texttt{proto} file from Tutorial}
   %\framesubtitle{FIXME ?}
 
-% <FOOT>
-\begin{footnotesize}
-<<lang=cpp>>=
+<<lang=cpp,size=footnotesize>>=
 package tutorial;
 message Person {
  required string name = 1;
@@ -175,16 +173,12 @@ message AddressBook {
   repeated Person person = 1;
 }
 @
-\end{footnotesize}
-% </FOOT>
 \end{frame}
 
 \begin{frame}
   \frametitle{Example C++ usage}
 
-% <FOOT>
-\begin{footnotesize}
-<<lang=cpp>>=
+<<lang=cpp,size=footnotesize>>=
 #include "addressbook.pb.h"
 using namespace std;
 
@@ -202,16 +196,12 @@ void ListPeople(const tutorial::AddressBook& address_book) {
            << person.email() << endl;
     }
 @
-\end{footnotesize}
-% </FOOT>
 \end{frame}
 
 \begin{frame}
   \frametitle{Example C++ usage (cont.)}
 
-% <FOOT>
-\begin{footnotesize}
-<<lang=cpp>>=
+<<lang=cpp,size=footnotesize>>=
     for (int j = 0; j < person.phone_size(); j++) {
       const tutorial::Person::PhoneNumber
          &phone_number = person.phone(j);
@@ -232,9 +222,6 @@ void ListPeople(const tutorial::AddressBook& address_book) {
   }
 }
 @
-\end{footnotesize}
-% </FOOT>
-
 \end{frame}
 
 \section{RProtoBuf}
@@ -384,9 +371,7 @@ message Trades {
 %    // compatible with the version of the headers we compiled against.
 %    GOOGLE_PROTOBUF_VERIFY_VERSION;
 
-%%% <TINY>
-\begin{tiny}
-<<lang=cpp>>=
+<<lang=cpp,size=tiny>>=
 int main(int argc, char **argv) {
   const char* pbfile = "trades.pb";
   const int N = 1000;
@@ -414,8 +399,6 @@ int main(int argc, char **argv) {
 }
 
 @
-\end{tiny}
-%%% </TINY>
 
 \tiny See \texttt{inst/examples/HighFrequencyFinance/protoCreate.cpp}
 \end{frame}
@@ -452,9 +435,8 @@ int main(int argc, char **argv) {
 
 \begin{frame}
   \frametitle{Example R reader: Simple}
-% <FOOT>
-\begin{footnotesize}
-<<eval=FALSE>>=
+
+<<eval=FALSE,size=footnotesize>>=
 basicUse <- function(verbose=TRUE) {
   readProtoFiles("TradeData.proto")
   x <- read( TradeData.Trades, "trades.pb")
@@ -468,16 +450,14 @@ basicUse <- function(verbose=TRUE) {
   invisible(df)
 }
 @
-\end{footnotesize}
-% </FOOT>
+
 \tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
 \end{frame}
 
 \begin{frame}
   \frametitle{Example R reader: Smarter}
-% <FOOT>
-\begin{footnotesize}
-<<eval=FALSE>>=
+
+<<eval=FALSE,size=footnotesize>>=
 betterUse <- function(verbose=TRUE,
                       file="trades.pb") {
   readProtoFiles("TradeData.proto")
@@ -494,16 +474,13 @@ betterUse <- function(verbose=TRUE,
   invisible(df)
 }
 @
-\end{footnotesize}
-% </FOOT>
 \tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
 \end{frame}
 
 \begin{frame}
   \frametitle{Example R reader: Manual via Rcpp}
-% <FOOT>
-\begin{footnotesize}
-<<eval=FALSE>>=
+
+<<eval=FALSE,size=footnotesize>>=
 compiled <- function(verbose=FALSE,
                      file="trades.pb") {
 
@@ -516,17 +493,13 @@ compiled <- function(verbose=FALSE,
     invisible(df)
 }
 @
-\end{footnotesize}
-% </FOOT>
 \tiny See \texttt{inst/examples/HighFrequencyFinance/loadInR.r}
 \end{frame}
 
 \begin{frame}
   \frametitle{Example R reader: C++ support}
 
-%%% <TINY>
-\begin{tiny}
-<<lang=C++>>=
+<<lang=C++,size=tiny>>=
 extern "C" SEXP pbload(SEXP b) {
   std::string pbfile = Rcpp::as<std::string>(b);
   TradeData::Trades tr;
@@ -553,8 +526,6 @@ extern "C" SEXP pbload(SEXP b) {
                                  Rcpp::Named("size")   = tsize);
 }
 @
-\end{tiny}
-%%% </TINY>
 
 \tiny See \texttt{inst/examples/HighFrequencyFinance/protoModule.cpp}
 \end{frame}
