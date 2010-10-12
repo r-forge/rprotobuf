@@ -1,0 +1,347 @@
+Index: pkg/src/extractors.cpp
+===================================================================
+--- pkg/src/extractors.cpp	(revision 392)
++++ pkg/src/extractors.cpp	(working copy)
+@@ -51,7 +51,7 @@
+ 	case TYPE : \
+ 		return Rcpp::wrap( RepeatedFieldImporter<DATATYPE>(ref, *message, fieldDesc) ) ; \
+ 
+-		HANDLE_REPEATED_FIELD(CPPTYPE_INT32, GPB::int32) ;
++			HANDLE_REPEATED_FIELD(CPPTYPE_INT32, GPB::int32) ;
+     		HANDLE_REPEATED_FIELD(CPPTYPE_INT64, GPB::int64) ;
+     		HANDLE_REPEATED_FIELD(CPPTYPE_UINT32 , GPB::uint32) ;
+     		HANDLE_REPEATED_FIELD(CPPTYPE_UINT64 , GPB::uint64) ;
+@@ -59,10 +59,24 @@
+     		HANDLE_REPEATED_FIELD(CPPTYPE_FLOAT, float) ;
+     		HANDLE_REPEATED_FIELD(CPPTYPE_BOOL, bool) ;
+     		HANDLE_REPEATED_FIELD(CPPTYPE_ENUM, enum_field ) ;
+-    		HANDLE_REPEATED_FIELD(CPPTYPE_STRING, std::string ) ;
+     		HANDLE_REPEATED_FIELD(CPPTYPE_MESSAGE, message_field ) ;
+ #undef HANDLE_REPEATED_FIELD
+ 
++		case CPPTYPE_STRING:
++			if (fieldDesc->type() == TYPE_STRING) {
++				return Rcpp::wrap( RepeatedFieldImporter<std::string>(ref, *message, fieldDesc) ) ;
++			} else if (fieldDesc->type() == TYPE_BYTES) {
++				int field_size = ref->FieldSize( *message, fieldDesc ) ;
++				Rcpp::List res(field_size);
++				for (int i=0; i<field_size; i++) {
++					std::string s = ref->GetRepeatedString(*message, fieldDesc, i);
++					res[i] =  Rcpp::wrap(std::vector<Rbyte>(s.begin(), s.end()));
++				}
++				return res;
++			} else {
++				throwException( "unknown field type with CPP_TYPE STRING", "ConversionException" ) ;
++			}
++
+     	}
+     	
+     } else {
+@@ -81,14 +95,22 @@
+ 		HANDLE_SINGLE_FIELD( CPPTYPE_DOUBLE, Double );
+ 		HANDLE_SINGLE_FIELD( CPPTYPE_FLOAT, Float );
+ 		HANDLE_SINGLE_FIELD( CPPTYPE_BOOL, Bool );
+-		HANDLE_SINGLE_FIELD( CPPTYPE_STRING, String );
+ #undef HANDLE_SINGLE_FIELD
+ 
++		case CPPTYPE_STRING:
++			if (fieldDesc->type() == TYPE_STRING) {
++				return Rcpp::wrap( ref->GetString(*message, fieldDesc) );
++			} else if (fieldDesc->type() == TYPE_BYTES) {
++				std::string s = ref->GetString(*message, fieldDesc);
++				return Rcpp::wrap(std::vector<Rbyte>(s.begin(), s.end()));
++			} else {
++				throwException( "unknown field type with CPP_TYPE STRING", "ConversionException" ) ;			   
++			}
+ 		case CPPTYPE_ENUM : 
+-    			return Rcpp::wrap( ref->GetEnum( *message, fieldDesc )->number() ) ;
++			return Rcpp::wrap( ref->GetEnum( *message, fieldDesc )->number() ) ;
+     		
+-    		case CPPTYPE_MESSAGE:
+-    			return S4_Message( CLONE( &ref->GetMessage( *message, fieldDesc ) ) ) ;
++   		case CPPTYPE_MESSAGE:
++			return S4_Message( CLONE( &ref->GetMessage( *message, fieldDesc ) ) ) ;
+     			break ;
+     	}
+     }
+Index: pkg/src/mutators.cpp
+===================================================================
+--- pkg/src/mutators.cpp	(revision 392)
++++ pkg/src/mutators.cpp	(working copy)
+@@ -152,18 +152,24 @@
+ 	return "" ; // -Wall, should not happen since we only call this when we know it works
+ }
+ 
+-/**
+- * calls the R function charToRaw to convert raw into a string
+- *
+- * @param raw raw vector
+- * @return a string (STRSXP)
+- */
+-/* FIXME: maybe we don't need to go back to R for this */
+-SEXP rawToString( SEXP raw){
+-	SEXP call = PROTECT( Rf_lang2( Rf_install("charToRaw"), raw ) ) ;
+-	SEXP res = PROTECT( Rf_eval( call, R_GlobalEnv ) );
+-	UNPROTECT( 2 ) ; /* res, call */
+-	return res ;
++std::string GET_bytes( SEXP x, int index ){
++	switch( TYPEOF(x)) {
++		case RAWSXP:
++			if (index == 0) {
++				return(std::string((const char *) RAW(x), (size_t) LENGTH(x)));
++			} else {
++				throwException( "cannot cast SEXP to bytes", "CastException" ) ;
++			}
++		case VECSXP:
++			if (TYPEOF(VECTOR_ELT(x, index)) == RAWSXP) {
++				return(std::string((const char *) RAW(VECTOR_ELT(x, index)), (size_t) LENGTH(VECTOR_ELT(x, index))));
++			} else {
++				throwException( "cannot cast SEXP to bytes", "CastException" ) ;
++			}
++		default:
++			throwException( "cannot cast SEXP to bytes", "CastException" ) ;
++	}
++	return "" ; // -Wall, should not happen since we only call this when we know it works
+ }
+ 
+ /**
+@@ -189,6 +195,25 @@
+ 	return _TRUE_ ;
+ }
+ 
++/**
++ * indicates if this is a list of raws
++ * 
++ * @param x a list (VECSXP)
++ * @return TRUE if all objects are instances of RAWSXP
++ */
++Rboolean allAreRaws( SEXP x) {
++		
++	if( TYPEOF(x) != VECSXP ) return _FALSE_ ;
++	
++	int n = LENGTH(x) ;
++	SEXP current ;
++	for( int i=0; i<n; i++){
++		current = VECTOR_ELT( x, i) ;
++		/* not a RAWSXP */
++		if( TYPEOF(current) != RAWSXP ) return _FALSE_ ;
++	}
++	return _TRUE_ ;
++}
+ 
+ /**
+  * check that all the values contained in value are suitable for the 
+@@ -345,7 +370,9 @@
+ 				value_size = 1 ; /* we will store the message payload */
+ 			} else if( TYPEOF(value) == VECSXP && allAreMessages( value ) ){
+ 				value_size = LENGTH(value) ;
+-			} else{
++			} else if( TYPEOF(value) == VECSXP && allAreRaws( value ) ){
++				value_size = LENGTH(value) ;
++			} else {
+ 				throwException( "cannot convert to string", "ConversionException" ) ;
+ 			}
+ 		}
+@@ -744,8 +771,20 @@
+     						} 
+     					case RAWSXP:
+     						{
+-    							ref->SetRepeatedString( message, field_desc, 0, COPYSTRING( CHAR(STRING_ELT(rawToString(value),0 )) ) ) ;
+-    						}
++    							/* in any case, fill the values up to field_size */
++								int i = 0;
++								for ( ; i<field_size; i++) {
++									ref->SetRepeatedString( message, field_desc, i, GET_bytes(value, 0)) ;
++								}
++								
++								/* then add some if needed */
++								if( value_size > field_size ){
++									for( ; i<value_size; i++) {
++										ref->AddString( message, field_desc, GET_bytes(value, 0)) ;
++									}
++								}
++								break;
++							}
+     					case S4SXP:
+     						{
+     							/* check if value is a message */
+@@ -759,28 +798,43 @@
+     						}
+     					case VECSXP:
+     						{
+-    							// we know it is a list of messages because it 
++    							// we know it is a list of messages or raws because it 
+     							// has been tested above
+-    							
+-    							// FIXME: we should probably use SerializeToString 
+-    							//        as indicated in the protobuf api documentation
+-    							//        http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message_lite.html#MessageLite.SerializeAsString.details
+-    							GPB::Message* __mess ;
+-    							
+-    							/* in any case, fill the values up to field_size */
+-    							int i = 0;
+-			    				for( ; i<field_size; i++){
+-			    					__mess = GET_MESSAGE_POINTER_FROM_S4( VECTOR_ELT( value, i ) ); 
+-			    					ref->SetRepeatedString( message, field_desc, i, __mess->SerializeAsString() ) ;
+-			    				}
+-			    				
+-			    				/* then add some if needed */
+-			    				if( value_size > field_size ){
+-			    					for( ; i<value_size; i++){
+-			    						__mess = GET_MESSAGE_POINTER_FROM_S4( VECTOR_ELT( value, i ) ); 
+-			    						ref->AddString( message, field_desc, __mess->SerializeAsString() ) ;
+-			    					}
+-			    				}
++						        if (LENGTH(value) > 0 && TYPEOF(VECTOR_ELT(value, 0)) == RAWSXP ) {
++									/* in any case, fill the values up to field_size */
++									int i = 0;
++									for( ; i<field_size; i++) {
++										ref->SetRepeatedString( message, field_desc, i, GET_bytes(value,i )) ;
++									}
++									
++									/* then add some if needed */
++									if( value_size > field_size ) {
++										for( ; i<value_size; i++){
++											ref->AddString( message, field_desc, GET_bytes(value,i )) ;
++										}
++									}
++								} else {
++									// FIXME: we should probably use SerializeToString 
++									//        as indicated in the protobuf api documentation
++									//        http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message_lite.html#MessageLite.SerializeAsString.details
++									GPB::Message* __mess ;
++									
++									/* in any case, fill the values up to field_size */
++									int i = 0;
++									for( ; i<field_size; i++){
++										__mess = GET_MESSAGE_POINTER_FROM_S4( VECTOR_ELT( value, i ) ); 
++										ref->SetRepeatedString( message, field_desc, i, __mess->SerializeAsString() ) ;
++									}
++									
++									/* then add some if needed */
++									if( value_size > field_size ){
++										for( ; i<value_size; i++){
++											__mess = GET_MESSAGE_POINTER_FROM_S4( VECTOR_ELT( value, i ) ); 
++											ref->AddString( message, field_desc, __mess->SerializeAsString() ) ;
++										}
++									}
++									
++								}
+ 			    				break ;
+     							
+     						}
+@@ -936,7 +990,7 @@
+     						}
+     					case RAWSXP:
+     						{
+-    							ref->SetString(message, field_desc, COPYSTRING( CHAR(STRING_ELT( rawToString( value ) ,0 )) ) ) ;
++    							ref->SetString(message, field_desc,  GET_bytes(value, 0)) ;
+     							break ;
+     						}
+     					case S4SXP:
+Index: pkg/src/rprotobuf.h
+===================================================================
+--- pkg/src/rprotobuf.h	(revision 392)
++++ pkg/src/rprotobuf.h	(working copy)
+@@ -59,7 +59,7 @@
+ 
+ 
+ /* uncomment for debugging */
+-// #define RPB_DEBUG
++#define RPB_DEBUG
+ 
+ #ifdef RPB_DEBUG
+ #define RPB_DEBUG_BEGIN(__WHAT__) Rprintf( "<" #__WHAT__ ">\n" ) ;
+@@ -138,6 +138,7 @@
+ RcppExport uint64 GET_uint64( SEXP, int ) ;
+ RcppExport bool GET_bool( SEXP, int) ;
+ RcppExport std::string GET_stdstring( SEXP, int ) ;
++RcppExport std::string GET_bytes( SEXP, int ) ;
+ RcppExport void CHECK_values_for_enum( GPB::FieldDescriptor*, SEXP) ;
+ RcppExport void CHECK_messages( GPB::FieldDescriptor*, SEXP) ;
+ 
+Index: pkg/src/wrapper_Message.cpp
+===================================================================
+--- pkg/src/wrapper_Message.cpp	(revision 392)
++++ pkg/src/wrapper_Message.cpp	(working copy)
+@@ -840,7 +840,6 @@
+ 				
+      			// {{{ string
+ 				case TYPE_STRING:
+-    			case TYPE_BYTES:
+     				{
+     					if( TYPEOF(values) == STRSXP ){ 
+     						for( int i=0 ; i<value_size; i++){
+@@ -852,6 +851,22 @@
+     					break ; 
+     				}
+ 				// }}}
++
++     			// {{{ bytes
++    			case TYPE_BYTES:
++    				{
++						if( TYPEOF(values) == RAWSXP ){
++							ref->AddString( message, field_desc, GET_bytes(values,0 )) ;
++						} else if( TYPEOF(values) == VECSXP ){ 
++							for( int i=0 ; i<value_size; i++) {
++								ref->AddString( message, field_desc, GET_bytes(values,i )) ;
++				    		}
++    					} else{
++    						throwException( "Cannot convert to bytes", "ConversionException" ) ;
++    					}
++    					break ; 
++    				}
++				// }}}
+     			
+ 				// {{{ message
+     			case TYPE_MESSAGE:
+@@ -983,7 +998,6 @@
+ 					return res; 
+ 				}
+ 			case TYPE_STRING:
+-	    	case TYPE_BYTES:
+ 	    		{
+ 	    			const GPB::Reflection* ref = message->GetReflection() ; 
+ 	    			Rcpp::CharacterVector res(n) ;
+@@ -992,6 +1006,16 @@
+     				}
+     			    return res ;
+ 	    		}
++	    	case TYPE_BYTES:
++	    		{
++	    			const GPB::Reflection* ref = message->GetReflection() ; 
++	    			Rcpp::List res(n) ;
++	    			for( int i=0; i<n; i++){
++						std::string s = ref->GetRepeatedString( *message, field_desc, index[i] );
++	    				res[i] = std::vector<Rbyte>(s.begin(), s.end());
++    				}
++    			    return res ;
++	    		}
+ 	    	case TYPE_MESSAGE:
+     		case TYPE_GROUP:
+     			{
+@@ -1101,7 +1125,6 @@
+ 						break ;
+ 					}
+ 				case TYPE_STRING:
+-	    		case TYPE_BYTES:
+ 	    			{
+ 	    				
+ 	    				for( int i=0; i<n; i++){
+@@ -1111,6 +1134,16 @@
+ 						}
+ 						break ;
+ 	    			}
++	    		case TYPE_BYTES:
++	    			{
++	    				
++	    				for( int i=0; i<n; i++){
++							ref->SetRepeatedString( message, field_desc, 
++								index[i], 
++								GET_bytes( values, i ) ) ;
++						}
++						break ;
++	    			}
+ 	    		case TYPE_ENUM :
+ 	    			{
+ 	    				CHECK_values_for_enum( field_desc, values ) ;
