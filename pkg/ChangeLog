@@ -1,3 +1,9 @@
+2010-10-20  Dirk Eddelbuettel  <deddelbuettel@wolve.com>
+
+	* inst/doc/Makefile: do not remove the pdf in 'clean'
+
+	* inst/unitTests/runit.addressbook.R: stick 'book' into global env.
+
 2010-10-18  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.2.1
