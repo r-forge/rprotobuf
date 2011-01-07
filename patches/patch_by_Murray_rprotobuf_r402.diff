@@ -1,0 +1,133 @@
+Index: ../pkg/R/00classes.R
+===================================================================
+--- ../pkg/R/00classes.R	(revision 402)
++++ ../pkg/R/00classes.R	(working copy)
+@@ -54,8 +54,10 @@
+ ), prototype = list( pointer = NULL ) )
+ 
+ setClass( "EnumValueDescriptor", representation( 
+-	pointer = "externalptr"  # pointer to a google::protobuf::EnumValueDescriptor c++ object
+-), prototype = list( pointer = NULL ) )
++	pointer = "externalptr",  # pointer to a google::protobuf::EnumValueDescriptor c++ object
++	name    = "character", 
++	full_name  = "character"
++), prototype = list( pointer = NULL, name = character(0), full_name = character(0) ) )
+ 
+ # actual objects
+ 
+@@ -284,6 +286,7 @@
+ 		"as.character" = function() as.character(x),
+ 		"toString" = function(...) toString(x, ...) ,
+ 		"asMessage" = function() asMessage(x), 
++		"name" = function(...) name(x, ... ),
+ 		
+ 		invisible(NULL)
+ 		)
+@@ -481,6 +484,10 @@
+ function(object, full = FALSE){
+ 	.Call( "EnumDescriptor__name", object@pointer, full, PACKAGE = "RProtoBuf" )
+ })
++setMethod( "name", c( object = "EnumValueDescriptor" ) , 
++function(object, full = FALSE){
++	.Call( "EnumDescriptor__name", object@pointer, full, PACKAGE = "" )
++})
+ setMethod( "name", c( object = "ServiceDescriptor" ) , 
+ function(object, full = FALSE){
+ 	.Call( "ServiceDescriptor__name", object@pointer, full, PACKAGE = "RProtoBuf" )
+Index: ../pkg/R/wrapper_EnumDescriptor.R
+===================================================================
+--- ../pkg/R/wrapper_EnumDescriptor.R	(revision 402)
++++ ../pkg/R/wrapper_EnumDescriptor.R	(working copy)
+@@ -21,15 +21,15 @@
+ 	}
+ 	
+ 	if( has_index ){
+-		return( .Call( "EnumDescriptor_getValueByIndex", object@pointer, as.integer(index)-1L, PACKAGE = "RProtoBuf" ) )
++		return( .Call( "EnumDescriptor__getValueByIndex", object@pointer, as.integer(index)-1L, PACKAGE = "RProtoBuf" ) )
+ 	}
+ 	
+ 	if( has_number ){
+-		return( .Call( "EnumDescriptor_getValueByNumber", object@pointer, as.integer(number), PACKAGE = "RProtoBuf" ) )
++		return( .Call( "EnumDescriptor__getValueByNumber", object@pointer, as.integer(number), PACKAGE = "RProtoBuf" ) )
+ 	}
+ 	
+ 	if( has_name ){
+-		return( .Call( "EnumDescriptor_getValueByName", object@pointer, as.character(name), PACKAGE = "RProtoBuf" ) )
++		return( .Call( "EnumDescriptor__getValueByName", object@pointer, as.character(name), PACKAGE = "RProtoBuf" ) )
+ 	}
+ 	
+ } )
+Index: ../pkg/src/wrapper_EnumDescriptor.cpp
+===================================================================
+--- ../pkg/src/wrapper_EnumDescriptor.cpp	(revision 402)
++++ ../pkg/src/wrapper_EnumDescriptor.cpp	(working copy)
+@@ -14,7 +14,11 @@
+ 	}
+ 
+ 	RCPP_FUNCTION_2( S4_EnumValueDescriptor, METHOD(getValueByIndex) , Rcpp::XPtr<GPB::EnumDescriptor> d, int index){
++		if ((index >= 0) && (index < d->value_count())) {
+ 		return S4_EnumValueDescriptor( d->value(index) ) ;
++		} else {
++			return S4_EnumValueDescriptor(NULL);
++		}
+ 	}
+ 	
+ 	RCPP_FUNCTION_2( S4_EnumValueDescriptor, METHOD(getValueByNumber), Rcpp::XPtr<GPB::EnumDescriptor> d, int i ){
+Index: ../pkg/src/wrapper_EnumValueDescriptor.cpp
+===================================================================
+--- ../pkg/src/wrapper_EnumValueDescriptor.cpp	(revision 402)
++++ ../pkg/src/wrapper_EnumValueDescriptor.cpp	(working copy)
+@@ -13,6 +13,10 @@
+ 	return S4_Message(message) ;
+ }
+ 		
++RCPP_FUNCTION_2( string, METHOD(name), Rcpp::XPtr<GPB::EnumValueDescriptor> d, bool full) {
++	return full ? d->full_name() : d->name() ;
++}
++
+ #undef METHOD
+ 
+ } // namespace rprotobuf
+Index: ../pkg/src/S4_classes.h
+===================================================================
+--- ../pkg/src/S4_classes.h	(revision 402)
++++ ../pkg/src/S4_classes.h	(working copy)
+@@ -31,6 +31,8 @@
+ 			if( d ){
+ 				slot( "pointer" ) = Rcpp::XPtr<GPB::EnumValueDescriptor>( 
+ 					const_cast<GPB::EnumValueDescriptor*>(d), false) ;
++                                slot( "name" )     = d->name() ;
++                                slot( "full_name") = d->full_name() ;
+ 			} else{
+ 				setSEXP( R_NilValue ); 
+ 			}
+Index: ../pkg/inst/unitTests/runit.enums.R
+===================================================================
+--- ../pkg/inst/unitTests/runit.enums.R	(revision 0)
++++ ../pkg/inst/unitTests/runit.enums.R	(revision 0)
+@@ -0,0 +1,25 @@
++# Copyright 2011 Google Inc.
++# 
++# This program is free software; you can redistribute it and/or
++# modify it under the terms of the GNU General Public License
++# as published by the Free Software Foundation; either version 2
++# of the License, or (at your option) any later version.
++# 
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++# 
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++
++test.enums <- function() {
++  ProtoFormat <- P("tutorial.Person")
++
++  checkEquals(name(value(ProtoFormat$PhoneType, index=1)), "MOBILE")
++  checkEquals(name(value(ProtoFormat$PhoneType, index=2)), "HOME")
++
++  # Verify that invalid indices are returned as NULL.
++  checkTrue(is.null(value(ProtoFormat$PhoneType, index=900)))
++}
