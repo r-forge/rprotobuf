@@ -1,3 +1,11 @@
+0.2.2   2011-0107 
+
+   o 	Applied patch by Murray Stokely which 
+         - corrects a typo preventing some functions from being called, 
+         - adds bounds checking in call to google protobuf library, 
+         - adds a new name method 
+         - adds a tiny unit test 
+
 0.2.1   2010-10-18
 
    o 	Support for raw bytes added thanks to a patch by Koert Kuipers

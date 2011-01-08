@@ -1,3 +1,16 @@
+2011-01-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* Applied patch by Murray Stokely providing all the following:
+	   - src/S4_classes.h: new 'name' and 'full_name' slots
+	   - R/00classes.R: idem
+	   - R/wrapper_EnumDescriptor.R: fix typo now permitting function call
+	   - src/wrapper_EnumDescriptor.cpp: add a bounds check
+	   - src/wrapper_EnumValueDescriptor.cpp: add a new name method
+	   - inst/unitTests/runit.enums.R: add new unit test
+
+	* man/EnumValueDescriptor-class.Rd: Add documentation for name
+	and full_name
+
 2010-10-20  Dirk Eddelbuettel  <deddelbuettel@wolve.com>
 
 	* inst/doc/Makefile: do not remove the pdf in 'clean'
