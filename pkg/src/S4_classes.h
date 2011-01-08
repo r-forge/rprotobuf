@@ -31,6 +31,8 @@ namespace rprotobuf {
 			if( d ){
 				slot( "pointer" ) = Rcpp::XPtr<GPB::EnumValueDescriptor>( 
 					const_cast<GPB::EnumValueDescriptor*>(d), false) ;
+                                slot( "name" )     = d->name() ;
+                                slot( "full_name") = d->full_name() ;
 			} else{
 				setSEXP( R_NilValue ); 
 			}

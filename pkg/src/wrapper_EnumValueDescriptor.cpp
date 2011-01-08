@@ -13,6 +13,10 @@ RCPP_FUNCTION_1(S4_Message, METHOD(as_Message) , Rcpp::XPtr<GPB::EnumValueDescri
 	return S4_Message(message) ;
 }
 		
+RCPP_FUNCTION_2( std::string, METHOD(name), Rcpp::XPtr<GPB::EnumValueDescriptor> d, bool full) {
+	return full ? d->full_name() : d->name() ;
+}
+
 #undef METHOD
 
 } // namespace rprotobuf

@@ -14,7 +14,11 @@ namespace rprotobuf{
 	}
 
 	RCPP_FUNCTION_2( S4_EnumValueDescriptor, METHOD(getValueByIndex) , Rcpp::XPtr<GPB::EnumDescriptor> d, int index){
+		if ((index >= 0) && (index < d->value_count())) {
 		return S4_EnumValueDescriptor( d->value(index) ) ;
+		} else {
+			return S4_EnumValueDescriptor(NULL);
+		}
 	}
 	
 	RCPP_FUNCTION_2( S4_EnumValueDescriptor, METHOD(getValueByNumber), Rcpp::XPtr<GPB::EnumDescriptor> d, int i ){
