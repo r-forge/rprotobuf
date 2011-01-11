@@ -1,10 +1,13 @@
-0.2.2   2011-0107 
+0.2.2   2011-01-xx 
 
-   o 	Applied patch by Murray Stokely which 
-         - corrects a typo preventing some functions from being called, 
-         - adds bounds checking in call to google protobuf library, 
-         - adds a new name method 
-         - adds a tiny unit test 
+   o 	Applied two patches by Murray Stokely which 
+         - correct a typo preventing some functions from being called, 
+         - add bounds checking in call to google protobuf library, 
+         - add a new name method 
+         - add a tiny unit test 
+	 - add more graceful error handling
+	 - add support for import patterns other than .proto$, 
+	 - add simple repeated field unit test
 
 0.2.1   2010-10-18
 

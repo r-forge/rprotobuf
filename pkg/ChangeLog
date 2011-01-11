@@ -1,3 +1,12 @@
+2011-01-10  Dirk Eddelbuettel  <edd@debian.org>
+
+	* Applied another patch by Murray Stokely providing:
+	   - R/internals.R: generalise readProtoFiles() adding 'pattern' arg
+	   - man/readProtoFiles.Rd: documenting new 'pattern' argument
+	   - src/DescriptorPoolLookup.cpp: enhanced error message
+	   - inst/unitTests/runit.golden.message.R: new unit test for
+	   repeated fields fixed (which was issue addressed earlier)
+
 2011-01-07  Dirk Eddelbuettel  <edd@debian.org>
 
 	* Applied patch by Murray Stokely providing all the following:

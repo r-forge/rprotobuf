@@ -1,0 +1,77 @@
+Index: pkg/R/internals.R
+===================================================================
+--- pkg/R/internals.R	(revision 406)
++++ pkg/R/internals.R	(working copy)
+@@ -11,8 +11,9 @@
+ #' @return invisible(NULL)
+ readProtoFiles <- function( 
+ 	files, 
+-	dir, 
+-	package = "RProtoBuf"
++	dir,
++	package = "RProtoBuf",
++	pattern = "\\.proto$"
+ 	){
+ 	
+ 	if( missing( files ) ){
+@@ -26,7 +27,7 @@
+ 				}
+ 			}
+ 		}
+-		files <- list.files( dir, pattern = "\\.proto$", full.names = TRUE ) 
++		files <- list.files( dir, pattern = pattern, full.names = TRUE ) 
+ 	} else {
+ 		if( !is.character( files )  ){
+ 			stop( "'file' should be a character vector" )
+Index: pkg/src/DescriptorPoolLookup.cpp
+===================================================================
+--- pkg/src/DescriptorPoolLookup.cpp	(revision 406)
++++ pkg/src/DescriptorPoolLookup.cpp	(working copy)
+@@ -26,6 +26,11 @@
+ 		int n = LENGTH(files) ;
+ 		for( int j=0; j < n; j++ ){
+ 			const GPB::FileDescriptor* file_desc = importer.Import( CHAR(STRING_ELT(files, j)) );
++			if (!file_desc) {
++				Rf_error("Could not load proto file '%s'\n",
++					 CHAR(STRING_ELT(files, j)));
++				continue;
++			}
+ 		    int ntypes = file_desc->message_type_count() ;
+ 		    for( int i=0; i<ntypes; i++){
+ 		    	const GPB::Descriptor* desc = file_desc->message_type( i ) ;
+Index: pkg/man/readProtoFiles.Rd
+===================================================================
+--- pkg/man/readProtoFiles.Rd	(revision 406)
++++ pkg/man/readProtoFiles.Rd	(working copy)
+@@ -9,7 +9,7 @@
+ message type names.
+ }
+ \usage{
+-readProtoFiles(files, dir, package = "RProtoBuf")
++readProtoFiles(files, dir, package = "RProtoBuf", pattern = "\\.proto$")
+ }
+ \arguments{
+   \item{files}{Proto files}
+@@ -19,6 +19,7 @@
+   \item{package}{R package name. If \code{files} and \code{dir} are
+   missing, "proto" files in the "proto" directory of the 
+   package tree are imported.}
++  \item{pattern}{A filename pattern to match proto files.}
+ }
+ \value{
+ \code{NULL}, invisibly. 
+Index: pkg/inst/unitTests/runit.golden.message.R
+===================================================================
+--- pkg/inst/unitTests/runit.golden.message.R	(revision 406)
++++ pkg/inst/unitTests/runit.golden.message.R	(working copy)
+@@ -55,4 +55,9 @@
+ 	
+ }
+ 
+-
++# Early versions of RProtoBuf did not support repeated messages properly.
++test.repeatedFields <- function(){
++	test <- new(protobuf_unittest.TestAllTypes)
++	test$add("repeated_int32", c(1:5))
++	checkEquals(test$repeated_int32, c(1:5))
++}

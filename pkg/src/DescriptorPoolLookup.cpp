@@ -26,6 +26,11 @@ namespace rprotobuf{
 		int n = LENGTH(files) ;
 		for( int j=0; j < n; j++ ){
 			const GPB::FileDescriptor* file_desc = importer.Import( CHAR(STRING_ELT(files, j)) );
+			if (!file_desc) {
+				Rf_error("Could not load proto file '%s'\n",
+					 CHAR(STRING_ELT(files, j)));
+				continue;
+			}
 		    int ntypes = file_desc->message_type_count() ;
 		    for( int i=0; i<ntypes; i++){
 		    	const GPB::Descriptor* desc = file_desc->message_type( i ) ;
