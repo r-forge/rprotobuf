@@ -1,3 +1,7 @@
+2011-01-11  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/THANKS: Added new file to say Thanks!
+
 2011-01-10  Dirk Eddelbuettel  <edd@debian.org>
 
 	* Applied another patch by Murray Stokely providing:
