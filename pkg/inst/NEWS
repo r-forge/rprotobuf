@@ -4,9 +4,10 @@
          - correct a typo preventing some functions from being called, 
          - add bounds checking in call to google protobuf library, 
          - add a new name method 
-         - add a tiny unit test 
+         - add a tiny unit test for the above
 	 - add more graceful error handling
 	 - add support for import patterns other than .proto$, 
+	 - add simple reading file that does not exist (exception) test
 	 - add simple repeated field unit test
 
 0.2.1   2010-10-18

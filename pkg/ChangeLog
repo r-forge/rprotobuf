@@ -5,7 +5,8 @@
 	   - man/readProtoFiles.Rd: documenting new 'pattern' argument
 	   - src/DescriptorPoolLookup.cpp: enhanced error message
 	   - inst/unitTests/runit.golden.message.R: new unit test for
-	   repeated fields fixed (which was issue addressed earlier)
+	     repeated fields fixed (which was issue addressed earlier)
+	   - inst/runit.import.R: new unit test for non-existing file
 
 2011-01-07  Dirk Eddelbuettel  <edd@debian.org>
 
