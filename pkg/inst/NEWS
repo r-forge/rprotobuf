@@ -1,4 +1,4 @@
-0.2.2   2011-01-xx 
+0.2.2   2011-01-11
 
    o 	Applied two patches by Murray Stokely which 
          - correct a typo preventing some functions from being called, 

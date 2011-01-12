@@ -1,5 +1,7 @@
 2011-01-11  Dirk Eddelbuettel  <edd@debian.org>
 
+	* DESCRIPTION: Release 0.2.2
+
 	* inst/THANKS: Added new file to say Thanks!
 
 2011-01-10  Dirk Eddelbuettel  <edd@debian.org>
