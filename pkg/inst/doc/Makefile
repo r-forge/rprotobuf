@@ -1,5 +1,5 @@
 
-all: clean RProtoBuf-unitTests.pdf RProtoBuf.pdf RProtoBuf-quickref.pdf
+all: RProtoBuf-unitTests.pdf RProtoBuf.pdf RProtoBuf-quickref.pdf
 
 clean:
 	rm -fr *.pdf

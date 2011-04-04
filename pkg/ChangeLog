@@ -1,6 +1,10 @@
+2011-04-04  Dirk Eddelbuettel  <edd@debian.org>
+
+	* inst/doc/Makefile: Do not call clean in all target
+
 2011-01-12  Dirk Eddelbuettel  <edd@debian.org>
 
-	* R/with.R: Use envir= argument to eval() 
+	* R/with.R: Use envir= argument to eval()
 
 2011-01-11  Dirk Eddelbuettel  <edd@debian.org>
 
