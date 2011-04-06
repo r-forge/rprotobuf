@@ -4,14 +4,21 @@ all: RProtoBuf-unitTests.pdf RProtoBuf.pdf RProtoBuf-quickref.pdf
 clean:
 	rm -fr *.pdf
 
+setvars:
+ifeq (${R_HOME},)
+R_HOME=	$(shell R RHOME)
+endif
+RPROG=	$(R_HOME)/bin/R
+RSCRIPT=$(R_HOME)/bin/Rscript
+
 RProtoBuf-unitTests.pdf: unitTests/RProtoBuf-unitTests.R
-	Rscript --default-packages="RProtoBuf,Rcpp,brew,RUnit,tools,utils" unitTests/RProtoBuf-unitTests.R
+	$(RSCRIPT) --default-packages="RProtoBuf,Rcpp,brew,RUnit,tools,utils" unitTests/RProtoBuf-unitTests.R
 
 RProtoBuf.pdf: RProtoBuf/RProtoBuf.Rnw
 	touch RProtoBuf.Rnw
 	rm RProtoBuf.Rnw
 	cp RProtoBuf/RProtoBuf.Rnw RProtoBuf.Rnw
-	Rscript -e "require( 'highlight' ); require('tools'); Sweave('RProtoBuf.Rnw', driver = HighlightWeaveLatex() ) ; texi2dvi('RProtoBuf.tex', pdf = TRUE, clean = TRUE)"
+	$(RSCRIPT) -e "require( 'highlight' ); require('tools'); Sweave('RProtoBuf.Rnw', driver = HighlightWeaveLatex() ) ; texi2dvi('RProtoBuf.tex', pdf = TRUE, clean = TRUE)"
 	rm -fr RProtoBuf.tex
 	rm -fr RProtoBuf.Rnw
 	rm -fr RProtoBuf.aux
@@ -23,7 +30,7 @@ RProtoBuf-quickref.pdf: RProtoBuf-quickref/RProtoBuf-quickref.Rnw
 	touch RProtoBuf-quickref.Rnw
 	rm RProtoBuf-quickref.Rnw
 	cp RProtoBuf-quickref/RProtoBuf-quickref.Rnw .
-	Rscript -e "require( 'highlight' ); require('tools'); Sweave('RProtoBuf-quickref.Rnw', driver = HighlightWeaveLatex() ) ; texi2dvi('RProtoBuf-quickref.tex', pdf = TRUE, clean = TRUE)"
+	$(RSCRIPT) -e "require( 'highlight' ); require('tools'); Sweave('RProtoBuf-quickref.Rnw', driver = HighlightWeaveLatex() ) ; texi2dvi('RProtoBuf-quickref.tex', pdf = TRUE, clean = TRUE)"
 	rm -fr RProtoBuf-quickref.tex
 	rm -fr RProtoBuf-quickref.Rnw
 	rm -fr RProtoBuf-quickref.aux
