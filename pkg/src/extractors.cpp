@@ -100,7 +100,9 @@ SEXP extractFieldAsSEXP( const Rcpp::XPtr<GPB::Message>& message, const GPB::Des
 			} else {
 				throwException( "unknown field type with CPP_TYPE STRING", "ConversionException" ) ;
 			}
-
+			
+		default:
+			throwException("Unsupported type", "ConversionException");
     	}
     	
     } else {
@@ -139,8 +141,12 @@ SEXP extractFieldAsSEXP( const Rcpp::XPtr<GPB::Message>& message, const GPB::Des
     		
    		case CPPTYPE_MESSAGE:
 			return S4_Message( CLONE( &ref->GetMessage( *message, fieldDesc ) ) ) ;
-    			break ;
+			break ;
+
+		default:
+			throwException("Unsupported type", "ConversionException");
     	}
+
     }
     return R_NilValue ; /* -Wall */
 }

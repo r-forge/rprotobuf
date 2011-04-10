@@ -1001,6 +1001,8 @@ HANDLE_SINGLE_FIELD( CPPTYPE_DOUBLE, Double, double) ;
 HANDLE_SINGLE_FIELD( CPPTYPE_FLOAT, Float, float) ;
 HANDLE_SINGLE_FIELD( CPPTYPE_BOOL, Bool, bool) ;
 #undef HANDLE_SINGLE_FIELD
+		default:
+			throwException("Unsupported type", "ConversionException");
 // }}}  
      		
 			// {{{ string
