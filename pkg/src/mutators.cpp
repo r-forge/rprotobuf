@@ -1,3 +1,23 @@
+// -*- mode: C++; c-indent-level: 4; c-basic-offset: 4; tab-width: 4 -*-
+/* :tabSize=4:indentSize=4:noTabs=false:folding=explicit:collapseFolds=1: */
+//
+// Copyright (C) 2010 - 2011  Dirk Eddelbuettel and Romain Francois
+//
+// This file is part of RProtoBuf.
+//
+// RProtoBuf is free software: you can redistribute it and/or modify it
+// under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 2 of the License, or
+// (at your option) any later version.
+//
+// RProtoBuf is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with RProtoBuf.  If not, see <http://www.gnu.org/licenses/>.
+
 #include "rprotobuf.h" 
 #include "fieldtypes.h" 
 /* :tabSize=4:indentSize=4:noTabs=false:folding=explicit:collapseFolds=1: */
@@ -970,9 +990,13 @@ case CPPTYPE :																\
 		break ;   															\
 	}
 HANDLE_SINGLE_FIELD( CPPTYPE_INT32, Int32, GPB::int32) ;
+#ifdef RCPP_HAS_LONG_LONG_TYPES
 HANDLE_SINGLE_FIELD( CPPTYPE_INT64, Int64, GPB::int64) ;
+#endif
 HANDLE_SINGLE_FIELD( CPPTYPE_UINT32, UInt32, GPB::uint32) ;
+#ifdef RCPP_HAS_LONG_LONG_TYPES
 HANDLE_SINGLE_FIELD( CPPTYPE_UINT64, UInt64, GPB::uint64) ;
+#endif
 HANDLE_SINGLE_FIELD( CPPTYPE_DOUBLE, Double, double) ;
 HANDLE_SINGLE_FIELD( CPPTYPE_FLOAT, Float, float) ;
 HANDLE_SINGLE_FIELD( CPPTYPE_BOOL, Bool, bool) ;

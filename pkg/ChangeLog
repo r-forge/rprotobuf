@@ -1,3 +1,10 @@
+2011-04-10  Dirk Eddelbuettel  <edd@dexter>
+
+	* src/extractors.cpp: Protect UINT64 and INT64 inside of #ifdef test
+	for RCPP_HAS_LONG_LONG_TYPES which we now need for g++ 4.5 or later
+	* src/mutators.cpp: Idem
+	* wrapper_FieldDescriptor.cpp: Idem
+
 2011-04-08  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.2.3
