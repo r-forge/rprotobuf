@@ -52,11 +52,9 @@ case CPPTYPE_##__CPP__:                                           \
 		switch( d->cpp_type() ){
 			
 			RPB_HANDLE_CASE(INT32,int32)
-#ifdef RCPP_HAS_LONG_LONG_TYPES
-			RPB_HANDLE_CASE(INT64,int64)
-#endif
 			RPB_HANDLE_CASE(UINT32,uint32)
 #ifdef RCPP_HAS_LONG_LONG_TYPES
+			RPB_HANDLE_CASE(INT64,int64)
 			RPB_HANDLE_CASE(UINT64,uint64)
 #endif
 			RPB_HANDLE_CASE(DOUBLE,double)

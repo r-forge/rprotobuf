@@ -72,12 +72,10 @@ SEXP extractFieldAsSEXP( const Rcpp::XPtr<GPB::Message>& message, const GPB::Des
 			return Rcpp::wrap( RepeatedFieldImporter<DATATYPE>(ref, *message, fieldDesc) ) ; \
 
 			HANDLE_REPEATED_FIELD(CPPTYPE_INT32, GPB::int32) ;
+    		HANDLE_REPEATED_FIELD(CPPTYPE_UINT32, GPB::uint32) ;
 #ifdef RCPP_HAS_LONG_LONG_TYPES
     		HANDLE_REPEATED_FIELD(CPPTYPE_INT64, GPB::int64) ;
-#endif
-    		HANDLE_REPEATED_FIELD(CPPTYPE_UINT32 , GPB::uint32) ;
-#ifdef RCPP_HAS_LONG_LONG_TYPES
-    		HANDLE_REPEATED_FIELD(CPPTYPE_UINT64 , GPB::uint64) ;
+    		HANDLE_REPEATED_FIELD(CPPTYPE_UINT64, GPB::uint64) ;
 #endif
     		HANDLE_REPEATED_FIELD(CPPTYPE_DOUBLE, double) ;
     		HANDLE_REPEATED_FIELD(CPPTYPE_FLOAT, float) ;
@@ -115,11 +113,9 @@ SEXP extractFieldAsSEXP( const Rcpp::XPtr<GPB::Message>& message, const GPB::Des
 			return Rcpp::wrap( ref->Get##SUFFIX(*message, fieldDesc ) ) ;
 
 		HANDLE_SINGLE_FIELD( CPPTYPE_INT32,  Int32 ); 
-#ifdef RCPP_HAS_LONG_LONG_TYPES
-		HANDLE_SINGLE_FIELD( CPPTYPE_INT64,  Int64 );
-#endif
 		HANDLE_SINGLE_FIELD( CPPTYPE_UINT32, UInt32 ); 
 #ifdef RCPP_HAS_LONG_LONG_TYPES
+		HANDLE_SINGLE_FIELD( CPPTYPE_INT64,  Int64 );
 		HANDLE_SINGLE_FIELD( CPPTYPE_UINT64, UInt64 );
 #endif
 		HANDLE_SINGLE_FIELD( CPPTYPE_DOUBLE, Double );
