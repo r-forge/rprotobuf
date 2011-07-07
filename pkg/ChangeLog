@@ -1,3 +1,8 @@
+2011-07-07  Dirk Eddelbuettel  <edd@debian.org>
+
+	* src/wrapper_FileDescriptor.cpp (rprotobuf): Applied patch by Murray
+	to correct a cut & paste error in variable name
+
 2011-04-12  Dirk Eddelbuettel  <edd@debian.org>
 
 	* DESCRIPTION: Release 0.2.3
