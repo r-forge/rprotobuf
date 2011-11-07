@@ -100,23 +100,6 @@ int32 GET_int32( SEXP x, int index ){
 	return (int32)0 ; // -Wall, should not happen since we only call this when we know it works
 }
 
-
-int64 GET_int64( SEXP x, int index ){
-	switch( TYPEOF(x) ){
-		case INTSXP: 
-			return( (int64)INTEGER(x)[index] );
-		case REALSXP: 
-			return( (int64)REAL(x)[index] );
-		case LGLSXP:
-			return( (int64)LOGICAL(x)[index] );
-		case RAWSXP:
-			return( (int64)RAW(x)[index] ) ;
-		default:
-			throwException( "cannot cast SEXP to int64", "CastException" ) ; 
-	}
-	return (int64)0 ; // -Wall, should not happen since we only call this when we know it works
-}
-
 uint32 GET_uint32( SEXP x, int index ){
 	switch( TYPEOF(x) ){
 		case INTSXP: 
@@ -133,18 +116,45 @@ uint32 GET_uint32( SEXP x, int index ){
 	return (uint32)0 ; // -Wall, should not happen since we only call this when we know it works
 }
 
+
+int64 GET_int64( SEXP x, int index ){
+	if( Rf_inherits(x, "int64" ) ){
+		return Rcpp::int64::LongVector<int64_t>(x).get(index) ;
+	} else {
+		switch( TYPEOF(x) ){
+			case INTSXP: 
+				return( (int64)INTEGER(x)[index] );
+			case REALSXP: 
+				return( (int64)REAL(x)[index] );
+			case LGLSXP:
+				return( (int64)LOGICAL(x)[index] );
+			case RAWSXP:
+				return( (int64)RAW(x)[index] ) ;
+			default:
+				throwException( "cannot cast SEXP to int64", "CastException" ) ; 
+		} 
+	}
+	return (int64)0 ; // -Wall, should not happen since we only call this when we know it works
+}
+
+
+
 uint64 GET_uint64( SEXP x, int index ){
-	switch( TYPEOF(x) ){
-		case INTSXP: 
-			return( (uint64)INTEGER(x)[index] );
-		case REALSXP: 
-			return( (uint64)REAL(x)[index] );
-		case LGLSXP:
-			return( (uint64)LOGICAL(x)[index] );
-		case RAWSXP:
-			return( (uint64)RAW(x)[index] ) ;
-		default:
-			throwException( "cannot cast SEXP to uint64", "CastException" ) ; 
+	if( Rf_inherits( x, "uint64" ) ){
+		 return Rcpp::int64::LongVector<uint64_t>(x).get(index) ;
+	} else {
+		switch( TYPEOF(x) ){
+			case INTSXP: 
+				return( (uint64)INTEGER(x)[index] );
+			case REALSXP: 
+				return( (uint64)REAL(x)[index] );
+			case LGLSXP:
+				return( (uint64)LOGICAL(x)[index] );
+			case RAWSXP:
+				return( (uint64)RAW(x)[index] ) ;
+			default:
+				throwException( "cannot cast SEXP to uint64", "CastException" ) ; 
+		}
 	}
 	return (uint64)0 ; // -Wall, should not happen since we only call this when we know it works
 }
@@ -583,30 +593,47 @@ PRINT_DEBUG_INFO( "value", value ) ;
     		case TYPE_SINT64:
     		case TYPE_SFIXED64:
     			{
-    				switch( TYPEOF( value ) ){
-    					case INTSXP:
-    					case REALSXP:
-    					case LGLSXP:
-    					case RAWSXP:	
-    						{
-    							int i = 0;
-
-	    						/* in any case, fill the values up to field_size */
-	    						for( ; i<field_size; i++){
-	    							ref->SetRepeatedInt64( message, field_desc, i, GET_int64(value,i) ) ;
-	    						}
-	    						
-	    						/* then add some if needed */
-	    						if( value_size > field_size ){
-	    							for( ; i<value_size; i++){
-	    								ref->AddInt64( message, field_desc, GET_int64(value,i) ) ;
+    				if( Rf_inherits( value, "int64") ){
+    					Rcpp::int64::LongVector<int64_t> data_int64(value) ;
+    					
+    					int i = 0 ;
+    					/* in any case, fill the values up to field_size */
+	    				for( ; i<field_size; i++){
+	    					ref->SetRepeatedInt64( message, field_desc, i, data_int64.get(i) ) ;
+	    				}
+	    				
+	    				/* then add some if needed */
+	    				if( value_size > field_size ){
+	    					for( ; i<value_size; i++){
+	    						ref->AddInt64( message, field_desc, data_int64.get(i) ) ;
+	    					}
+	    				}
+    				} else {
+    					switch( TYPEOF( value ) ){ 
+    						case INTSXP:
+    						case REALSXP:
+    						case LGLSXP:
+    						case RAWSXP:	
+    							{
+    								int i = 0;
+                    	
+	    							/* in any case, fill the values up to field_size */
+	    							for( ; i<field_size; i++){
+	    								ref->SetRepeatedInt64( message, field_desc, i, GET_int64(value,i) ) ;
 	    							}
-	    						}
-    							break ;
-    						}
-
-    					default: 
-    						throwException( "Cannot convert to int64", "ConversionException" ) ; 
+	    							
+	    							/* then add some if needed */
+	    							if( value_size > field_size ){
+	    								for( ; i<value_size; i++){
+	    									ref->AddInt64( message, field_desc, GET_int64(value,i) ) ;
+	    								}
+	    							}
+    								break ;
+    							}
+                    	
+    						default: 
+    							throwException( "Cannot convert to int64", "ConversionException" ) ; 
+    					} 
     				}
     				break ;
     			}
@@ -647,29 +674,47 @@ PRINT_DEBUG_INFO( "value", value ) ;
     		case TYPE_UINT64:
     		case TYPE_FIXED64:
     			{
-    				switch( TYPEOF( value ) ){
-	   					case INTSXP:
-    					case REALSXP:
-    					case LGLSXP:
-    					case RAWSXP:	
-    						{
-    							
-    							int i = 0;
-	    						/* in any case, fill the values up to field_size */
-								for( ; i<field_size; i++){
-	    							ref->SetRepeatedUInt64( message, field_desc, i, GET_uint64(value,i) ) ;
-	    						}
-	    						
-	    						/* then add some if needed */
-	    						if( value_size > field_size ){
-	    							for( ; i<value_size; i++){
-	    								ref->AddUInt64( message, field_desc, GET_uint64(value,i) ) ;
+    				if( Rf_inherits( value, "uint64" ) ){
+    					int i = 0 ;
+    					Rcpp::int64::LongVector<uint64_t> data_uint64(value) ;
+    					
+    					/* in any case, fill the values up to field_size */
+						for( ; i<field_size; i++){
+	    					ref->SetRepeatedUInt64( message, field_desc, i, data_uint64.get(i) ) ;
+	    				}
+	    				
+	    				/* then add some if needed */
+	    				if( value_size > field_size ){
+	    					for( ; i<value_size; i++){
+	    						ref->AddUInt64( message, field_desc, data_uint64.get(i) ) ;
+	    					}
+	    				}
+    					
+    				} else {
+    					switch( TYPEOF( value ) ){
+	   						case INTSXP:
+    						case REALSXP:
+    						case LGLSXP:
+    						case RAWSXP:	
+    							{
+    								
+    								int i = 0;
+	    							/* in any case, fill the values up to field_size */
+									for( ; i<field_size; i++){
+	    								ref->SetRepeatedUInt64( message, field_desc, i, GET_uint64(value,i) ) ;
 	    							}
-	    						}
-    							break ;
-    						}
-    					default: 
-    						throwException( "Cannot convert to int64", "ConversionException" ) ; 
+	    							
+	    							/* then add some if needed */
+	    							if( value_size > field_size ){
+	    								for( ; i<value_size; i++){
+	    									ref->AddUInt64( message, field_desc, GET_uint64(value,i) ) ;
+	    								}
+	    							}
+    								break ;
+    							}
+    						default: 
+    							throwException( "Cannot convert to int64", "ConversionException" ) ; 
+    					}
     				}
     				break ;   
     			}
