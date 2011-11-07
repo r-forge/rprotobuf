@@ -28,17 +28,41 @@ test.int64 <- function() {
   checkEquals( msg$b, as.uint64(2) )
   checkEquals( msg$c, as.int64(1:4) )
   checkEquals( msg$d, as.uint64(1:4) )
+  msg$a <- 11
+  msg$b <- 12
+  msg$c <- seq(1,15, by = 1 )
+  msg$d <- seq(1,15, by = 1 )
+  checkEquals( msg$a, as.int64(11) )
+  checkEquals( msg$b, as.uint64(12) )
+  checkEquals( msg$c, as.int64(1:15) )
+  checkEquals( msg$d, as.uint64(1:15) )
   
   msg <- new( TestInt64, a = 1L, b = 2L, c = 1:4, d = 1:4 )
   checkEquals( msg$a, as.int64(1) )
   checkEquals( msg$b, as.uint64(2) )
   checkEquals( msg$c, as.int64(1:4) )
   checkEquals( msg$d, as.uint64(1:4) )
+  msg$a <- 11L
+  msg$b <- 12L
+  msg$c <- 1:15
+  msg$d <- 1:15
+  checkEquals( msg$a, as.int64(11) )
+  checkEquals( msg$b, as.uint64(12) )
+  checkEquals( msg$c, as.int64(1:15) )
+  checkEquals( msg$d, as.uint64(1:15) )
   
   msg <- new( TestInt64, a = as.int64(1), b = as.int64(2), c = as.int64(1:4), d = as.int64(1:4) )
   checkEquals( msg$a, as.int64(1) )
   checkEquals( msg$b, as.uint64(2) )
   checkEquals( msg$c, as.int64(1:4) )
   checkEquals( msg$d, as.uint64(1:4) )
+  msg$a <- as.int64(11)
+  msg$b <- as.uint64(12)
+  msg$c <- as.int64( 1:15 )
+  msg$d <- as.uint64( 1:15 )
+  checkEquals( msg$a, as.int64(11) )
+  checkEquals( msg$b, as.uint64(12) )
+  checkEquals( msg$c, as.int64(1:15) )
+  checkEquals( msg$d, as.uint64(1:15) )
   
 }
