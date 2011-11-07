@@ -1,3 +1,9 @@
+0.2.4   future
+
+   o    changes to handle int64, etc ... fields better. Based on the new 
+   int64 package and related changes in Rcpp. This work has been sponsored by
+   the Google Open Source Programs Office
+
 0.2.3   2011-04-12
 
    o 	Protect UINT64 and INT64 with '#ifdef RCPP_HAS_LONG_LONG' which
