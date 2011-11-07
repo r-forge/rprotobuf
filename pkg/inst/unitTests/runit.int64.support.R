@@ -23,9 +23,22 @@
 }
 
 test.int64 <- function() {
-  msg <- new( TestInt64, a = 1, b = 2, c = 1:4, d = 1:4 )
+  msg <- new( TestInt64, a = 1, b = 2, c = seq(1,4,by=1), d = seq(1,4,by=1) )
   checkEquals( msg$a, as.int64(1) )
   checkEquals( msg$b, as.uint64(2) )
   checkEquals( msg$c, as.int64(1:4) )
   checkEquals( msg$d, as.uint64(1:4) )
+  
+  msg <- new( TestInt64, a = 1L, b = 2L, c = 1:4, d = 1:4 )
+  checkEquals( msg$a, as.int64(1) )
+  checkEquals( msg$b, as.uint64(2) )
+  checkEquals( msg$c, as.int64(1:4) )
+  checkEquals( msg$d, as.uint64(1:4) )
+  
+  msg <- new( TestInt64, a = as.int64(1), b = as.int64(2), c = as.int64(1:4), d = as.int64(1:4) )
+  checkEquals( msg$a, as.int64(1) )
+  checkEquals( msg$b, as.uint64(2) )
+  checkEquals( msg$c, as.int64(1:4) )
+  checkEquals( msg$d, as.uint64(1:4) )
+  
 }
