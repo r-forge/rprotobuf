@@ -994,6 +994,7 @@ RCPP_FUNCTION_VOID_3( METHOD(add_values), Rcpp::XPtr<GPB::Message> message, SEXP
     		case TYPE_SFIXED64:
     		    {
     		        Rcpp::int64::LongVector<int64_t> res(n) ;
+    		        const GPB::Reflection* ref = message->GetReflection() ; 
     		        for( int i=0; i<n; i++){
     		          res.set(i, ref->GetRepeatedInt64( *message, field_desc, index[i] ) ) ;  
     		        }
@@ -1002,6 +1003,7 @@ RCPP_FUNCTION_VOID_3( METHOD(add_values), Rcpp::XPtr<GPB::Message> message, SEXP
 			case TYPE_FIXED64:
 	    	case TYPE_UINT64:
 	    	    {
+	    	        const GPB::Reflection* ref = message->GetReflection() ; 
 	    	        Rcpp::int64::LongVector<uint64_t> res(n) ;
     		        for( int i=0; i<n; i++){
     		          res.set(i, ref->GetRepeatedUInt64( *message, field_desc, index[i] ) ) ;  
