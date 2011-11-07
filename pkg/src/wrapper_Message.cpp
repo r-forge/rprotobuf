@@ -7,33 +7,6 @@ namespace rprotobuf{
 
 /* helpers */
 
-	/* this is only to be called for repeated fields */
-	int MESSAGE_GET_REPEATED_INT( GPB::Message* message, GPB::FieldDescriptor* field_desc, int index ){
-		
-		const GPB::Reflection* ref = message->GetReflection() ; 
-		
-		switch( field_desc->type() ){
-			case TYPE_INT32:
-    		case TYPE_SINT32:
-    		case TYPE_SFIXED32:
-    			return (int) ref->GetRepeatedInt32( *message, field_desc, index ) ;
-    		case TYPE_INT64:
-    		case TYPE_SINT64:
-    		case TYPE_SFIXED64:
-    			return (int) ref->GetRepeatedInt64( *message, field_desc, index ) ;
-    		case TYPE_UINT32:
-    		case TYPE_FIXED32:
-    			return (int) ref->GetRepeatedUInt32( *message, field_desc, index ) ;
-    		case TYPE_UINT64:
-    		case TYPE_FIXED64:
-    			return (int) ref->GetRepeatedUInt64( *message, field_desc, index ) ;
-    		case TYPE_ENUM:
-    			return ref->GetRepeatedEnum( *message, field_desc, index )->number() ;
-    		default:
-    			throwException( "cannot cast to int", "CastException" ) ; 
-		}
-		return 0 ; // -Wall
-	}
 	
 	/* this is only to be called for repeated fields */
 	double MESSAGE_GET_REPEATED_DOUBLE( GPB::Message* message, GPB::FieldDescriptor* field_desc, int index ){
@@ -973,28 +946,42 @@ RCPP_FUNCTION_VOID_3( METHOD(add_values), Rcpp::XPtr<GPB::Message> message, SEXP
 		}
 		
 		int n = index.size() ; 
+		const GPB::Reflection* ref = message->GetReflection() ; 
+		
 		switch( field_desc->type() ){
 			
     		case TYPE_INT32:
     		case TYPE_SINT32:
     		case TYPE_SFIXED32:
+    		    {
+    		        Rcpp::IntegerVector res(n) ;
+    		        for( int i=0; i<n; i++){
+    		            res[i] = ref->GetRepeatedInt32( *message, field_desc, index[i] ) ;
+    		        }
+    		        return res ;
+    		    }
 			case TYPE_UINT32:
 	    	case TYPE_FIXED32:
-	    	case TYPE_ENUM:
 	    		{
 	    			Rcpp::IntegerVector res(n) ;
 	    			for( int i=0; i<n; i++){
-						res[i] = MESSAGE_GET_REPEATED_INT( 
-							message, field_desc, index[i] ) ;
+						res[i] = (int)ref->GetRepeatedUInt32( *message, field_desc, index[i] ) ;
 					}
 					return res; 
 				}
+		    case TYPE_ENUM:
+		        {
+		           Rcpp::IntegerVector res(n) ;
+	    			for( int i=0; i<n; i++){
+						res[i] = (int)ref->GetRepeatedEnum( *message, field_desc, index[i] )->number() ;
+					}
+					return res;
+		        }
 		    case TYPE_INT64:
     		case TYPE_SINT64:
     		case TYPE_SFIXED64:
     		    {
     		        Rcpp::int64::LongVector<int64_t> res(n) ;
-    		        const GPB::Reflection* ref = message->GetReflection() ; 
     		        for( int i=0; i<n; i++){
     		          res.set(i, ref->GetRepeatedInt64( *message, field_desc, index[i] ) ) ;  
     		        }
@@ -1003,7 +990,6 @@ RCPP_FUNCTION_VOID_3( METHOD(add_values), Rcpp::XPtr<GPB::Message> message, SEXP
 			case TYPE_FIXED64:
 	    	case TYPE_UINT64:
 	    	    {
-	    	        const GPB::Reflection* ref = message->GetReflection() ; 
 	    	        Rcpp::int64::LongVector<uint64_t> res(n) ;
     		        for( int i=0; i<n; i++){
     		          res.set(i, ref->GetRepeatedUInt64( *message, field_desc, index[i] ) ) ;  
