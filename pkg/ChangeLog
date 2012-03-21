@@ -1,3 +1,9 @@
+2012-03-20  Dirk Eddelbuettel  <edd@debian.org>
+
+	* Applied another patch by Murray:
+	  - src/mutators.cpp: Deal with case of repeated strings
+	  - inst/unitTests/runit.golden.message.R: test for this case
+
 2011-07-17  Dirk Eddelbuettel  <edd@debian.org>
 
 	* Applied another patch by Murray:

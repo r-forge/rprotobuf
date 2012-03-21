@@ -396,6 +396,8 @@ PRINT_DEBUG_INFO( "value", value ) ;
 		if( field_type == TYPE_STRING || field_type == TYPE_BYTES ){
 			if( TYPEOF(value) == RAWSXP ){
 				value_size = 1 ;
+            } else if( TYPEOF(value) == STRSXP ){
+                value_size = LENGTH(value);
 			} else if( TYPEOF(value) == S4SXP && Rf_inherits( value, "Message") ){
 				value_size = 1 ; /* we will store the message payload */
 			} else if( TYPEOF(value) == VECSXP && allAreMessages( value ) ){
@@ -1159,4 +1161,3 @@ RCPP_FUNCTION_VOID_2( update_message, Rcpp::XPtr<GPB::Message> message, Rcpp::Li
 }
 
 } // namespace rprotobuf
-
