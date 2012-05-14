@@ -1,0 +1,43 @@
+Index: DESCRIPTION
+===================================================================
+--- DESCRIPTION	(revision 434)
++++ DESCRIPTION	(working copy)
+@@ -1,5 +1,5 @@
+ Package: RProtoBuf
+-Version: 0.2.4
++Version: 0.2.5
+ Date: $Date$
+ Author: Romain Francois <romain@r-enthusiasts.com> and Dirk Eddelbuettel <edd@debian.org>
+ Maintainer: Romain and Dirk <RomainAndDirk@r-enthusiasts.com>
+Index: src/mutators.cpp
+===================================================================
+--- src/mutators.cpp	(revision 434)
++++ src/mutators.cpp	(working copy)
+@@ -396,6 +396,8 @@
+ 		if( field_type == TYPE_STRING || field_type == TYPE_BYTES ){
+ 			if( TYPEOF(value) == RAWSXP ){
+ 				value_size = 1 ;
++            } else if( TYPEOF(value) == STRSXP ){
++                value_size = LENGTH(value);
+ 			} else if( TYPEOF(value) == S4SXP && Rf_inherits( value, "Message") ){
+ 				value_size = 1 ; /* we will store the message payload */
+ 			} else if( TYPEOF(value) == VECSXP && allAreMessages( value ) ){
+@@ -1159,4 +1161,3 @@
+ }
+ 
+ } // namespace rprotobuf
+-
+Index: inst/unitTests/runit.golden.message.R
+===================================================================
+--- inst/unitTests/runit.golden.message.R	(revision 434)
++++ inst/unitTests/runit.golden.message.R	(working copy)
+@@ -60,4 +60,9 @@
+ 	test <- new(protobuf_unittest.TestAllTypes)
+ 	test$add("repeated_int32", c(1:5))
+ 	checkEquals(test$repeated_int32, c(1:5))
++
++        # Prior to RProtoBuf v0.2.5, this was not handled properly.
++        test.2 <- new(protobuf_unittest.TestAllTypes,
++                      repeated_string=c("foo", "bar"))
++        checkEquals(test.2$repeated_string, c("foo", "bar"))
+ }

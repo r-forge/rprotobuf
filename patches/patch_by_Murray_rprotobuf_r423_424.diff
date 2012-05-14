@@ -1,0 +1,32 @@
+Index: src/wrapper_FileDescriptor.cpp
+===================================================================
+--- src/wrapper_FileDescriptor.cpp      (revision 422)
++++ src/wrapper_FileDescriptor.cpp      (working copy)
+@@ -73,8 +73,8 @@
+        return res;
+ }
+
+-RCPP_FUNCTION_1( std::string, METHOD(name), Rcpp::XPtr<GPB::EnumDescriptor> d ){
+-       return d->full_name() ;
++RCPP_FUNCTION_1( std::string, METHOD(name), Rcpp::XPtr<GPB::FileDescriptor> desc ){
++       return desc->name() ;
+ }
+
+ #undef METHOD
+
+----------------------------------------------------------------------
+Index: src/wrapper_FileDescriptor.cpp
+===================================================================
+--- src/wrapper_FileDescriptor.cpp	(revision 422)
++++ src/wrapper_FileDescriptor.cpp	(working copy)
+@@ -73,8 +73,8 @@
+ 	return res; 
+ }
+ 
+-RCPP_FUNCTION_1( std::string, METHOD(name), Rcpp::XPtr<GPB::EnumDescriptor> d ){
+-	return d->full_name() ;
++RCPP_FUNCTION_1( std::string, METHOD(name), Rcpp::XPtr<GPB::FileDescriptor> desc ){
++	return desc->name() ;
+ }
+ 
+ #undef METHOD
