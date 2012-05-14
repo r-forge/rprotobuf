@@ -189,6 +189,7 @@ namespace rprotobuf{
 		return Rf_ScalarInteger( res ) ;
 	}
 	
+#ifdef RCPP_HAS_INT64
 	SEXP ZeroCopyInputStream_ReadLittleEndian64( SEXP xp){
 		GPB::io::CodedInputStream* coded_stream = GET_CIS(xp) ;
 		uint64 res = 0 ;
@@ -202,6 +203,7 @@ namespace rprotobuf{
 		if( !coded_stream->ReadVarint64( &res ) ) Rf_error( "error reading varint64" ) ;
 		return Rcpp::int64::LongVector<uint64_t>( res ) ;
 	}
+#endif
 	// }}}
 	
 	// {{{ Write*** functions using CodedOuputStream

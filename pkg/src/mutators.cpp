@@ -118,9 +118,11 @@ uint32 GET_uint32( SEXP x, int index ){
 
 
 int64 GET_int64( SEXP x, int index ){
+#ifdef RCPP_HAS_INT64
 	if( Rf_inherits(x, "int64" ) ){
 		return Rcpp::int64::LongVector<int64_t>(x).get(index) ;
 	} else {
+#endif
 		switch( TYPEOF(x) ){
 			case INTSXP: 
 				return( (int64)INTEGER(x)[index] );
@@ -133,16 +135,20 @@ int64 GET_int64( SEXP x, int index ){
 			default:
 				throwException( "cannot cast SEXP to int64", "CastException" ) ; 
 		} 
+#ifdef RCPP_HAS_INT64
 	}
+#endif
 	return (int64)0 ; // -Wall, should not happen since we only call this when we know it works
 }
 
 
 
 uint64 GET_uint64( SEXP x, int index ){
+#ifdef RCPP_HAS_INT64
 	if( Rf_inherits( x, "uint64" ) ){
 		 return Rcpp::int64::LongVector<uint64_t>(x).get(index) ;
 	} else {
+#endif
 		switch( TYPEOF(x) ){
 			case INTSXP: 
 				return( (uint64)INTEGER(x)[index] );
@@ -155,7 +161,9 @@ uint64 GET_uint64( SEXP x, int index ){
 			default:
 				throwException( "cannot cast SEXP to uint64", "CastException" ) ; 
 		}
+#ifdef RCPP_HAS_INT64
 	}
+#endif
 	return (uint64)0 ; // -Wall, should not happen since we only call this when we know it works
 }
 
@@ -595,6 +603,7 @@ PRINT_DEBUG_INFO( "value", value ) ;
     		case TYPE_SINT64:
     		case TYPE_SFIXED64:
     			{
+#ifdef RCPP_HAS_INT64
     				if( Rf_inherits( value, "int64") ){
     					Rcpp::int64::LongVector<int64_t> data_int64(value) ;
     					
@@ -611,6 +620,7 @@ PRINT_DEBUG_INFO( "value", value ) ;
 	    					}
 	    				}
     				} else {
+#endif
     					switch( TYPEOF( value ) ){ 
     						case INTSXP:
     						case REALSXP:
@@ -636,7 +646,9 @@ PRINT_DEBUG_INFO( "value", value ) ;
     						default: 
     							throwException( "Cannot convert to int64", "ConversionException" ) ; 
     					} 
+#ifdef RCPP_HAS_INT64
     				}
+#endif
     				break ;
     			}
     			// }}}	
@@ -676,6 +688,7 @@ PRINT_DEBUG_INFO( "value", value ) ;
     		case TYPE_UINT64:
     		case TYPE_FIXED64:
     			{
+#ifdef RCPP_HAS_INT64
     				if( Rf_inherits( value, "uint64" ) ){
     					int i = 0 ;
     					Rcpp::int64::LongVector<uint64_t> data_uint64(value) ;
@@ -693,6 +706,7 @@ PRINT_DEBUG_INFO( "value", value ) ;
 	    				}
     					
     				} else {
+#endif
     					switch( TYPEOF( value ) ){
 	   						case INTSXP:
     						case REALSXP:
@@ -717,7 +731,9 @@ PRINT_DEBUG_INFO( "value", value ) ;
     						default: 
     							throwException( "Cannot convert to int64", "ConversionException" ) ; 
     					}
+#ifdef RCPP_HAS_INT64
     				}
+#endif
     				break ;   
     			}
 			// }}}
