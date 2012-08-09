@@ -1,0 +1,183 @@
+Index: man/type.Rd
+===================================================================
+--- man/type.Rd	(revision 453)
++++ man/type.Rd	(working copy)
+@@ -36,12 +36,11 @@
+ \alias{CPPTYPE_STRING}
+ \alias{CPPTYPE_MESSAGE}
+ 
+-\title{Gets the type or the c++ type of a field}
++\title{Gets the type or the C++ type of a field}
+ \description{
+-Gets the type or the c++ type of a field
++Gets the type or the C++ type of a field
+ }
+ \seealso{
+ The method is implemented for the \linkS4class{FieldDescriptor} class
+ }
+ \keyword{methods}
+-
+Index: man/FieldDescriptor-class.Rd
+===================================================================
+--- man/FieldDescriptor-class.Rd	(revision 453)
++++ man/FieldDescriptor-class.Rd	(working copy)
+@@ -97,6 +97,15 @@
+ 
+ # or as a pseudo method
+ Person$email$as.character()
++
++Person$email$is_required()
++Person$email$is_optional()
++Person$email$is_repeated()
++
++Person$email$has_default_value()
++Person$email$default_value()
++
++Person$email$is_extension()
+ }
+ }
+ \keyword{classes}
+Index: man/size.Rd
+===================================================================
+--- man/size.Rd	(revision 453)
++++ man/size.Rd	(working copy)
+@@ -16,5 +16,15 @@
+ \describe{
+ \item{\code{signature(object = "Message")}}{Number of objects in a message field}
+ }}
++\examples{
++unitest.proto.file <- system.file("unitTests", "data", "unittest.proto",
++				  package = "RProtoBuf" )
++readProtoFiles(file = unitest.proto.file)
++
++test <- new(protobuf_unittest.TestAllTypes)
++test$size("optional_int32")
++
++test$add("repeated_int32", 1:10)
++test$size("test$repeated_int32")
++}
+ \keyword{methods}
+-
+Index: man/has.Rd
+===================================================================
+--- man/has.Rd	(revision 453)
++++ man/has.Rd	(working copy)
+@@ -22,5 +22,15 @@
+ 		\item{has}{\code{signature(object = "Message")}: Indicates if the message has a given field.}
+ 	}
+ }
++\examples{
++unitest.proto.file <- system.file("unitTests", "data", "unittest.proto",
++				  package = "RProtoBuf" )
++readProtoFiles(file = unitest.proto.file)
++
++test <- new(protobuf_unittest.TestAllTypes)
++test$has("optional_int32")
++
++test$add("repeated_int32", 1:10)
++test$has("repeated_int32")
++}
+ \keyword{methods}
+-
+Index: R/wrapper_FieldDescriptor.R
+===================================================================
+--- R/wrapper_FieldDescriptor.R	(revision 453)
++++ R/wrapper_FieldDescriptor.R	(working copy)
+@@ -3,14 +3,14 @@
+ 	standardGeneric("is_extension")
+ } )
+ setMethod( "is_extension", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_is_extension", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__is_extension", object@pointer, PACKAGE = "RProtoBuf" )
+ })
+ 
+ setGeneric( "number", function(object){
+ 	standardGeneric( "number" )
+ } )
+ setMethod( "number", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_number", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__number", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+ 
+ TYPE_DOUBLE   <- 1L
+@@ -38,7 +38,7 @@
+ 	standardGeneric( "type" )
+ } )
+ setMethod( "type", "FieldDescriptor", function(object, as.string = FALSE){
+-	type <- .Call( "FieldDescriptor_type", object@pointer, PACKAGE = "RProtoBuf" )
++	type <- .Call( "FieldDescriptor__type", object@pointer, PACKAGE = "RProtoBuf" )
+ 	if( as.string ) .TYPES[type] else type
+ } )
+ 
+@@ -59,7 +59,7 @@
+ 	standardGeneric( "cpp_type" )
+ } )
+ setMethod( "cpp_type", "FieldDescriptor", function(object, as.string = FALSE){
+-	cpptype <- .Call( "FieldDescriptor_cpp_type", object@pointer, PACKAGE = "RProtoBuf" )
++	cpptype <- .Call( "FieldDescriptor__cpp_type", object@pointer, PACKAGE = "RProtoBuf" )
+ 	if( as.string ) .CPPTYPES[cpptype] else cpptype
+ } )
+ 
+@@ -72,7 +72,7 @@
+ 	standardGeneric( "label" )
+ } )
+ setMethod( "label", "FieldDescriptor", function(object, as.string = FALSE){
+-	lab <- .Call( "FieldDescriptor_label", object@pointer, PACKAGE = "RProtoBuf" )
++	lab <- .Call( "FieldDescriptor__label", object@pointer, PACKAGE = "RProtoBuf" )
+ 	if( as.string ) .LABELS[lab] else lab
+ } )
+ 
+@@ -80,35 +80,35 @@
+ 	standardGeneric( "is_repeated" )
+ } )
+ setMethod( "is_repeated", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_is_repeated", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__is_repeated", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+ 
+ setGeneric( "is_optional", function(object){
+ 	standardGeneric( "is_optional" )
+ } )
+ setMethod( "is_optional", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_is_optional", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__is_optional", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+ 
+ setGeneric( "is_required", function(object ){
+ 	standardGeneric( "is_required" )
+ } )
+ setMethod( "is_required", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_is_required", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__is_required", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+ 
+ setGeneric( "has_default_value", function(object ){
+ 	standardGeneric( "has_default_value" )
+ } )
+ setMethod( "has_default_value", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_has_default_value", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__has_default_value", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+ 
+ setGeneric( "default_value", function(object ){
+ 	standardGeneric( "default_value" )
+ } )
+ setMethod( "default_value", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_default_value", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__default_value", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+ 
+ 
+@@ -116,10 +116,9 @@
+ 	standardGeneric( "message_type" )
+ } )
+ setMethod( "message_type", "FieldDescriptor", function(object){
+-	.Call( "FieldDescriptor_message_type", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__message_type", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+ 
+ setMethod( "enum_type", c( object = "FieldDescriptor", index = "missing", name = "missing"), function(object){
+-	.Call( "FieldDescriptor_enum_type", object@pointer, PACKAGE = "RProtoBuf" )
++	.Call( "FieldDescriptor__enum_type", object@pointer, PACKAGE = "RProtoBuf" )
+ } )
+-
