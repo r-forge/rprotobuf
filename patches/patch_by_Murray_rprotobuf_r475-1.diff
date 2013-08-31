@@ -1,0 +1,173 @@
+Index: src/RconnectionCopyingInputStream.h
+===================================================================
+--- src/RconnectionCopyingInputStream.h	(revision 475)
++++ src/RconnectionCopyingInputStream.h	(working copy)
+@@ -8,9 +8,11 @@
+ 			RconnectionCopyingInputStream( int id );
+ 	
+ 			int Read(void * buffer, int size) ;
++			bool Failure() { return(failure); }
+ 	
+ 		private: 
+ 			int connection_id ;
++			bool failure;
+ } ;
+ 
+ } // namespace rprotobuf
+Index: src/RconnectionCopyingInputStream.cpp
+===================================================================
+--- src/RconnectionCopyingInputStream.cpp	(revision 475)
++++ src/RconnectionCopyingInputStream.cpp	(working copy)
+@@ -2,9 +2,11 @@
+ #include "RconnectionCopyingInputStream.h"
+ 
+ namespace rprotobuf{
+-	
++	/* N.B. connection must be opened in binary mode due to call
++	 * to readBin below. */
+ 	RconnectionCopyingInputStream::RconnectionCopyingInputStream(int id) : 
+-		connection_id(id){}
++                connection_id(id),
++                failure(false) {}
+ 	
+ 	/** 
+ 	 * call readBin to read size bytes from R
+@@ -15,18 +17,19 @@
+ 	 * @return the number of bytes actually read
+ 	 */
+ 	int	RconnectionCopyingInputStream::Read(void * buffer, int size){
+-		
+ 		Rcpp::Language call( "readBin", connection_id, Rcpp::RawVector(0), size ) ;
+ 		Rcpp::RawVector res ;
+ 		try{
+-			res = call.eval(); 
++			res = call.eval();
+ 		}  catch( ... ){
+-			return 0 ;
++			/* Failed to read anything from the connection,
++			 * could have been permissions, or connection opened
++			 * in the wrong type, etc. */
++                        failure = true;
++			return -1 ;
+ 		}
+ 		int len = res.size() ;
+ 		memcpy( buffer, reinterpret_cast<const void*>(res.begin()), len) ;
+ 		return len ;
+ 	}
+-	
+ }
+-
+Index: src/wrapper_Descriptor.cpp
+===================================================================
+--- src/wrapper_Descriptor.cpp	(revision 475)
++++ src/wrapper_Descriptor.cpp	(working copy)
+@@ -179,8 +179,14 @@
+ 	if( !message ){
+ 		throw std::range_error( "could not call factory->GetPrototype(desc)->New()" ) ; 
+ 	}
+-	GPB::TextFormat::Parse( &stream, message ) ;
+-	return( S4_Message( message ) ) ;
++        if (!GPB::TextFormat::Parse( &stream, message ) ) {
++		throw std::range_error("Could not parse ASCII protocol buffer.");
++        } else {
++                if (wrapper.Failure()) {
++			throw std::range_error("Could not read ASCII protocol buffer.");
++                }
++                return( S4_Message( message ) );
++        }
+ }
+ 
+ #undef METHOD
+Index: R/read.R
+===================================================================
+--- R/read.R	(revision 475)
++++ R/read.R	(working copy)
+@@ -18,9 +18,9 @@
+ 	if( !inherits( input, "connection" ) ){ 
+ 		stop( "can only read from connections" )
+ 	}
+-	sc <- summary( input )
+-	wasopen <- identical( sc[["opened"]], "opened" )
+-	if( !wasopen ) open( input )
++	wasopen <- identical( summary(input)[["opened"]], "opened" )
++	if( !wasopen ) open( input, "rb")
++        stopifnot(summary(input)[["text"]] == "binary")
+ 	message <- .Call( "Descriptor__readMessageFromConnection", descriptor@pointer, input, PACKAGE = "RProtoBuf" )
+ 	if( !wasopen ) close( input )
+ 	message
+@@ -43,9 +43,9 @@
+ 	if( !inherits( input, "connection" ) ){ 
+ 		stop( "can only read from connections" )
+ 	}
+-	sc <- summary( input )
+-	wasopen <- identical( sc[["opened"]], "opened" )
+-	if( !wasopen ) open( input )
++	wasopen <- identical( summary(input)[["opened"]], "opened" )
++	if( !wasopen ) open( input, "rb" )
++        stopifnot(summary(input)[["text"]] == "binary")
+ 	message <- .Call( "Descriptor__readASCIIFromConnection", descriptor@pointer, input, PACKAGE = "RProtoBuf" )
+ 	if( !wasopen ) close( input )
+ 	message
+Index: man/readASCII.Rd
+===================================================================
+--- man/readASCII.Rd	(revision 475)
++++ man/readASCII.Rd	(working copy)
+@@ -31,9 +31,12 @@
+ out.file <- tempfile()
+ writeLines( as.character(message), file(out.file))
+ 
+-# Verify we can read back in the message from a text file.
++# Verify that we can read back in the message from a text file.
+ message2 <- readASCII( tutorial.AddressBook, file(out.file, "rb"))
+ 
++# Verify that we can read back in the message from an unopened file.
++message3 <- readASCII( tutorial.AddressBook, file(out.file))
++
+ \dontshow{
+ stopifnot( identical( message, message2) )
+ }
+Index: inst/unitTests/runit.addressbook.R
+===================================================================
+--- inst/unitTests/runit.addressbook.R	(revision 475)
++++ inst/unitTests/runit.addressbook.R	(working copy)
+@@ -35,7 +35,27 @@
+     out.file <- tempfile()
+     writeLines( as.character(book), file(out.file))
+ 
+-    # Verify we can read back in the message from a text file.
++    # Verify that we can read back in the message from a text file.
+     book2 <- readASCII( tutorial.AddressBook, file(out.file, "rb"))
+     checkEquals(as.character(book), as.character(book2) )
++
++    # Verify that we can read in messages from unopened connections.
++    book3 <- readASCII( tutorial.AddressBook, file(out.file))
++    checkEquals(as.character(book), as.character(book3) )
++
++    # Verify that we get an exception if we try to read from a text connection.
++    # (better than silently getting an empty proto.)
++    book4 <- checkException( readASCII( tutorial.AddressBook, file(out.file, "rt"))
++
++    # Verify that we get an exception if the file is not readable.
++    old.mode <- file.info(out.file)[["mode"]])
++    Sys.chmod(out.file, "0000")
++    book5 <- checkException( readASCII( tutorial.AddressBook, file(out.file, "rb")))
++    # Set the permissions back to ensure the file is cleaned up properly.
++    Sys.chmod(out.file, old.mode)
++
++    # Verify that we get an exception if the file is not parseable.
++    out.file2 <- tempfile()
++    writeLines("jibberish", file(out.file2))
++    book6 <- checkException( readASCII( tutorial.AddressBook, file(out.file2)))
+ }
+Index: inst/unitTests/runit.import.R
+===================================================================
+--- inst/unitTests/runit.import.R	(revision 475)
++++ inst/unitTests/runit.import.R	(working copy)
+@@ -15,6 +15,6 @@
+ # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ 
+ test.import <- function() {
+-  # Verify we get a graceful errorr ather than segfault.
++  # Verify that we get a graceful error rather than a segfault.
+   checkException(readProtoFiles("/etc/hosts"))
+ }

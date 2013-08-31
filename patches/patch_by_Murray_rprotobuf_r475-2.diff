@@ -1,0 +1,233 @@
+Index: NAMESPACE
+===================================================================
+--- NAMESPACE	(revision 475)
++++ NAMESPACE	(working copy)
+@@ -48,7 +48,7 @@
+ 	"is_extension", "number", "label",
+ 	"is_required", "is_repeated", "is_optional",
+ 	"has_default_value", "default_value",
+-	"message_type", "enum_type",
++	"message_type", "enum_type", "type", "cpp_type",
+ 
+ 	# EnumDescriptor
+ 	"value_count", "value",
+@@ -103,4 +103,3 @@
+ exportPattern( "^LABEL_" )
+ 
+ # export( run_unit_tests )
+-
+Index: R/wrapper_FieldDescriptor.R
+===================================================================
+--- R/wrapper_FieldDescriptor.R	(revision 475)
++++ R/wrapper_FieldDescriptor.R	(working copy)
+@@ -32,14 +32,17 @@
+ TYPE_SINT32   <- 17L
+ TYPE_SINT64   <- 18L
+ 
+-.TYPES <- ls( pattern = "^TYPE_" )
+-
+ setGeneric( "type", function(object, as.string = FALSE){
+ 	standardGeneric( "type" )
+ } )
+ setMethod( "type", "FieldDescriptor", function(object, as.string = FALSE){
+ 	type <- .Call( "FieldDescriptor__type", object@pointer, PACKAGE = "RProtoBuf" )
+-	if( as.string ) .TYPES[type] else type
++	if( as.string ) {
++                .TYPES <- sapply(ls( "package:RProtoBuf", pattern="^TYPE_" ), get)
++                names(which(.TYPES == type))
++        } else {
++                type
++        }
+ } )
+ 
+ 
+@@ -53,27 +56,35 @@
+ CPPTYPE_ENUM <- 8L
+ CPPTYPE_STRING <- 9L
+ CPPTYPE_MESSAGE <- 10L
+-.CPPTYPES <- ls( pattern = "^CPPTYPE_" )
+ 
+ setGeneric( "cpp_type", function(object, as.string = FALSE ){
+ 	standardGeneric( "cpp_type" )
+ } )
+ setMethod( "cpp_type", "FieldDescriptor", function(object, as.string = FALSE){
+ 	cpptype <- .Call( "FieldDescriptor__cpp_type", object@pointer, PACKAGE = "RProtoBuf" )
+-	if( as.string ) .CPPTYPES[cpptype] else cpptype
++	if( as.string ) {
++                .CPPTYPES <- sapply(ls( "package:RProtoBuf", pattern="^CPPTYPE_" ), get)
++                names(which(.CPPTYPES == cpptype))
++        } else {
++                cpptype
++        }
+ } )
+ 
+ LABEL_OPTIONAL <- 1L
+ LABEL_REQUIRED <- 2L
+ LABEL_REPEATED <- 3L
+-.LABELS <-  ls( pattern = "^LABEL_" )
+ 
+ setGeneric( "label", function(object, as.string = FALSE ){
+ 	standardGeneric( "label" )
+ } )
+ setMethod( "label", "FieldDescriptor", function(object, as.string = FALSE){
+ 	lab <- .Call( "FieldDescriptor__label", object@pointer, PACKAGE = "RProtoBuf" )
+-	if( as.string ) .LABELS[lab] else lab
++	if( as.string ) {
++                .LABELS <- sapply(ls( "package:RProtoBuf", pattern="^LABEL_" ), get)
++                names(which(.LABELS == lab))
++        } else {
++                lab
++        }
+ } )
+ 
+ setGeneric( "is_repeated", function(object ){
+Index: man/is_extension.Rd
+===================================================================
+--- man/is_extension.Rd	(revision 475)
++++ man/is_extension.Rd	(working copy)
+@@ -9,4 +9,8 @@
+ The method is implemented for the \linkS4class{FieldDescriptor} class
+ }
+ \keyword{methods}
+-
++\examples{
++proto.file <- system.file( "proto", "addressbook.proto", package = "RProtoBuf" )
++Person <- P( "tutorial.Person", file = proto.file )
++is_extension(Person$id)
++}
+Index: man/label.Rd
+===================================================================
+--- man/label.Rd	(revision 475)
++++ man/label.Rd	(working copy)
+@@ -9,10 +9,26 @@
+ 
+ \title{Gets the label of a field}
+ \description{
+-Gets the label of a field
++Gets the label of a field (optional, required, or repeated).
+ }
++\arguments{
++  \item{object}{A \linkS4class{FieldDescriptor} object.}
++  \item{as.string}{If true, print a string representation of the type.}
++}
+ \seealso{
+ The method is implemented for the \linkS4class{FieldDescriptor} class
+ }
+ \keyword{methods}
+-
++\examples{
++proto.file <- system.file( "proto", "addressbook.proto", package = "RProtoBuf" )
++Person <- P( "tutorial.Person", file = proto.file )
++label(Person$id)
++label(Person$email)
++label(Person$phone)
++label(Person$id, TRUE)
++label(Person$email, TRUE)
++label(Person$phone, TRUE)
++LABEL_OPTIONAL
++LABEL_REQUIRED
++LABEL_REPEATED
++}
+Index: man/number.Rd
+===================================================================
+--- man/number.Rd	(revision 475)
++++ man/number.Rd	(working copy)
+@@ -9,4 +9,10 @@
+ The method is implemented for the \linkS4class{FieldDescriptor} class
+ }
+ \keyword{methods}
+-
++\examples{
++proto.file <- system.file( "proto", "addressbook.proto", package = "RProtoBuf" )
++Person <- P( "tutorial.Person", file = proto.file )
++number(Person$id)
++number(Person$email)
++as.character(Person)
++}
+Index: man/type.Rd
+===================================================================
+--- man/type.Rd	(revision 475)
++++ man/type.Rd	(working copy)
+@@ -40,7 +40,19 @@
+ \description{
+ Gets the type or the C++ type of a field
+ }
++\arguments{
++  \item{object}{A \linkS4class{FieldDescriptor} object.}
++  \item{as.string}{If true, print a string representation of the type.}
++}
+ \seealso{
+ The method is implemented for the \linkS4class{FieldDescriptor} class
+ }
+ \keyword{methods}
++\examples{
++proto.file <- system.file( "proto", "addressbook.proto", package = "RProtoBuf" )
++Person <- P( "tutorial.Person", file = proto.file )
++type(Person$id)
++type(Person$id, as.string=TRUE)
++cpp_type(Person$email)
++cpp_type(Person$email, TRUE)
++}
+Index: inst/unitTests/runit.FieldDescriptor.R
+===================================================================
+--- inst/unitTests/runit.FieldDescriptor.R	(revision 0)
++++ inst/unitTests/runit.FieldDescriptor.R	(revision 0)
+@@ -0,0 +1,58 @@
++# Copyright 2012 Google Inc.
++# Author: Murray Stokely
++#
++# This program is free software; you can redistribute it and/or
++# modify it under the terms of the GNU General Public License
++# as published by the Free Software Foundation; either version 2
++# of the License, or (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program; if not, write to the Free Software
++# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
++
++test.FieldDescriptor.class <- function() {
++  proto.file <- system.file( "proto", "addressbook.proto", package = "RProtoBuf" )
++  Person <- P( "tutorial.Person", file = proto.file )
++
++  # field descriptor object
++  checkTrue(!is.null(Person$email))
++
++  # debug string
++  checkTrue(nchar(as.character( Person$email )) > 1)
++
++  # default values
++  checkTrue(!has_default_value(Person$id))
++  checkTrue(has_default_value(Person$PhoneNumber$type))
++
++  checkEquals(default_value(Person$PhoneNumber$type), 1)
++  checkEquals(default_value(Person$id), 0)
++
++  # Get the types of field descriptors
++  checkEquals(type(Person$id), TYPE_INT32)
++  checkEquals(type(Person$id, TRUE), "TYPE_INT32")
++  checkEquals(cpp_type(Person$email), CPPTYPE_STRING)
++  checkEquals(cpp_type(Person$email, TRUE), "CPPTYPE_STRING")
++
++  # Get the label of a field descriptor
++  checkEquals(label(Person$id), LABEL_REQUIRED)
++  checkEquals(label(Person$id, TRUE), "LABEL_REQUIRED")
++  checkEquals(label(Person$email), LABEL_OPTIONAL)
++  checkEquals(label(Person$email, TRUE), "LABEL_OPTIONAL")
++
++  # Test if a field is optional
++  checkTrue(is_required(Person$id))
++  checkTrue(!is_optional(Person$id))
++  checkTrue(!is_repeated(Person$id))
++
++  checkTrue(!is_required(Person$email))
++  checkTrue(is_optional(Person$email))
++  checkTrue(!is_repeated(Person$email))
++
++  # Return the class of a message field
++  checkTrue(inherits(message_type(Person$phone), "Descriptor"))
++}
