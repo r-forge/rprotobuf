@@ -1,0 +1,156 @@
+% !TeX root = RJwrapper.tex
+\title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
+\author{by Dirk Eddelbuettel, Romain Fran\c{c}ois, and Murray Stokely}
+
+\maketitle
+
+\abstract{Modern data collection and analysis pipelines often involve
+ a sophisticated mix of applications written in general purpose and
+ specialized programming languages.  Protocol Buffers are a popular
+ method of serializing structured data between applications.  The
+ \textbf{RProtoBuf} package provides a complete interface to this
+ library.
+TODO keep it less than 150 words.
+}
+
+\section{Introduction}
+
+Comparison with what people start with in R : CSV
+comparison with what is only slightly better: JSON
+
+Introductory section which may include references in parentheses
+\citep{R}, or cite a reference such as \citet{R} in the text.
+
+Protocol buffers are a language-neutral, platform-neutral, extensible
+way of serializing structured data for use in communications
+protocols, data storage, and more.
+
+Protocol Buffers offer key features such as an efficient data interchange
+format that is both language- and operating system-agnostic yet uses a
+lightweight and highly performant encoding, object serialization and
+de-serialization as well data and configuration management. Protocol
+buffers are also forward compatible: updates to the \texttt{proto}
+files do not break programs built against the previous specification.
+
+While benchmarks are not available, Google states on the project page that in
+comparison to XML, protocol buffers are at the same time \textsl{simpler},
+between three to ten times \textsl{smaller}, between twenty and one hundred
+times \textsl{faster}, as well as less ambiguous and easier to program.
+
+The protocol buffers code is released under an open-source (BSD) license. The
+protocol buffer project (\url{http://code.google.com/p/protobuf/})
+contains a C++ library and a set of runtime libraries and compilers for
+C++, Java and Python.
+
+With these languages, the workflow follows standard practice of so-called
+Interface Description Languages (IDL)
+(c.f. \href{http://en.wikipedia.org/wiki/Interface_description_language}{Wikipedia
+  on IDL}).  This consists of compiling a protocol buffer description file
+(ending in \texttt{.proto}) into language specific classes that can be used
+to create, read, write and manipulate protocol buffer messages. In other
+words, given the 'proto' description file, code is automatically generated
+for the chosen target language(s). The project page contains a tutorial for
+each of these officially supported languages:
+\url{http://code.google.com/apis/protocolbuffers/docs/tutorials.html}
+
+Besides the officially supported C++, Java and Python implementations, several projects have been
+created to support protocol buffers for many languages. The list of known
+languages to support protocol buffers is compiled as part of the
+project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
+
+The protocol buffer project page contains a comprehensive
+description of the language: \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}
+
+%This section may contain a figure such as Figure~\ref{figure:rlogo}.
+%
+%\begin{figure}[htbp]
+%  \centering
+%  \includegraphics{Rlogo}
+%  \caption{The logo of R.}
+%  \label{figure:rlogo}
+%\end{figure}
+
+\section{Dynamic use: Protocol Buffers and R}
+
+This section describes how to use the R API to create and manipulate
+protocol buffer messages in R, and how to read and write the
+binary \emph{payload} of the messages to files and arbitrary binary
+R connections.
+
+\subsection{Importing proto files}
+
+In contrast to the other languages (Java, C++, Python) that are officially
+supported by Google, the implementation used by the \texttt{RProtoBuf}
+package does not rely on the \texttt{protoc} compiler (with the exception of
+the two functions discussed in the previous section). This means that no
+initial step of statically compiling the proto file into C++ code that is
+then accessed by R code is necessary. Instead, \texttt{proto} files are
+parsed and processed \textsl{at runtime} by the protobuf C++ library---which
+is much more appropriate for a dynamic language.
+
+The \texttt{readProtoFiles} function allows importing \texttt{proto}
+files in several ways.
+
+% Example code snippet.
+% TODO(mstokely): Remove this.
+\begin{example}
+  x <- 1:10
+  result <- myFunction(x)
+\end{example}
+
+\section{Related work on IDLs (greatly expanded from what you have)}
+
+\section{Design tradeoffs: reflection vs proto compiler (not addressed
+  at all in current vignettes)}
+
+\subsection{Performance considerations}
+
+TODO RProtoBuf is quite flexible and easy to use for interactive
+analysis, but it is not designed for certain classes of operations one
+might like to do with protocol buffers.  For example, taking a list of
+10,000 protocol buffers, extracting a named field from each one, and
+computing a aggregate statistics on those values would be extremely
+slow with RProtoBuf, and while this is a useful class of operations,
+it is outside of the scope of RProtoBuf.  We should be very clear
+about this to clarify the goals and strengths of RProtoBuf and its
+reflection and object mapping.
+
+\subsection{Serialization comparison}
+
+TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
+
+\section{Basic usage example - tutorial.Person}
+
+\section{Application: distributed Data Collection with MapReduce}
+
+We could describe a common MapReduce pattern of having the MR written
+in another language output protocol buffers that are later pulled into
+R.  There is some text about this in section 2 of
+http://cran.r-project.org/web/packages/HistogramTools/vignettes/HistogramTools.pdf 
+
+\section{Application: Sending/receiving Interaction With Servers}
+
+\section{Summary}
+
+This file is only a basic article template. For full details of \emph{The R Journal} style and information on how to prepare your article for submission, see the \href{http://journal.r-project.org/latex/RJauthorguide.pdf}{Instructions for Authors}.
+
+\bibliography{eddelbuettel-francois-stokely}
+
+\address{Author One\\
+  Affiliation\\
+  Address\\
+  Country}
+\email{author1@work}
+
+\address{Author Two\\
+  Affiliation\\
+  Address\\
+  Country}
+\email{author2@work}
+
+\address{Murray Stokely\\
+  Google, Inc.\\
+  1600 Amphitheatre Parkway\\
+  Mountain View, CA 94043\\
+  USA}
+\email{mstokely@google.com}
