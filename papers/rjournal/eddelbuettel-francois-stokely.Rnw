@@ -118,31 +118,38 @@ project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
 The protocol buffer project page contains a comprehensive
 description of the language: \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}
 
+\noindent
+\begin{tabular}{@{}p{.40\textwidth}|p{0.5\textwidth}@{}}
+\begin{minipage}{.35\textwidth}
 \begin{example}
 package tutorial;
 message Person {
  required string name = 1;
- required int32 id = 2;        // Unique ID number for person.
+ required int32 id = 2;
  optional string email = 3;
  enum PhoneType {
-   MOBILE = 0; HOME = 1; WORK = 2;
+   MOBILE = 0; HOME = 1;
+   WORK = 2;
  }
  message PhoneNumber {
    required string number = 1;
-   optional PhoneType type = 2 [default = HOME];
+   optional PhoneType type = 2;
  }
  repeated PhoneNumber phone = 4;
 }
 \end{example}
-
+\end{minipage} & \begin{minipage}{.45\textwidth}
 <<echo=TRUE>>=
 library(RProtoBuf)
-person <- new(tutorial.Person, id=1, name="Romain")
-person$id
+person <- new(tutorial.Person, id=1,
+              name="Romain")
+person
 person$name
 person$name <- "Dirk"
 cat(as.character(person))
 @ 
+\end{minipage}
+\end{tabular}
 
 %This section may contain a figure such as Figure~\ref{figure:rlogo}.
 %
@@ -166,13 +173,6 @@ This section describes how to use the R API to create and manipulate
 protocol buffer messages in R, and how to read and write the
 binary \emph{payload} of the messages to files and arbitrary binary
 R connections.
-
-\emph{TODO(mstokely): Remove this example code snippet}
-
-\begin{example}
-  x <- 1:10
-  result <- myFunction(x)
-\end{example}
 
 \subsection{Importing proto files}
 
@@ -387,46 +387,55 @@ close( con )
 message <- tutorial.Person$read( payload )
 @
 
-\section{Related work on IDLs (greatly expanded from what you have)}
+\section{Basic Abstractions: Messages, Descriptors, and
+  DescriptorPools}
 
-\section{Design tradeoffs: reflection vs proto compiler (not addressed
-  at all in current vignettes)}
+The three basic abstractions of \CRANpkg{RProtoBuf} are Messages,
+which encapsulate a data structure, Descriptors, which define the
+schema used by one or more messages, and DescriptorPools, which
+provide access to descriptors.
 
-\subsection{Performance considerations}
+\section{Under the hood: S4 Classes, Methods, and Pseudo Methods}
 
-TODO RProtoBuf is quite flexible and easy to use for interactive
-analysis, but it is not designed for certain classes of operations one
-might like to do with protocol buffers.  For example, taking a list of
-10,000 protocol buffers, extracting a named field from each one, and
-computing a aggregate statistics on those values would be extremely
-slow with RProtoBuf, and while this is a useful class of operations,
-it is outside of the scope of RProtoBuf.  We should be very clear
-about this to clarify the goals and strengths of RProtoBuf and its
-reflection and object mapping.
+The \CRANpkg{RProtoBuf} package uses the S4 system to store
+information about descriptors and messages, but the information stored
+in the R object is very minimal and mainly consists of an external
+pointer to a C++ variable that is managed by the \texttt{protobuf} C++
+library.
 
-\subsection{Serialization comparison}
+Using the S4 system allows the \texttt{RProtoBuf} package to dispatch
+methods that are not generic in the S3 sense, such as \texttt{new} and
+\texttt{serialize}.
 
-TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
+The \texttt{RProtoBuf} package combines the \emph{R typical} dispatch
+of the form \verb|method( object, arguments)| and the more traditional
+object oriented notation \verb|object$method(arguments)|.
+
+TODO(ms): Perhaps a table here of the different S4 classes, how many
+methods they include, whether it dynamically does dispatch on other
+strings, whether/how it is available in the search path, etc.
+
+\subsection{Messages}
+
+The \texttt{Message} S4 class represents Protocol Buffer Messages and
+is the core abstraction of \CRANpkg{RProtoBuf}.  Each \texttt{Message}
+has a \texttt{Descriptor} S4 class which defines the schema of the
+data defined in the Message, as well as a number of
+\texttt{FieldDescriptors} for the individual fields of the message.
 
 
-\section{Descriptor lookup}
-\label{sec-lookup}
 
-The \texttt{RProtoBuf} package uses the user defined tables framework
-that is defined as part of the \texttt{RObjectTables} package available
-from the OmegaHat project \citep{RObjectTables}.
+represented in R using the \texttt{Message}
+S4 class. The class contains the slots \texttt{pointer} and \texttt{type} as
+described on the Table~\ref{Message-class-table}.
 
-The feature allows \texttt{RProtoBuf} to install the
-special environment \emph{RProtoBuf:DescriptorPool} in the R search path.
-The environment is special in that, instead of being associated with a
-static hash table, it is dynamically queried by R as part of R's usual
-variable lookup. In other words, it means that when the R interpreter
-looks for a binding to a symbol (foo) in its search path,
-it asks to our package if it knows the binding "foo", this is then
-implemented by the \texttt{RProtoBuf} package by calling an internal
-method of the \texttt{protobuf} C++ library.
+\section{Type Coercion}
 
-\section{64-bit integer issues}
+\subsection{Booleans}
+Bools
+Int64s.
+
+\subsection{64-bit integers}
 \label{sec:int64}
 
 R does not have native 64-bit integer support.  Instead, R treats
@@ -486,6 +495,46 @@ length(unique(test$repeated_int64))
 <<echo=FALSE,print=FALSE>>=
 options("RProtoBuf.int64AsString" = FALSE)
 @ 
+
+
+\section{Related work on IDLs (greatly expanded from what you have)}
+
+\section{Design tradeoffs: reflection vs proto compiler (not addressed
+  at all in current vignettes)}
+
+\subsection{Performance considerations}
+
+TODO RProtoBuf is quite flexible and easy to use for interactive
+analysis, but it is not designed for certain classes of operations one
+might like to do with protocol buffers.  For example, taking a list of
+10,000 protocol buffers, extracting a named field from each one, and
+computing a aggregate statistics on those values would be extremely
+slow with RProtoBuf, and while this is a useful class of operations,
+it is outside of the scope of RProtoBuf.  We should be very clear
+about this to clarify the goals and strengths of RProtoBuf and its
+reflection and object mapping.
+
+\subsection{Serialization comparison}
+
+TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
+
+
+\section{Descriptor lookup}
+\label{sec-lookup}
+
+The \texttt{RProtoBuf} package uses the user defined tables framework
+that is defined as part of the \texttt{RObjectTables} package available
+from the OmegaHat project \citep{RObjectTables}.
+
+The feature allows \texttt{RProtoBuf} to install the
+special environment \emph{RProtoBuf:DescriptorPool} in the R search path.
+The environment is special in that, instead of being associated with a
+static hash table, it is dynamically queried by R as part of R's usual
+variable lookup. In other words, it means that when the R interpreter
+looks for a binding to a symbol (foo) in its search path,
+it asks to our package if it knows the binding "foo", this is then
+implemented by the \texttt{RProtoBuf} package by calling an internal
+method of the \texttt{protobuf} C++ library.
 
 \section{Other approaches}
 
