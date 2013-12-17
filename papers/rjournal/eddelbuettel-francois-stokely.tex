@@ -8,7 +8,7 @@
  a sophisticated mix of applications written in general purpose and
  specialized programming languages.  Protocol Buffers are a popular
  method of serializing structured data between applications---while remaining
- indendent of programming languages or operating system.  The
+ independent of programming languages or operating system.  The
  \CRANpkg{RProtoBuf} package provides a complete interface to this
  library.
  %TODO(ms) keep it less than 150 words.
@@ -18,9 +18,15 @@
 
 \section{Introduction}
 
-Modern data collection and analysis pipelines often involve a
-sophisticated mix of applications used for collecting, cleaning,
-analyzing, processing, and presenting data.  Each stage of the data
+Modern data collection and analysis pipelines are increasingly being
+built using collections of components to better manage software
+complexity through reusability, modularity, and fault
+isolation \citep{Wegiel:2010:CTT:1932682.1869479}.  Different
+programming languages are often used for the different phases of data
+analysis -- collection, cleaning, analysis, post-processing, and
+presentation in order to take advantage of the unique combination of 
+performance, speed of development, and library support offered by
+different environments.  Each stage of the data
 analysis pipeline may involve storing intermediate results in a
 file or sending them over the network.  Programming langauges such as
 Java, Ruby, Python, and R include built-in serialization support, but
@@ -41,7 +47,7 @@ an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
 basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
 several common use cases for protocol buffers in data analysis.
 
-\section{Protocol Bfufers}
+\section{Protocol Buffers}
 
 Once the data serialization needs get complex enough, application
 developers typically benefit from the use of an \emph{interface
@@ -117,6 +123,13 @@ description of the language: \url{http://code.google.com/apis/protocolbuffers/do
 %\end{figure}
 
 \section{Dynamic use: Protocol Buffers and R}
+
+TODO(ms): random citations to work in:
+
+We make use of Object Tables \citep{RObjectTables} for lookup.
+Many sources compare data serialization formats and show protocol
+buffers very favorably to the alternatives, such
+as \citep{Sumaray:2012:CDS:2184751.2184810}
 
 This section describes how to use the R API to create and manipulate
 protocol buffer messages in R, and how to read and write the
