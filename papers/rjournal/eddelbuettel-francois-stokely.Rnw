@@ -141,6 +141,13 @@ protocol buffer messages in R, and how to read and write the
 binary \emph{payload} of the messages to files and arbitrary binary
 R connections.
 
+\emph{TODO(mstokely): Remove this example code snippet}
+
+\begin{example}
+  x <- 1:10
+  result <- myFunction(x)
+\end{example}
+
 \subsection{Importing proto files}
 
 In contrast to the other languages (Java, C++, Python) that are officially
@@ -155,12 +162,209 @@ is much more appropriate for a dynamic language.
 The \texttt{readProtoFiles} function allows importing \texttt{proto}
 files in several ways.
 
-% Example code snippet.
-% TODO(mstokely): Remove this.
-\begin{example}
-  x <- 1:10
-  result <- myFunction(x)
-\end{example}
+<<>>=
+library(RProtoBuf)
+args( readProtoFiles )
+@
+
+Using the \texttt{file} argument, one can specify one or several file
+paths that ought to be proto files.
+
+<<>>=
+proto.dir <- system.file( "proto", package = "RProtoBuf" )
+proto.file <- file.path( proto.dir, "addressbook.proto" )
+<<eval=FALSE>>=
+readProtoFiles( proto.file )
+@
+
+With the \texttt{dir} argument, which is
+ignored if the \texttt{file} is supplied, all files matching the
+\texttt{.proto} extension will be imported.
+
+<<>>=
+dir( proto.dir, pattern = "\\.proto$", full.names = TRUE )
+<<eval=FALSE>>=
+readProtoFiles( dir = proto.dir )
+@
+
+Finally, with the
+\texttt{package} argument (ignored if \texttt{file} or
+\texttt{dir} is supplied), the function will import all \texttt{.proto}
+files that are located in the \texttt{proto} sub-directory of the given
+package. A typical use for this argument is in the \texttt{.onLoad}
+function of a package.
+
+<<eval=FALSE>>=
+readProtoFiles( package = "RProtoBuf" )
+@
+
+Once the proto files are imported, all message descriptors are
+are available in the R search path in the \texttt{RProtoBuf:DescriptorPool}
+special environment. The underlying mechanism used here is
+described in more detail in section~\ref{sec-lookup}.
+
+<<>>=
+ls( "RProtoBuf:DescriptorPool" )
+@
+
+
+\subsection{Creating a message}
+
+The objects contained in the special environment are
+descriptors for their associated message types. Descriptors will be
+discussed in detail in another part of this document, but for the
+purpose of this section, descriptors are just used with the \texttt{new}
+function to create messages.
+
+<<>>=
+p <- new( tutorial.Person, name = "Romain", id = 1 )
+@
+
+\subsection{Access and modify fields of a message}
+
+Once the message is created, its fields can be queried
+and modified using the dollar operator of R, making protocol
+buffer messages seem like lists.
+
+<<>>=
+p$name
+p$id
+p$email <- "francoisromain@free.fr"
+@
+
+However, as opposed to R lists, no partial matching is performed
+and the name must be given entirely.
+
+The \verb|[[| operator can also be used to query and set fields
+of a mesages, supplying either their name or their tag number :
+
+<<>>=
+p[["name"]] <- "Romain Francois"
+p[[ 2 ]] <- 3
+p[[ "email" ]]
+@
+
+Protocol buffers include a 64-bit integer type, but R lacks native
+64-bit integer support.  A workaround is available and described in
+Section~\ref{sec:int64} for working with large integer values.
+
+% TODO(mstokely): Document extensions here.
+% There are none in addressbook.proto though.
+
+\subsection{Display messages}
+
+Protocol buffer messages and descriptors implement \texttt{show}
+methods that provide basic information about the message :
+
+<<>>=
+p
+@
+
+For additional information, such as for debugging purposes,
+the \texttt{as.character} method provides a more complete ASCII
+representation of the contents of a message.
+
+<<>>=
+writeLines( as.character( p ) )
+@
+
+\subsection{Serializing messages}
+
+However, the main focus of protocol buffer messages is
+efficiency. Therefore, messages are transported as a sequence
+of bytes. The \texttt{serialize} method is implemented for
+protocol buffer messages to serialize a message into the sequence of
+bytes (raw vector in R speech) that represents the message.
+
+<<>>=
+serialize( p, NULL )
+@
+
+The same method can also be used to serialize messages to files :
+
+<<>>=
+tf1 <- tempfile()
+tf1
+serialize( p, tf1 )
+readBin( tf1, raw(0), 500 )
+@
+
+Or to arbitrary binary connections:
+
+<<>>=
+tf2 <- tempfile()
+con <- file( tf2, open = "wb" )
+serialize( p, con )
+close( con )
+readBin( tf2, raw(0), 500 )
+@
+
+\texttt{serialize} can also be used in a more traditionnal
+object oriented fashion using the dollar operator :
+
+<<>>=
+# serialize to a file
+p$serialize( tf1 )
+# serialize to a binary connection
+con <- file( tf2, open = "wb" )
+p$serialize( con )
+close( con )
+@
+
+
+\subsection{Parsing messages}
+
+The \texttt{RProtoBuf} package defines the \texttt{read}
+function to read messages from files, raw vector (the message payload)
+and arbitrary binary connections.
+
+<<>>=
+args( read )
+@
+
+
+The binary representation of the message (often called the payload)
+does not contain information that can be used to dynamically
+infer the message type, so we have to provide this information
+to the \texttt{read} function in the form of a descriptor :
+
+<<>>=
+message <- read( tutorial.Person, tf1 )
+writeLines( as.character( message ) )
+@
+
+The \texttt{input} argument of \texttt{read} can also be a binary
+readable R connection, such as a binary file connection:
+
+<<>>=
+con <- file( tf2, open = "rb" )
+message <- read( tutorial.Person, con )
+close( con )
+writeLines( as.character( message ) )
+@
+
+Finally, the payload of the message can be used :
+
+<<>>=
+# reading the raw vector payload of the message
+payload <- readBin( tf1, raw(0), 5000 )
+message <- read( tutorial.Person, payload )
+@
+
+
+\texttt{read} can also be used as a pseudo method of the descriptor
+object :
+
+<<>>=
+# reading from a file
+message <- tutorial.Person$read( tf1 )
+# reading from a binary connection
+con <- file( tf2, open = "rb" )
+message <- tutorial.Person$read( con )
+close( con )
+# read from the payload
+message <- tutorial.Person$read( payload )
+@
 
 \section{Related work on IDLs (greatly expanded from what you have)}
 
@@ -183,6 +387,104 @@ reflection and object mapping.
 
 TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
 
+
+\section{Descriptor lookup}
+\label{sec-lookup}
+
+The \texttt{RProtoBuf} package uses the user defined tables framework
+that is defined as part of the \texttt{RObjectTables} package available
+from the OmegaHat project.
+
+The feature allows \texttt{RProtoBuf} to install the
+special environment \emph{RProtoBuf:DescriptorPool} in the R search path.
+The environment is special in that, instead of being associated with a
+static hash table, it is dynamically queried by R as part of R's usual
+variable lookup. In other words, it means that when the R interpreter
+looks for a binding to a symbol (foo) in its search path,
+it asks to our package if it knows the binding "foo", this is then
+implemented by the \texttt{RProtoBuf} package by calling an internal
+method of the \texttt{protobuf} C++ library.
+
+\section{64-bit integer issues}
+\label{sec:int64}
+
+R does not have native 64-bit integer support.  Instead, R treats
+large integers as doubles which have limited precision.  For example,
+it loses the ability to distinguish some distinct integers:
+
+<<>>=
+2^53 == (2^53 + 1)
+@
+
+Protocol Buffers are frequently used to pass data between different
+systems, however, and most other systems these days have support for
+64-bit integers.  To work around this, RProtoBuf allows users to get
+and set 64-bit integer types by treating them as characters.
+
+<<echo=FALSE,print=FALSE>>=
+if (!exists("protobuf_unittest.TestAllTypes",
+            "RProtoBuf:DescriptorPool")) {
+    unittest.proto.file <- system.file("unitTests", "data",
+                                       "unittest.proto",
+                                       package="RProtoBuf")
+    readProtoFiles(file=unittest.proto.file)
+}
+@
+
+If we try to set an int64 field in R to double values, we lose
+precision:
+
+<<>>=
+test <- new(protobuf_unittest.TestAllTypes)
+test$repeated_int64 <- c(2^53, 2^53+1)
+length(unique(test$repeated_int64))
+@
+
+However, we can specify the values as character strings so that the
+C++ library on which RProtoBuf is based can store a true 64-bit
+integer representation of the data.
+
+<<>>=
+test$repeated_int64 <- c("9007199254740992", "9007199254740993")
+@
+
+When reading the value back into R, numeric types are returned by
+default, but when the full precision is required a character value
+will be returned if the \texttt{RProtoBuf.int64AsString} option is set
+to \texttt{TRUE}.
+
+<<>>=
+options("RProtoBuf.int64AsString" = FALSE)
+test$repeated_int64
+length(unique(test$repeated_int64))
+options("RProtoBuf.int64AsString" = TRUE)
+test$repeated_int64
+length(unique(test$repeated_int64))
+@
+
+<<echo=FALSE,print=FALSE>>=
+options("RProtoBuf.int64AsString" = FALSE)
+@ 
+
+\section{Other approaches}
+
+Saptarshi Guha wrote another package that deals with integration
+of protocol buffer messages with R, taking a different angle :
+serializing any R object as a message, based on a single catch-all
+\texttt{proto} file.  Saptarshi's package is available at
+\url{http://ml.stat.purdue.edu/rhipe/doc/html/ProtoBuffers.html}.
+
+Jeroen Ooms took a similar approach influenced by Saptarshi in his
+\texttt{RProtoBufUtils} package.  Unlike Saptarshi's package,
+RProtoBufUtils depends on RProtoBuf for underlying message operations.
+This package is available at
+\url{https://github.com/jeroenooms/RProtoBufUtils}.
+
+% Phillip Yelland wrote another implementation, currently proprietary,
+% that has significant speed advantages when querying fields from a
+% large number of protocol buffers, but is less user friendly for the
+% basic cases documented here.
+
 \section{Basic usage example - tutorial.Person}
 
 \section{Application: distributed Data Collection with MapReduce}
@@ -194,9 +496,19 @@ http://cran.r-project.org/web/packages/HistogramTools/vignettes/HistogramTools.p
 
 \section{Application: Sending/receiving Interaction With Servers}
 
+Unlike Apache Thrift, Protocol Buffers do not include a concrete RPC
+implementation.  However, serialized protocol buffers can trivially be
+sent over TCP or integrated with a proprietary RPC system.  Combined
+with an RPC system this means that one can interactively craft request
+messages, send the serialized message to a remote server, read back a
+response, and then parse the response protocol buffer interactively.
+
 \section{Summary}
 
-This file is only a basic article template. For full details of \emph{The R Journal} style and information on how to prepare your article for submission, see the \href{http://journal.r-project.org/latex/RJauthorguide.pdf}{Instructions for Authors}.
+Its pretty useful.  Murray to see if he can get approval to talk a
+tiny bit about how much its used at Google.
+
+%This file is only a basic article template. For full details of \emph{The R Journal} style and information on how to prepare your article for submission, see the \href{http://journal.r-project.org/latex/RJauthorguide.pdf}{Instructions for Authors}.
 
 \bibliography{eddelbuettel-francois-stokely}
 
