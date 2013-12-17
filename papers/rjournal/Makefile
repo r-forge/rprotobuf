@@ -9,7 +9,8 @@ clean:
 	rm -fr RJwrapper.blg
 	rm -fr RJwrapper.brf
 
-RJwrapper.pdf: RJwrapper.tex eddelbuettel-francois-stokely.tex RJournal.sty
+RJwrapper.pdf: RJwrapper.tex eddelbuettel-francois-stokely.Rnw RJournal.sty
+	R CMD Sweave eddelbuettel-francois-stokely.Rnw
 	pdflatex RJwrapper.tex
 	bibtex RJwrapper
 	pdflatex RJwrapper.tex
