@@ -9,7 +9,7 @@
  specialized programming languages.  Protocol Buffers are a popular
  method of serializing structured data between applications---while remaining
  indendent of programming languages or operating system.  The
- \textbf{RProtoBuf} package provides a complete interface to this
+ \CRANpkg{RProtoBuf} package provides a complete interface to this
  library.
  %TODO(ms) keep it less than 150 words.
 }
@@ -18,12 +18,51 @@
 
 \section{Introduction}
 
-Comparison with what people start with in R : CSV
+Modern data collection and analysis pipelines often involve a
+sophisticated mix of applications used for collecting, cleaning,
+analyzing, processing, and presenting data.  Each stage of the data
+analysis pipeline may involve storing intermediate results in a
+file or sending them over the network.  Programming langauges such as
+Java, Ruby, Python, and R include built-in serialization support, but
+these formats are tied to the specific programming language in use.
+CSV files can be read and written by many applications and so are
+often used for exporting tabular data.  However, CSV files have a
+number of disadvantages, such as a limitation of exporting only
+tabular datasets, lack of type-safety, inefficient text representation
+and parsing, and abiguities in the format involving special
+characters.  JSON is another widely supported format used mostly on
+the web that removes many of these disadvantages, but it too suffers
+from being too slow to parse and also does not provide strong typing
+between integers and floating point.  Large numbers of JSON messages
+would also be required to duplicate the field names with each message.
 
-Comparison with what is only slightly better: JSON
+This article describes the basics of Google's Protocol Buffers through
+an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
+basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
+several common use cases for protocol buffers in data analysis.
 
-Maybe mention related, competing approaches such as BSON, Thrift, msgpack,
-though we get carried away.
+\section{Protocol Bfufers}
+
+Once the data serialization needs get complex enough, application
+developers typically benefit from the use of an \emph{interface
+description language}, or \emph{IDL}.  IDLs like Google's Protocol
+Buffers and Apache Thrift provide a compact well-documented schema for
+cross-langauge data structures as well efficient binary interchange
+formats.  The schema can be used to generate model classes for
+statically typed programming languages such as C++ and Java, or can be
+used with reflection for dynamically typed programming languages.
+Since the schema is provided separately from the encoded data, the
+data can be efficiently encoded to minimize storage costs of the
+stored data when compared with simple ``schema-less'' binary
+interchange formats like BSON.
+
+%BSON, msgpack, Thrift, and Protocol Buffers take this latter approach,
+%with the
+
+% There are references comparing these we should use here.
+
+TODO Also mention Thrift and msgpack and the references comparing some
+of these tradeoffs.
 
 Introductory section which may include references in parentheses
 \citep{R}, or cite a reference such as \citet{R} in the text.
