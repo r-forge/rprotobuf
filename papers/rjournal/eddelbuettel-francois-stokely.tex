@@ -42,6 +42,11 @@ from being too slow to parse and also does not provide strong typing
 between integers and floating point.  Large numbers of JSON messages
 would also be required to duplicate the field names with each message.
 
+TODO(ms): Also work in reference to Split-Apply-Combine pattern for
+data analysis \citep{wickham2011split}, since that is a great pattern
+but it seems overly optimistic to expect all of those phases to always
+be done in the same language.
+
 This article describes the basics of Google's Protocol Buffers through
 an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
 basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
@@ -125,7 +130,7 @@ description of the language: \url{http://code.google.com/apis/protocolbuffers/do
 \section{Dynamic use: Protocol Buffers and R}
 
 TODO(ms): random citations to work in:
-
+q
 We make use of Object Tables \citep{RObjectTables} for lookup.
 Many sources compare data serialization formats and show protocol
 buffers very favorably to the alternatives, such
