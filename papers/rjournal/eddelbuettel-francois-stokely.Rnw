@@ -118,6 +118,32 @@ project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
 The protocol buffer project page contains a comprehensive
 description of the language: \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}
 
+\begin{example}
+package tutorial;
+message Person {
+ required string name = 1;
+ required int32 id = 2;        // Unique ID number for person.
+ optional string email = 3;
+ enum PhoneType {
+   MOBILE = 0; HOME = 1; WORK = 2;
+ }
+ message PhoneNumber {
+   required string number = 1;
+   optional PhoneType type = 2 [default = HOME];
+ }
+ repeated PhoneNumber phone = 4;
+}
+\end{example}
+
+<<echo=TRUE>>=
+library(RProtoBuf)
+person <- new(tutorial.Person, id=1, name="Romain")
+person$id
+person$name
+person$name <- "Dirk"
+cat(as.character(person))
+@ 
+
 %This section may contain a figure such as Figure~\ref{figure:rlogo}.
 %
 %\begin{figure}[htbp]
@@ -130,8 +156,8 @@ description of the language: \url{http://code.google.com/apis/protocolbuffers/do
 \section{Dynamic use: Protocol Buffers and R}
 
 TODO(ms): random citations to work in:
-q
-We make use of Object Tables \citep{RObjectTables} for lookup.
+
+
 Many sources compare data serialization formats and show protocol
 buffers very favorably to the alternatives, such
 as \citep{Sumaray:2012:CDS:2184751.2184810}
@@ -161,11 +187,6 @@ is much more appropriate for a dynamic language.
 
 The \texttt{readProtoFiles} function allows importing \texttt{proto}
 files in several ways.
-
-<<>>=
-library(RProtoBuf)
-args( readProtoFiles )
-@
 
 Using the \texttt{file} argument, one can specify one or several file
 paths that ought to be proto files.
@@ -393,7 +414,7 @@ TODO comparison of protobuf serialization sizes/times for various vectors.  Comp
 
 The \texttt{RProtoBuf} package uses the user defined tables framework
 that is defined as part of the \texttt{RObjectTables} package available
-from the OmegaHat project.
+from the OmegaHat project \citep{RObjectTables}.
 
 The feature allows \texttt{RProtoBuf} to install the
 special environment \emph{RProtoBuf:DescriptorPool} in the R search path.
@@ -475,7 +496,7 @@ serializing any R object as a message, based on a single catch-all
 \url{http://ml.stat.purdue.edu/rhipe/doc/html/ProtoBuffers.html}.
 
 Jeroen Ooms took a similar approach influenced by Saptarshi in his
-\texttt{RProtoBufUtils} package.  Unlike Saptarshi's package,
+\pkg{RProtoBufUtils} package.  Unlike Saptarshi's package,
 RProtoBufUtils depends on RProtoBuf for underlying message operations.
 This package is available at
 \url{https://github.com/jeroenooms/RProtoBufUtils}.
@@ -505,8 +526,8 @@ response, and then parse the response protocol buffer interactively.
 
 \section{Summary}
 
-Its pretty useful.  Murray to see if he can get approval to talk a
-tiny bit about how much its used at Google.
+%Its pretty useful.  Murray to see if he can get approval to talk a
+%tiny bit about how much its used at Google.
 
 %This file is only a basic article template. For full details of \emph{The R Journal} style and information on how to prepare your article for submission, see the \href{http://journal.r-project.org/latex/RJauthorguide.pdf}{Instructions for Authors}.
 
