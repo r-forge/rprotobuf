@@ -1,4 +1,13 @@
 % !TeX root = RJwrapper.tex
+% We don't want a left margin for Sinput or Soutput for our table 1.
+%\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=0em}
+%\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=0em}
+%\DefineVerbatimEnvironment{Scode}{Verbatim}{xleftmargin=2em}
+% Setting the topsep to 0 reduces spacing from input to output and
+% improves table 1.
+\fvset{listparameters={\setlength{\topsep}{0pt}}}
+\renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
+
 \title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
 \author{by Dirk Eddelbuettel, Romain Fran\c{c}ois, and Murray Stokely}
 
@@ -119,8 +128,13 @@ The protocol buffer project page contains a comprehensive
 description of the language: \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}
 
 \noindent
-\begin{tabular}{@{}p{.40\textwidth}|p{0.5\textwidth}@{}}
+\begin{table}
+\begin{tabular}{@{\hskip .01\textwidth}p{.40\textwidth}@{\hskip .015\textwidth}|@{\hskip .015\textwidth}p{0.55\textwidth}@{\hskip .01\textwidth}}
+\hline
+Schema : \texttt{addressbook.proto} & Example R Session\\
+\hline
 \begin{minipage}{.35\textwidth}
+\vspace{2mm}
 \begin{example}
 package tutorial;
 message Person {
@@ -138,18 +152,25 @@ message Person {
  repeated PhoneNumber phone = 4;
 }
 \end{example}
+\vspace{2mm}
 \end{minipage} & \begin{minipage}{.45\textwidth}
 <<echo=TRUE>>=
 library(RProtoBuf)
-person <- new(tutorial.Person, id=1,
-              name="Romain")
+person <- new(tutorial.Person, id=1, name="Dirk")
 person
 person$name
-person$name <- "Dirk"
+person$name <- "Romain"
 cat(as.character(person))
+serialize(person, NULL)
 @ 
-\end{minipage}
+\end{minipage} \\
+\hline
 \end{tabular}
+\caption{The schema representation from a \texttt{.proto} file for the
+  \texttt{tutorial.Person} class (left) and simple R code for creating
+  an object of this class and accessing its fields (right).}
+\label{tab:proto}
+\end{table}
 
 %This section may contain a figure such as Figure~\ref{figure:rlogo}.
 %
