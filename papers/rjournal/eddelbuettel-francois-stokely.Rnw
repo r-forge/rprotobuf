@@ -40,6 +40,7 @@ analysis pipeline may involve storing intermediate results in a
 file or sending them over the network.  Programming langauges such as
 Java, Ruby, Python, and R include built-in serialization support, but
 these formats are tied to the specific programming language in use.
+% TODO(ms): and they often don't support versioning among other faults.
 CSV files can be read and written by many applications and so are
 often used for exporting tabular data.  However, CSV files have a
 number of disadvantages, such as a limitation of exporting only
@@ -75,6 +76,8 @@ Since the schema is provided separately from the encoded data, the
 data can be efficiently encoded to minimize storage costs of the
 stored data when compared with simple ``schema-less'' binary
 interchange formats like BSON.
+
+% TODO(ms) Also talk about versioning and why its useful.
 
 %BSON, msgpack, Thrift, and Protocol Buffers take this latter approach,
 %with the
@@ -124,8 +127,34 @@ created to support protocol buffers for many languages. The list of known
 languages to support protocol buffers is compiled as part of the
 project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
 
-The protocol buffer project page contains a comprehensive
-description of the language: \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}
+\section{Basic Usage: Messages and Descriptors}
+
+This section describes how to use the R API to create and manipulate
+protocol buffer messages in R, and how to read and write the
+binary \emph{payload} of the messages to files and arbitrary binary
+R connections.
+
+The two fundamental building blocks of Protocol Buffers are Messages
+and Descriptors.  Messages provide a common abstract encapsulation of
+structured data fields of the type specified in a Message Descriptor.
+Message Descriptors are defined in \texttt{.proto} files and define a
+schema for a particular named class of messages.  This separation
+between schema and the message objects is in contrast to
+more verbose formats like JSON, and when combined with the efficient
+binary representation of any Message object explains a large part of
+the performance and storage-space advantage offered by Protocol
+Buffers. TODO(ms): we already said some of this above.  clean up.
+
+Table~\ref{tab:proto} shows an example \texttt{.proto} file which
+defines the \texttt{tutorial.Person} type.  The R code in the right
+column shows an example of creating a new message of this type and
+populating its fields.
+
+% lifted from protobuf page:
+%With Protocol Buffers you define how you want your data to be
+%structured once, and then you can read or write structured data to and
+%from a variety of data streams using a variety of different
+%languages.  The definition
 
 \noindent
 \begin{table}
@@ -181,84 +210,57 @@ serialize(person, NULL)
 %  \label{figure:rlogo}
 %\end{figure}
 
-\section{Dynamic use: Protocol Buffers and R}
+\subsection{Importing Message Descriptors from \texttt{.proto} files}
 
-TODO(ms): random citations to work in:
+%The three basic abstractions of \CRANpkg{RProtoBuf} are Messages,
+%which encapsulate a data structure, Descriptors, which define the
+%schema used by one or more messages, and DescriptorPools, which
+%provide access to descriptors.
 
+Before we can create a new Protocol Buffer Message or parse a
+serialized stream of bytes as a Message, we must read in the message
+type specification from a \texttt{.proto} file.
 
-Many sources compare data serialization formats and show protocol
-buffers very favorably to the alternatives, such
-as \citep{Sumaray:2012:CDS:2184751.2184810}
+New \texttt{.proto} files are imported with the \code{readProtoFiles}
+function, which can import a single file, all files in a directory, or
+all \texttt{.proto} files provided by another R package. 
 
-This section describes how to use the R API to create and manipulate
-protocol buffer messages in R, and how to read and write the
-binary \emph{payload} of the messages to files and arbitrary binary
-R connections.
-
-\subsection{Importing proto files}
-
-In contrast to the other languages (Java, C++, Python) that are officially
-supported by Google, the implementation used by the \texttt{RProtoBuf}
-package does not rely on the \texttt{protoc} compiler (with the exception of
-the two functions discussed in the previous section). This means that no
-initial step of statically compiling the proto file into C++ code that is
-then accessed by R code is necessary. Instead, \texttt{proto} files are
-parsed and processed \textsl{at runtime} by the protobuf C++ library---which
-is much more appropriate for a dynamic language.
-
-The \texttt{readProtoFiles} function allows importing \texttt{proto}
-files in several ways.
-
-Using the \texttt{file} argument, one can specify one or several file
-paths that ought to be proto files.
-
-<<>>=
-proto.dir <- system.file( "proto", package = "RProtoBuf" )
-proto.file <- file.path( proto.dir, "addressbook.proto" )
-<<eval=FALSE>>=
-readProtoFiles( proto.file )
-@
-
-With the \texttt{dir} argument, which is
-ignored if the \texttt{file} is supplied, all files matching the
-\texttt{.proto} extension will be imported.
-
-<<>>=
-dir( proto.dir, pattern = "\\.proto$", full.names = TRUE )
-<<eval=FALSE>>=
-readProtoFiles( dir = proto.dir )
-@
-
-Finally, with the
-\texttt{package} argument (ignored if \texttt{file} or
-\texttt{dir} is supplied), the function will import all \texttt{.proto}
-files that are located in the \texttt{proto} sub-directory of the given
-package. A typical use for this argument is in the \texttt{.onLoad}
-function of a package.
-
-<<eval=FALSE>>=
-readProtoFiles( package = "RProtoBuf" )
-@
+The \texttt{.proto} file syntax for defining the structure of protocol
+buffer data is described comprehensively on Google Code:
+\url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.
 
 Once the proto files are imported, all message descriptors are
 are available in the R search path in the \texttt{RProtoBuf:DescriptorPool}
 special environment. The underlying mechanism used here is
-described in more detail in section~\ref{sec-lookup}.
+described in more detail in Section~\ref{sec-lookup}.
 
 <<>>=
 ls( "RProtoBuf:DescriptorPool" )
 @
 
+%\subsection{Importing proto files}
+%In contrast to the other languages (Java, C++, Python) that are officially
+%supported by Google, the implementation used by the \texttt{RProtoBuf}
+%package does not rely on the \texttt{protoc} compiler (with the exception of
+%the two functions discussed in the previous section). This means that no
+%initial step of statically compiling the proto file into C++ code that is
+%then accessed by R code is necessary. Instead, \texttt{proto} files are
+%parsed and processed \textsl{at runtime} by the protobuf C++ library---which
+%is much more appropriate for a dynamic language.
 
 \subsection{Creating a message}
 
-The objects contained in the special environment are
-descriptors for their associated message types. Descriptors will be
-discussed in detail in another part of this document, but for the
-purpose of this section, descriptors are just used with the \texttt{new}
-function to create messages.
+New messages are created with the \texttt{new} function which accepts
+a Message Descriptor and optionally a list of ``name = value'' pairs
+to set in the message.
+%The objects contained in the special environment are
+%descriptors for their associated message types. Descriptors will be
+%discussed in detail in another part of this document, but for the
+%purpose of this section, descriptors are just used with the \texttt{new}
+%function to create messages.
 
 <<>>=
+p1 <- new( tutorial.Person )
 p <- new( tutorial.Person, name = "Romain", id = 1 )
 @
 
@@ -315,8 +317,9 @@ writeLines( as.character( p ) )
 However, the main focus of protocol buffer messages is
 efficiency. Therefore, messages are transported as a sequence
 of bytes. The \texttt{serialize} method is implemented for
-protocol buffer messages to serialize a message into the sequence of
-bytes (raw vector in R speech) that represents the message.
+protocol buffer messages to serialize a message into a sequence of
+bytes that represents the message.
+%(raw vector in R speech) that represents the message.
 
 <<>>=
 serialize( p, NULL )
@@ -326,7 +329,6 @@ The same method can also be used to serialize messages to files :
 
 <<>>=
 tf1 <- tempfile()
-tf1
 serialize( p, tf1 )
 readBin( tf1, raw(0), 500 )
 @
@@ -356,14 +358,12 @@ close( con )
 
 \subsection{Parsing messages}
 
-The \texttt{RProtoBuf} package defines the \texttt{read}
-function to read messages from files, raw vector (the message payload)
-and arbitrary binary connections.
-
-<<>>=
-args( read )
-@
-
+The \texttt{RProtoBuf} package defines the \texttt{read} and
+\texttt{readASCII} functions to read messages from files, raw vectors,
+or arbitrary connections.  \texttt{read} expects to read the message
+payload from binary files or connections and \texttt{readASCII} parses
+the human-readable ASCII output that is created with
+\code{as.character}.
 
 The binary representation of the message (often called the payload)
 does not contain information that can be used to dynamically
@@ -371,8 +371,8 @@ infer the message type, so we have to provide this information
 to the \texttt{read} function in the form of a descriptor :
 
 <<>>=
-message <- read( tutorial.Person, tf1 )
-writeLines( as.character( message ) )
+msg <- read( tutorial.Person, tf1 )
+writeLines( as.character( msg ) )
 @
 
 The \texttt{input} argument of \texttt{read} can also be a binary
@@ -408,13 +408,6 @@ close( con )
 message <- tutorial.Person$read( payload )
 @
 
-\section{Basic Abstractions: Messages, Descriptors, and
-  DescriptorPools}
-
-The three basic abstractions of \CRANpkg{RProtoBuf} are Messages,
-which encapsulate a data structure, Descriptors, which define the
-schema used by one or more messages, and DescriptorPools, which
-provide access to descriptors.
 
 \section{Under the hood: S4 Classes, Methods, and Pseudo Methods}
 
@@ -445,10 +438,125 @@ data defined in the Message, as well as a number of
 \texttt{FieldDescriptors} for the individual fields of the message.
 
 
-
 represented in R using the \texttt{Message}
 S4 class. The class contains the slots \texttt{pointer} and \texttt{type} as
 described on the Table~\ref{Message-class-table}.
+
+\begin{table}[h]
+\centering
+\begin{small}
+\begin{tabular}{l|l}
+\textbf{Method} & \textbf{Description} \\
+\hline
+\hline
+\texttt{has} & Indicates if a message has a given field.   \\
+\texttt{clone} & Creates a clone of the message \\
+\texttt{isInitialized} & Indicates if a message has all its required fields set\\
+\texttt{serialize} & serialize a message to a file, binary connection, or raw vector\\
+\texttt{clear} & Clear one or several fields of a message, or the entire message\\
+\texttt{size} & The number of elements in a message field\\
+\texttt{bytesize} & The number of bytes the message would take once serialized\\
+\hline
+\texttt{swap} & swap elements of a repeated field of a message\\
+\texttt{set} & set elements of a repeated field\\
+\texttt{fetch} & fetch elements of a repeated field\\
+\texttt{setExtension} & set an extension of a message\\
+\texttt{getExtension} & get the value of an extension of a message\\
+\texttt{add} & add elements to a repeated field \\
+\hline
+\texttt{str} & the R structure of the message\\
+\texttt{as.character} & character representation of a message\\
+\texttt{toString} & character representation of a message (same as \texttt{as.character}) \\
+\texttt{as.list} & converts message to a named R list\\
+\texttt{update} & updates several fields of a message at once\\
+\texttt{descriptor} & get the descriptor of the message type of this message\\
+\texttt{fileDescriptor} & get the file descriptor of this message's descriptor\\
+\hline
+\end{tabular}
+\end{small}
+\caption{\label{Message-methods-table}Description of methods for the \texttt{Message} S4 class}
+\end{table}
+
+\subsection{Descriptors}
+
+Message descriptors are represented in R with the
+\emph{Descriptor} S4 class. The class contains
+the slots \texttt{pointer} and \texttt{type} :
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|cp{10cm}|}
+\hline
+\textbf{slot} & \textbf{description} \\
+\hline
+\texttt{pointer} & external pointer to the \texttt{Descriptor} object of the C++ proto library. Documentation for the
+\texttt{Descriptor} class is available from the protocol buffer project page:
+\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
+\hline
+\texttt{type} & fully qualified path of the message type. \\
+\hline
+\end{tabular}
+\caption{\label{Descriptor-class-table}Description of slots for the \texttt{Descriptor} S4 class}
+\end{table}
+
+Similarly to messages, the \verb|$| operator can be used to extract
+information from the descriptor, or invoke pseuso-methods.
+
+\subsubsection{Extracting descriptors}
+
+The \verb|$| operator, when used on a descriptor object retrieves
+descriptors that are contained in the descriptor.
+
+This can be a field descriptor (see section~\ref{subsec-field-descriptor} ),
+an enum descriptor (see section~\ref{subsec-enum-descriptor}) or a descriptor
+for a nested type
+
+<<>>=
+# field descriptor
+tutorial.Person$email
+
+# enum descriptor
+tutorial.Person$PhoneType
+
+# nested type descriptor
+tutorial.Person$PhoneNumber
+# same as
+tutorial.Person.PhoneNumber
+@
+
+\begin{table}[h]
+\centering
+\begin{small}
+\begin{tabular}{l|l}
+\textbf{Method} & \textbf{Description} \\
+\hline
+\hline
+\texttt{new} & Creates a prototype of a message described by this descriptor.\\
+\texttt{read} & Reads a message from a file or binary connection.\\
+\texttt{readASCII} & Read a message in ASCII format from a file or
+text connection.\\
+\hline
+\texttt{name} & Retrieve the name of the message type associated with
+this descriptor.\\
+\texttt{as.character} & character representation of a descriptor\\
+\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}) \\
+\hline
+\texttt{fileDescriptor} & Retrieve the file descriptor of this
+descriptor.\\
+\texttt{containing\_type} & Retrieve the descriptor describing the message type containing this descriptor.\\
+\texttt{field\_count} & Return the number of fields in this descriptor.\\
+\texttt{field} & Return the descriptor for the specified field in this descriptor.\\
+\texttt{nested\_type\_count} & The number of nested types in this descriptor.\\
+\texttt{nested\_type} & Return the descriptor for the specified nested
+type in this descriptor.\\
+\texttt{enum\_type\_count} & The number of enum types in this descriptor.\\
+\texttt{enum\_type} & Return the descriptor for the specified enum
+type in this descriptor.\\
+\hline
+\end{tabular}
+\end{small}
+\caption{\label{Descriptor-methods-table}Description of methods for the \texttt{Descriptor} S4 class}
+\end{table}
 
 \section{Type Coercion}
 
@@ -595,6 +703,12 @@ messages, send the serialized message to a remote server, read back a
 response, and then parse the response protocol buffer interactively.
 
 \section{Summary}
+
+TODO(ms): random citations to work in:
+
+Many sources compare data serialization formats and show protocol
+buffers very favorably to the alternatives, such
+as \citep{Sumaray:2012:CDS:2184751.2184810}
 
 %Its pretty useful.  Murray to see if he can get approval to talk a
 %tiny bit about how much its used at Google.
