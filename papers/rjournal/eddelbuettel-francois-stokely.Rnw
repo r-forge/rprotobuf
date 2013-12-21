@@ -655,6 +655,72 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \caption{\label{fielddescriptor-methods-table}Description of methods for the \texttt{FieldDescriptor} S4 class}
 \end{table}
 
+% TODO(ms): Useful distinction to make -- FieldDescriptor does not do
+% separate '$' dispatch like Messages, Descriptors, and
+% EnumDescriptors do.  Should it?
+
+\subsection{enum descriptors}
+\label{subsec-enum-descriptor}
+
+The class \emph{EnumDescriptor} is an R wrapper
+class around the C++ class \texttt{google::protobuf::EnumDescriptor}.
+Table~\ref{enumdescriptor-methods-table} describes the methods
+defined for the \texttt{EnumDescriptor} class.
+
+The \verb|$| operator can be used to retrieve the value of enum
+constants contained in the EnumDescriptor, or to invoke
+pseudo-methods.
+
+<<>>=
+tutorial.Person$PhoneType
+tutorial.Person$PhoneType$WORK
+@
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|cp{10cm}|}
+\hline
+\textbf{Slot} & \textbf{Description} \\
+\hline
+\texttt{pointer} & External pointer to the \texttt{EnumDescriptor} C++ variable \\
+\hline
+\texttt{name} & Simple name of the enum \\
+\hline
+\texttt{full\_name} & Fully qualified name of the enum \\
+\hline
+\texttt{type} & Name of the message type where the enum is declared \\
+\hline
+\end{tabular}
+\caption{\label{EnumDescriptor-class-table}Description of slots for the \texttt{EnumDescriptor} S4 class}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{small}
+\begin{tabular}{l|l}
+\hline
+\textbf{Method} & \textbf{Description} \\
+\hline
+\hline
+\texttt{as.list} & return a named
+integer vector with the values of the enum and their names.\\
+\texttt{as.character} & character representation of a descriptor\\
+\texttt{toString} & character
+representation of a descriptor (same as \texttt{as.character}) \\
+\texttt{asMessage} & return EnumDescriptorProto message. \\
+\texttt{name} & Return the name of the enum descriptor.\\
+\texttt{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
+\texttt{containing\_type} & Return the containing descriptor of this field.\\
+\texttt{length} & Return the number of constants in this enum.\\
+\texttt{has} & Return TRUE if this enum contains the specified named constant string.\\
+\texttt{value\_count} & Return the number of constants in this enum (same as \texttt{length}).\\
+\texttt{value} & Return the EnumValueDescriptor of an enum value of specified index, name, or number.\\
+\hline
+\end{tabular}
+\end{small}
+\caption{\label{enumdescriptor-methods-table}Description of methods for the \texttt{EnumDescriptor} S4 class}
+\end{table}
+
 \section{Type Coercion}
 
 \subsection{Booleans}
