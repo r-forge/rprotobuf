@@ -412,35 +412,72 @@ message <- tutorial.Person$read( payload )
 \section{Under the hood: S4 Classes, Methods, and Pseudo Methods}
 
 The \CRANpkg{RProtoBuf} package uses the S4 system to store
-information about descriptors and messages, but the information stored
-in the R object is very minimal and mainly consists of an external
-pointer to a C++ variable that is managed by the \texttt{protobuf} C++
-library.
-
-Using the S4 system allows the \texttt{RProtoBuf} package to dispatch
-methods that are not generic in the S3 sense, such as \texttt{new} and
+information about descriptors and messages.  Using the S4 system
+allows the \texttt{RProtoBuf} package to dispatch methods that are not
+generic in the S3 sense, such as \texttt{new} and
 \texttt{serialize}.
+
+Each R object stores an external pointer to an object managed by
+the \texttt{protobuf} C++ library.
+The \CRANpkg{Rcpp} \citep{eddelbuettel2011rcpp} package is used to
+facilitate the integration of the R and C++ code for these objects.
+
+% Message, Descriptor, FieldDescriptor, EnumDescriptor,
+% FileDescriptor, EnumValueDescriptor
+%
+% grep RPB_FUNC * | grep -v define|wc -l
+% 84
+% grep RPB_ * | grep -v RPB_FUNCTION | grep METHOD|wc -l
+% 33
+
+There are over 100 C++ functions that provide the glue code between
+the member functions of the 6 primary Message and Descriptor classes
+in the protobuf library.  Wrapping each method individually allows us
+to add user friendly custom error handling, type coercion, and
+performance improvements at the cost of a more verbose
+implementation.  The RProtoBuf implementation in many ways motivated
+the development of Rcpp Modules \citep{eddelbuettel2010exposing},
+which provide a more concise way of wrapping C++ functions and classes
+in a single entity.
 
 The \texttt{RProtoBuf} package combines the \emph{R typical} dispatch
 of the form \verb|method( object, arguments)| and the more traditional
 object oriented notation \verb|object$method(arguments)|.
 
-TODO(ms): Perhaps a table here of the different S4 classes, how many
+\emph{TODO(ms): Perhaps a table here of the different S4 classes, how many
 methods they include, whether it dynamically does dispatch on other
-strings, whether/how it is available in the search path, etc.
+strings, whether/how it is available in the search path, etc.}
 
 \subsection{Messages}
 
 The \texttt{Message} S4 class represents Protocol Buffer Messages and
-is the core abstraction of \CRANpkg{RProtoBuf}.  Each \texttt{Message}
-has a \texttt{Descriptor} S4 class which defines the schema of the
-data defined in the Message, as well as a number of
-\texttt{FieldDescriptors} for the individual fields of the message.
+is the core abstraction of \CRANpkg{RProtoBuf}.  The class contains
+the slots \texttt{pointer} and \texttt{type} as described on the
+Table~\ref{Message-class-table}.
 
+\begin{table}[h]
+\centering
+\begin{tabular}{|cp{10cm}|}
+\hline
+\textbf{Slot} & \textbf{Description} \\
+\hline
+\texttt{pointer} & External pointer to the \texttt{Message} object of the C++ proto library. Documentation for the
+\texttt{Message} class is available from the protocol buffer project page:
+\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message} \\
+\hline
+\texttt{type} & Fully qualified name of the message. For example a \texttt{Person} message
+has its \texttt{type} slot set to \texttt{tutorial.Person} \\
+\hline
+\end{tabular}
+\caption{\label{Message-class-table}Description of slots for the \texttt{Message} S4 class}
+\end{table}
 
-represented in R using the \texttt{Message}
-S4 class. The class contains the slots \texttt{pointer} and \texttt{type} as
-described on the Table~\ref{Message-class-table}.
+Each \texttt{Message} contains a pointer to a \texttt{Descriptor}
+which defines the schema of the data defined in the Message, as well
+as a number of \texttt{FieldDescriptors} for the individual fields of
+the message.  In addition to the field name extractors of
+\texttt{Messages} introduced in the previous section, a complete list
+of Message methods is available in Table~\ref{Message-methods-table}.
 
 \begin{table}[h]
 \centering
@@ -487,29 +524,22 @@ the slots \texttt{pointer} and \texttt{type} :
 \centering
 \begin{tabular}{|cp{10cm}|}
 \hline
-\textbf{slot} & \textbf{description} \\
+\textbf{Slot} & \textbf{Description} \\
 \hline
-\texttt{pointer} & external pointer to the \texttt{Descriptor} object of the C++ proto library. Documentation for the
+\texttt{pointer} & External pointer to the \texttt{Descriptor} object of the C++ proto library. Documentation for the
 \texttt{Descriptor} class is available from the protocol buffer project page:
 \url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
 \hline
-\texttt{type} & fully qualified path of the message type. \\
+\texttt{type} & Fully qualified path of the message type. \\
 \hline
 \end{tabular}
 \caption{\label{Descriptor-class-table}Description of slots for the \texttt{Descriptor} S4 class}
 \end{table}
 
-Similarly to messages, the \verb|$| operator can be used to extract
-information from the descriptor, or invoke pseuso-methods.
-
-\subsubsection{Extracting descriptors}
-
-The \verb|$| operator, when used on a descriptor object retrieves
-descriptors that are contained in the descriptor.
-
-This can be a field descriptor (see section~\ref{subsec-field-descriptor} ),
-an enum descriptor (see section~\ref{subsec-enum-descriptor}) or a descriptor
-for a nested type
+Similarly to messages, the \verb|$| operator can be used to retrieve
+descriptors that are contained in the descriptor, or invoke
+pseudo-methods.  Thise can be used to extract field descriptors, enum
+descriptors, or descriptors for a nested type.
 
 <<>>=
 # field descriptor
@@ -523,6 +553,9 @@ tutorial.Person$PhoneNumber
 # same as
 tutorial.Person.PhoneNumber
 @
+
+Table~\ref{Descriptor-methods-table} provides a complete list of the
+avalailable methods for Descriptors.
 
 \begin{table}[h]
 \centering
@@ -540,6 +573,9 @@ text connection.\\
 this descriptor.\\
 \texttt{as.character} & character representation of a descriptor\\
 \texttt{toString} & character representation of a descriptor (same as \texttt{as.character}) \\
+\texttt{as.list} & return a named
+list of the field, enum, and nested descriptors included in this descriptor.\\
+\texttt{asMessage} & return DescriptorProto message. \\
 \hline
 \texttt{fileDescriptor} & Retrieve the file descriptor of this
 descriptor.\\
@@ -556,6 +592,67 @@ type in this descriptor.\\
 \end{tabular}
 \end{small}
 \caption{\label{Descriptor-methods-table}Description of methods for the \texttt{Descriptor} S4 class}
+\end{table}
+
+\subsection{field descriptors}
+\label{subsec-field-descriptor}
+
+The class \emph{FieldDescriptor} represents field
+descriptor in R. This is a wrapper S4 class around the
+\texttt{google::protobuf::FieldDescriptor} C++ class.
+Table~\ref{fielddescriptor-methods-table} describes the methods
+defined for the \texttt{FieldDescriptor} class.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|cp{10cm}|}
+\hline
+\textbf{Slot} & \textbf{Description} \\
+\hline
+\texttt{pointer} & External pointer to the \texttt{FieldDescriptor} C++ variable \\
+\hline
+\texttt{name} & Simple name of the field \\
+\hline
+\texttt{full\_name} & Fully qualified name of the field \\
+\hline
+\texttt{type} & Name of the message type where the field is declared \\
+\hline
+\end{tabular}
+\caption{\label{FieldDescriptor-class-table}Description of slots for the \texttt{FieldDescriptor} S4 class}
+\end{table}
+
+
+\begin{table}[h]
+\centering
+\begin{small}
+\begin{tabular}{l|l}
+\hline
+\textbf{Method} & \textbf{Description} \\
+\hline
+\hline
+\texttt{as.character} & Character representation of a descriptor\\
+\texttt{toString} & Character
+representation of a descriptor (same as \texttt{as.character}) \\
+\texttt{asMessage} & Return FieldDescriptorProto message. \\
+\texttt{name} & Return the name of the field descriptor.\\
+\texttt{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
+\texttt{containing\_type} & Return the containing descriptor of this field.\\
+\texttt{is\_extension} & Return TRUE if this field is an extension.\\
+\texttt{number} & Gets the declared tag number of the field.\\
+\texttt{type} & Gets the type of the field.\\
+\texttt{cpp\_type} & Gets the C++ type of the field.\\
+\texttt{label} & Gets the label of a field (optional, required, or repeated).\\
+\texttt{is\_repeated} & Return TRUE if this field is repeated.\\
+\texttt{is\_required} & Return TRUE if this field is required.\\
+\texttt{is\_optional} & Return TRUE if this field is optional.\\
+\texttt{has\_default\_value} & Return TRUE if this field has a default value.\\
+\texttt{default\_value} & Return the default value.\\
+\texttt{message\_type} & Return the message type if this is a message type field.\\
+\texttt{enum\_type} & Return the enum type if this is an enum type field.\\
+\hline
+\end{tabular}
+\end{small}
+\caption{\label{fielddescriptor-methods-table}Description of methods for the \texttt{FieldDescriptor} S4 class}
 \end{table}
 
 \section{Type Coercion}
