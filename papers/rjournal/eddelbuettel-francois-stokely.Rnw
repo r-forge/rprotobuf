@@ -343,7 +343,7 @@ close( con )
 readBin( tf2, raw(0), 500 )
 @
 
-\texttt{serialize} can also be used in a more traditionnal
+\texttt{serialize} can also be used in a more traditional
 object oriented fashion using the dollar operator :
 
 <<>>=
@@ -443,10 +443,33 @@ in a single entity.
 The \texttt{RProtoBuf} package combines the \emph{R typical} dispatch
 of the form \verb|method( object, arguments)| and the more traditional
 object oriented notation \verb|object$method(arguments)|.
+Additionally, \texttt{RProtoBuf} implements the \texttt{.DollarNames} S3 generic function
+(defined in the \texttt{utils} package) for all classes to enable tab
+completion.  Completion possibilities include pseudo method names for all
+classes, plus dynamic dispatch on names or types specific to a given object.
 
-\emph{TODO(ms): Perhaps a table here of the different S4 classes, how many
-methods they include, whether it dynamically does dispatch on other
-strings, whether/how it is available in the search path, etc.}
+% TODO(ms): Add column check box for doing dynamic dispatch based on type.
+\begin{table}[h]
+\centering
+\begin{tabular}{|l|c|c|l|}
+\hline
+\textbf{Class} & \textbf{Slots} & \textbf{Methods} & \textbf{Dynamic Dispatch}\\
+\hline
+\hline
+Message & 2 & 20 & yes (field names)\\
+\hline
+Descriptor & 2 & 16 & yes (field names, enum types, nested types)\\
+\hline
+FieldDescriptor & 4 & 18 & no\\
+\hline
+EnumDescriptor & 4 & 11 & yes (enum constant names)\\
+\hline
+FileDescriptor & 3 & 6 & yes (message/field definitions)\\
+\hline
+EnumValueDescriptor & 3 & 6 & no\\
+\hline
+\end{tabular}
+\end{table}
 
 \subsection{Messages}
 
@@ -719,6 +742,113 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \end{tabular}
 \end{small}
 \caption{\label{enumdescriptor-methods-table}Description of methods for the \texttt{EnumDescriptor} S4 class}
+\end{table}
+
+\subsection{file descriptors}
+\label{subsec-file-descriptor}
+
+The class \emph{FileDescriptor} is an R wrapper
+class around the C++ class \texttt{google::protobuf::FileDescriptor}.
+Table~\ref{filedescriptor-methods-table} describes the methods
+defined for the \texttt{FileDescriptor} class.
+
+The \verb|$| operator can be used to retrieve named fields defined in
+the FileDescriptor, or to invoke pseudo-methods.
+
+<<>>=
+f <- tutorial.Person$fileDescriptor()
+f
+f$Person
+@
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|cp{10cm}|}
+\hline
+\textbf{slot} & \textbf{description} \\
+\hline
+\texttt{pointer} & external pointer to the \texttt{FileDescriptor} object of the C++ proto library. Documentation for the
+\texttt{FileDescriptor} class is available from the protocol buffer project page:
+\url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
+\hline
+\texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
+\hline
+\texttt{package} & package name defined in this \texttt{.proto} file.\\
+\hline
+\end{tabular}
+\caption{\label{FileDescriptor-class-table}Description of slots for the \texttt{FileDescriptor} S4 class}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{small}
+\begin{tabular}{l|l}
+\hline
+\textbf{Method} & \textbf{Description} \\
+\hline
+\hline
+\texttt{name} & Return the filename for this FileDescriptorProto.\\
+\texttt{package} & Return the file-level package name specified in this FileDescriptorProto.\\
+\texttt{as.character} & character representation of a descriptor. \\
+\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
+\texttt{asMessage} & return FileDescriptorProto message. \\
+\texttt{as.list} & return named list of descriptors defined in this file descriptor.\\
+\hline
+\end{tabular}
+\end{small}
+\caption{\label{filedescriptor-methods-table}Description of methods for the \texttt{FileDescriptor} S4 class}
+\end{table}
+
+\subsection{enum value descriptors}
+\label{subsec-enumvalue-descriptor}
+
+The class \emph{EnumValueDescriptor} is an R wrapper
+class around the C++ class \texttt{google::protobuf::EnumValueDescriptor}.
+Table~\ref{EnumValueDescriptor-methods-table} describes the methods
+defined for the \texttt{EnumValueDescriptor} class.
+
+The \verb|$| operator can be used to invoke pseudo-methods.
+
+<<>>=
+tutorial.Person$PhoneType$value(1)
+tutorial.Person$PhoneType$value(name="HOME")
+tutorial.Person$PhoneType$value(number=1)
+@ 
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|cp{10cm}|}
+\hline
+\textbf{slot} & \textbf{description} \\
+\hline
+\texttt{pointer} & External pointer to the \texttt{EnumValueDescriptor} C++ variable \\
+\hline
+\texttt{name} & simple name of the enum value \\
+\hline
+\texttt{full\_name} & fully qualified name of the enum value \\
+\hline
+\end{tabular}
+\caption{\label{EnumValueDescriptor-class-table}Description of slots for the \texttt{EnumValueDescriptor} S4 class}
+\end{table}
+
+\begin{table}[h]
+\centering
+\begin{small}
+\begin{tabular}{l|l}
+\hline
+\textbf{Method} & \textbf{Description} \\
+\hline
+\hline
+\texttt{number} & return the number of this EnumValueDescriptor. \\
+\texttt{name} & Return the name of the enum value descriptor.\\
+\texttt{enum\_type} & return the EnumDescriptor type of this EnumValueDescriptor. \\
+\texttt{as.character} & character representation of a descriptor. \\
+\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
+\texttt{asMessage} & return EnumValueDescriptorProto message. \\
+\hline
+\end{tabular}
+\end{small}
+\caption{\label{enumvaluedescriptor-methods-table}Description of methods for the \texttt{EnumValueDescriptor} S4 class}
 \end{table}
 
 \section{Type Coercion}
