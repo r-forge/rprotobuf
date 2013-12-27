@@ -1,0 +1,22 @@
+The RProtoBuf code base is a mix of many coding styles regarding
+indentation, spaces, braces, and more.
+
+Murray proposes running the whole code base through
+
+ clang-format -style="{BasedOnStyle: google, IndentWidth: 4}" -i *.cpp
+
+There are a number of other parameters that can be set however, see the full output of
+
+ clang-format -dump-config
+
+One changes have been made locally, you can view the diff with whitespace omitted with :
+
+ svn diff -x -w
+
+This will still pull up all the changes where lines were broken at 80
+characters or braces changed lines, but will ignore most of the pure
+whitespace changes for reviewing purposes before submitting.
+
+After the code base has been converted with clang-format, the emacs
+metadata comments at the top of each file will need to be updated as
+well.
