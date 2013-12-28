@@ -11,6 +11,7 @@
 \title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
 \author{by Dirk Eddelbuettel, Romain Fran\c{c}ois, and Murray Stokely}
 
+
 \maketitle
 
 \abstract{Modern data collection and analysis pipelines often involve
@@ -61,6 +62,10 @@ This article describes the basics of Google's Protocol Buffers through
 an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
 basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
 several common use cases for protocol buffers in data analysis.
+
+XXX Related work on IDLs (greatly expanded )
+
+XXX Design tradeoffs: reflection vs proto compiler
 
 \section{Protocol Buffers}
 
@@ -474,13 +479,17 @@ EnumValueDescriptor & 3 & 6 & no\\
 \subsection{Messages}
 
 The \texttt{Message} S4 class represents Protocol Buffer Messages and
-is the core abstraction of \CRANpkg{RProtoBuf}.  The class contains
-the slots \texttt{pointer} and \texttt{type} as described on the
-Table~\ref{Message-class-table}.
+is the core abstraction of \CRANpkg{RProtoBuf}. Each \texttt{Message}
+contains a pointer to a \texttt{Descriptor} which defines the schema
+of the data defined in the Message, as well as a number of
+\texttt{FieldDescriptors} for the individual fields of the message.  A
+complete list of the slots and methods for \texttt{Messages}
+is available in Table~\ref{Message-methods-table}.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|cp{10cm}|}
+\begin{small}
+\begin{tabular}{l|p{10cm}}
 \hline
 \textbf{Slot} & \textbf{Description} \\
 \hline
@@ -489,25 +498,9 @@ Table~\ref{Message-class-table}.
 \url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message} \\
 \hline
 \texttt{type} & Fully qualified name of the message. For example a \texttt{Person} message
-has its \texttt{type} slot set to \texttt{tutorial.Person} \\
+has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
 \hline
-\end{tabular}
-\caption{\label{Message-class-table}Description of slots for the \texttt{Message} S4 class}
-\end{table}
-
-Each \texttt{Message} contains a pointer to a \texttt{Descriptor}
-which defines the schema of the data defined in the Message, as well
-as a number of \texttt{FieldDescriptors} for the individual fields of
-the message.  In addition to the field name extractors of
-\texttt{Messages} introduced in the previous section, a complete list
-of Message methods is available in Table~\ref{Message-methods-table}.
-
-\begin{table}[h]
-\centering
-\begin{small}
-\begin{tabular}{l|l}
 \textbf{Method} & \textbf{Description} \\
-\hline
 \hline
 \texttt{has} & Indicates if a message has a given field.   \\
 \texttt{clone} & Creates a clone of the message \\
@@ -534,35 +527,16 @@ of Message methods is available in Table~\ref{Message-methods-table}.
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{Message-methods-table}Description of methods for the \texttt{Message} S4 class}
+\caption{\label{Message-methods-table}Description of slots and methods for the \texttt{Message} S4 class}
 \end{table}
 
 \subsection{Descriptors}
 
-Message descriptors are represented in R with the
-\emph{Descriptor} S4 class. The class contains
-the slots \texttt{pointer} and \texttt{type} :
-
-\begin{table}[h]
-\centering
-\begin{tabular}{|cp{10cm}|}
-\hline
-\textbf{Slot} & \textbf{Description} \\
-\hline
-\texttt{pointer} & External pointer to the \texttt{Descriptor} object of the C++ proto library. Documentation for the
-\texttt{Descriptor} class is available from the protocol buffer project page:
-\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
-\hline
-\texttt{type} & Fully qualified path of the message type. \\
-\hline
-\end{tabular}
-\caption{\label{Descriptor-class-table}Description of slots for the \texttt{Descriptor} S4 class}
-\end{table}
-
-Similarly to messages, the \verb|$| operator can be used to retrieve
-descriptors that are contained in the descriptor, or invoke
-pseudo-methods.  Thise can be used to extract field descriptors, enum
-descriptors, or descriptors for a nested type.
+Message descriptors are represented in R with the \emph{Descriptor} S4
+class. The class contains the slots \texttt{pointer} and
+\texttt{type}.  Similarly to messages, the \verb|$| operator can be
+used to retrieve descriptors that are contained in the descriptor, or
+invoke pseudo-methods.
 
 <<>>=
 # field descriptor
@@ -578,14 +552,22 @@ tutorial.Person.PhoneNumber
 @
 
 Table~\ref{Descriptor-methods-table} provides a complete list of the
-avalailable methods for Descriptors.
+slots and avalailable methods for Descriptors.
 
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{l|l}
-\textbf{Method} & \textbf{Description} \\
+\begin{tabular}{l|p{10cm}}
 \hline
+\textbf{Slot} & \textbf{Description} \\
+\hline
+\texttt{pointer} & External pointer to the \texttt{Descriptor} object of the C++ proto library. Documentation for the
+\texttt{Descriptor} class is available from the protocol buffer project page:
+\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
+\hline
+\texttt{type} & Fully qualified path of the message type. \\[.3cm]
+\hline
+\textbf{Method} & \textbf{Description} \\
 \hline
 \texttt{new} & Creates a prototype of a message described by this descriptor.\\
 \texttt{read} & Reads a message from a file or binary connection.\\
@@ -614,10 +596,10 @@ type in this descriptor.\\
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{Descriptor-methods-table}Description of methods for the \texttt{Descriptor} S4 class}
+\caption{\label{Descriptor-methods-table}Description of slots and methods for the \texttt{Descriptor} S4 class}
 \end{table}
 
-\subsection{field descriptors}
+\subsection{Field Descriptors}
 \label{subsec-field-descriptor}
 
 The class \emph{FieldDescriptor} represents field
@@ -628,7 +610,8 @@ defined for the \texttt{FieldDescriptor} class.
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|cp{10cm}|}
+\begin{small}
+\begin{tabular}{l|p{10cm}}
 \hline
 \textbf{Slot} & \textbf{Description} \\
 \hline
@@ -638,20 +621,9 @@ defined for the \texttt{FieldDescriptor} class.
 \hline
 \texttt{full\_name} & Fully qualified name of the field \\
 \hline
-\texttt{type} & Name of the message type where the field is declared \\
-\hline
-\end{tabular}
-\caption{\label{FieldDescriptor-class-table}Description of slots for the \texttt{FieldDescriptor} S4 class}
-\end{table}
-
-
-\begin{table}[h]
-\centering
-\begin{small}
-\begin{tabular}{l|l}
+\texttt{type} & Name of the message type where the field is declared \\[.3cm]
 \hline
 \textbf{Method} & \textbf{Description} \\
-\hline
 \hline
 \texttt{as.character} & Character representation of a descriptor\\
 \texttt{toString} & Character
@@ -675,14 +647,15 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{fielddescriptor-methods-table}Description of methods for the \texttt{FieldDescriptor} S4 class}
+\caption{\label{fielddescriptor-methods-table}Description of slots and
+  methods for the \texttt{FieldDescriptor} S4 class}
 \end{table}
 
 % TODO(ms): Useful distinction to make -- FieldDescriptor does not do
 % separate '$' dispatch like Messages, Descriptors, and
 % EnumDescriptors do.  Should it?
 
-\subsection{enum descriptors}
+\subsection{Enum Descriptors}
 \label{subsec-enum-descriptor}
 
 The class \emph{EnumDescriptor} is an R wrapper
@@ -701,7 +674,8 @@ tutorial.Person$PhoneType$WORK
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|cp{10cm}|}
+\begin{small}
+\begin{tabular}{l|p{10cm}}
 \hline
 \textbf{Slot} & \textbf{Description} \\
 \hline
@@ -711,19 +685,9 @@ tutorial.Person$PhoneType$WORK
 \hline
 \texttt{full\_name} & Fully qualified name of the enum \\
 \hline
-\texttt{type} & Name of the message type where the enum is declared \\
-\hline
-\end{tabular}
-\caption{\label{EnumDescriptor-class-table}Description of slots for the \texttt{EnumDescriptor} S4 class}
-\end{table}
-
-\begin{table}[h]
-\centering
-\begin{small}
-\begin{tabular}{l|l}
+\texttt{type} & Name of the message type where the enum is declared \\[.3cm]
 \hline
 \textbf{Method} & \textbf{Description} \\
-\hline
 \hline
 \texttt{as.list} & return a named
 integer vector with the values of the enum and their names.\\
@@ -741,10 +705,10 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{enumdescriptor-methods-table}Description of methods for the \texttt{EnumDescriptor} S4 class}
+\caption{\label{enumdescriptor-methods-table}Description of slots and methods for the \texttt{EnumDescriptor} S4 class}
 \end{table}
 
-\subsection{file descriptors}
+\subsection{File Descriptors}
 \label{subsec-file-descriptor}
 
 The class \emph{FileDescriptor} is an R wrapper
@@ -763,7 +727,8 @@ f$Person
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|cp{10cm}|}
+\begin{small}
+\begin{tabular}{l|p{10cm}}
 \hline
 \textbf{slot} & \textbf{description} \\
 \hline
@@ -773,19 +738,9 @@ f$Person
 \hline
 \texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
 \hline
-\texttt{package} & package name defined in this \texttt{.proto} file.\\
-\hline
-\end{tabular}
-\caption{\label{FileDescriptor-class-table}Description of slots for the \texttt{FileDescriptor} S4 class}
-\end{table}
-
-\begin{table}[h]
-\centering
-\begin{small}
-\begin{tabular}{l|l}
+\texttt{package} & package name defined in this \texttt{.proto} file.\\[.3cm]
 \hline
 \textbf{Method} & \textbf{Description} \\
-\hline
 \hline
 \texttt{name} & Return the filename for this FileDescriptorProto.\\
 \texttt{package} & Return the file-level package name specified in this FileDescriptorProto.\\
@@ -796,10 +751,10 @@ f$Person
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{filedescriptor-methods-table}Description of methods for the \texttt{FileDescriptor} S4 class}
+\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class}
 \end{table}
 
-\subsection{enum value descriptors}
+\subsection{Enum Value Descriptors}
 \label{subsec-enumvalue-descriptor}
 
 The class \emph{EnumValueDescriptor} is an R wrapper
@@ -817,7 +772,8 @@ tutorial.Person$PhoneType$value(number=1)
 
 \begin{table}[h]
 \centering
-\begin{tabular}{|cp{10cm}|}
+\begin{small}
+\begin{tabular}{l|p{10cm}}
 \hline
 \textbf{slot} & \textbf{description} \\
 \hline
@@ -825,19 +781,9 @@ tutorial.Person$PhoneType$value(number=1)
 \hline
 \texttt{name} & simple name of the enum value \\
 \hline
-\texttt{full\_name} & fully qualified name of the enum value \\
-\hline
-\end{tabular}
-\caption{\label{EnumValueDescriptor-class-table}Description of slots for the \texttt{EnumValueDescriptor} S4 class}
-\end{table}
-
-\begin{table}[h]
-\centering
-\begin{small}
-\begin{tabular}{l|l}
+\texttt{full\_name} & fully qualified name of the enum value \\[.3cm]
 \hline
 \textbf{Method} & \textbf{Description} \\
-\hline
 \hline
 \texttt{number} & return the number of this EnumValueDescriptor. \\
 \texttt{name} & Return the name of the enum value descriptor.\\
@@ -848,14 +794,92 @@ tutorial.Person$PhoneType$value(number=1)
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{enumvaluedescriptor-methods-table}Description of methods for the \texttt{EnumValueDescriptor} S4 class}
+\caption{\label{EnumValueDescriptor-methods-table}Description of slots
+  and methods for the \texttt{EnumValueDescriptor} S4 class}
 \end{table}
 
 \section{Type Coercion}
 
+One of the benefits of using an Interface Definition Language (IDL)
+like Protocol Buffers is that it provides a highly portable basic type
+system that different language and hardware implementations can map to
+the most appropriate type in different environments.
+Table~\ref{table-get-types} details the correspondance between the
+field type and the type of data that is retrieved by \verb|$| and \verb|[[|
+extractors.
+
+\begin{table}[h]
+\centering
+\begin{small}
+\begin{tabular}{|c|p{5cm}p{5cm}|}
+\hline
+field type & R type (non repeated) & R type (repeated) \\
+\hline
+\hline
+double	& \texttt{double} vector & \texttt{double} vector \\
+float	& \texttt{double} vector & \texttt{double} vector \\
+\hline
+int32	  & \texttt{integer} vector & \texttt{integer} vector \\
+uint32	  & \texttt{integer} vector & \texttt{integer} vector \\
+sint32	  & \texttt{integer} vector & \texttt{integer} vector \\
+fixed32	  & \texttt{integer} vector & \texttt{integer} vector \\
+sfixed32  & \texttt{integer} vector & \texttt{integer} vector \\
+\hline
+int64	  & \texttt{integer} or \texttt{character}
+vector \footnotemark & \texttt{integer} or \texttt{character} vector \\
+uint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
+sint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
+fixed64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
+sfixed64  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
+\hline
+bool	& \texttt{logical} vector & \texttt{logical} vector \\
+\hline
+string	& \texttt{character} vector & \texttt{character} vector \\
+bytes	& \texttt{character} vector & \texttt{character} vector \\
+\hline
+enum & \texttt{integer} vector & \texttt{integer} vector \\
+\hline
+message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \texttt{S4} objects of class \texttt{Message} \\
+\hline
+\end{tabular}
+\end{small}
+\caption{\label{table-get-types}Correspondance between field type and
+  R type retrieved by the extractors. \footnotesize{1. R lacks native
+  64-bit integers, so the \texttt{RProtoBuf.int64AsString} option is
+  available to return large integers as characters to avoid losing
+  precision.  This option is described in Section~\ref{sec:int64}}.}
+\end{table}
+
 \subsection{Booleans}
-Bools
-Int64s.
+
+R booleans can accept three values: \texttt{TRUE}, \texttt{FALSE}, and
+\texttt{NA}.  However, most other languages, including the protocol
+buffer schema, only accept \text{TRUE} or \text{FALSE}.  This means
+that we simply can not store R logical vectors that include all three
+possible values as booleans.  The library will refuse to store
+\texttt{NA}s in protocol buffer boolean fields, and users must instead
+choose another type (such as integers) capable of storing three
+distinct values.
+
+<<echo=FALSE,print=FALSE>>=
+    if (!exists("protobuf_unittest.TestAllTypes",
+                "RProtoBuf:DescriptorPool")) {
+        unittest.proto.file <- system.file("unitTests", "data",
+                                           "unittest.proto",
+                                           package="RProtoBuf")
+        readProtoFiles(file=unittest.proto.file)
+    }
+@
+
+<<>>=
+a <- new(protobuf_unittest.TestAllTypes)
+a$optional_bool <- TRUE
+a$optional_bool <- FALSE
+<<eval=F>>=
+a$optional_bool <- NA
+<<echo=FALSE,eval=TRUE,print=TRUE>>=
+try(a$optional_bool <- NA,silent=TRUE)
+@ 
 
 \subsection{64-bit integers}
 \label{sec:int64}
@@ -869,7 +893,7 @@ it loses the ability to distinguish some distinct integers:
 @
 
 Protocol Buffers are frequently used to pass data between different
-systems, however, and most other systems these days have support for
+systems, however, and most other modern systems do have support for
 64-bit integers.  To work around this, RProtoBuf allows users to get
 and set 64-bit integer types by treating them as characters.
 
@@ -919,10 +943,160 @@ options("RProtoBuf.int64AsString" = FALSE)
 @ 
 
 
-\section{Related work on IDLs (greatly expanded from what you have)}
+\section{Evaluation: data.frame to Protocol Buffer Serialization}
 
-\section{Design tradeoffs: reflection vs proto compiler (not addressed
-  at all in current vignettes)}
+Saptarshi Guha wrote the RHIPE package \citep{rhipe} which includes
+protocol buffer integration with R.  However, this implementation
+takes a different approach: any R object is serialized into a message
+based on a single catch-all \texttt{proto} schema.  Jeroen Ooms took a
+similar approach influenced by Saptarshi in his \pkg{RProtoBufUtils}
+package.  Unlike Saptarshi's package, however, RProtoBufUtils depends
+on RProtoBuf for underlying message operations.  This package is
+available at \url{https://github.com/jeroenooms/RProtoBufUtils}.
+
+The \textbf{RProtoBufUtils} package by Jereoen Ooms provides a
+\texttt{serialize\_pb} method to convert R objects into serialized
+protocol buffers in this format, and the \texttt{can\_serialize\_pb}
+method can be used to determine whether the given R object can safely
+be expressed in this way.  To show how how this method works, we
+attempt to convert all of the built-in datasets from R into this
+serialized protocol buffer representation.
+
+<<echo=TRUE>>=
+library(RProtoBufUtils)
+
+datasets <- subset(as.data.frame(data()$results), Package=="datasets")
+datasets$load.name <- sub("\\s+.*$", "", datasets$Item)
+n <- nrow(datasets)
+@
+
+There are \Sexpr{n} standard data sets included in R.  We use the
+\texttt{can\_serialize\_pb} method to determine how many of those can
+be safely converted to a serialized protocol buffer representation.
+
+<<echo=TRUE>>=
+datasets$valid.proto <- sapply(datasets$load.name, function(x) can_serialize_pb(eval(as.name(x))))
+datasets <- subset(datasets, valid.proto==TRUE)
+m <- nrow(datasets)
+@
+
+\Sexpr{m} data sets could be converted to Protocol Buffers
+(\Sexpr{format(100*m/n,digits=1)}\%).  The next section illustrates how
+many bytes were usued to store the data sets under four different
+situations (1) normal R serialization, (2) R serialization followed by
+gzip, (3) normal protocol buffer serialization, (4) protocol buffer
+serialization followed by gzip.
+
+\subsection{Compression Performance}
+\label{sec:compression}
+
+<<echo=FALSE,print=FALSE>>=
+datasets$object.size <- unname(sapply(datasets$load.name, function(x) object.size(eval(as.name(x)))))
+
+datasets$R.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize(eval(as.name(x)), NULL))))
+
+datasets$R.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize(eval(as.name(x)), NULL))))
+
+datasets$R.serialize.size.gz <- unname(sapply(datasets$load.name, function(x) length(memCompress(serialize(eval(as.name(x)), NULL), "gzip"))))
+
+datasets$RProtoBuf.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize_pb(eval(as.name(x)), NULL))))
+
+datasets$RProtoBuf.serialize.size.gz <- unname(sapply(datasets$load.name, function(x) length(memCompress(serialize_pb(eval(as.name(x)), NULL), "gzip"))))
+
+clean.df <- data.frame(dataset=datasets$load.name,
+                       object.size=datasets$object.size,
+                       "serialized"=datasets$R.serialize.size,
+                       "gzipped serialized"=datasets$R.serialize.size.gz,
+                       "RProtoBuf"=datasets$RProtoBuf.serialize.size,
+                       "gzipped RProtoBuf"=datasets$RProtoBuf.serialize.size.gz,
+                       check.names=FALSE)
+@
+
+Table~\ref{tab:compression} shows the sizes of 50 sample R datasets as
+returned by object.size() compared to the serialized sizes.
+The summary compression sizes are listed below, and a full table for a
+sample of 50 datasets is included on the next page.  Sizes are comparable
+but protocol buffers provide simple getters and setters in multiple
+languages instead of requiring other programs to parse the R
+serialization format \citep{serialization}.  One takeaway from this
+table is that RProtoBuf does not in general provide any significant
+space-savings over R's normal serialization mechanism.  The benefit
+from RProtoBuf comes from its interoperability with other
+environments.
+
+TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
+
+% N.B. see table.Rnw for how this table is created.
+%
+% latex table generated in R 3.0.2 by xtable 1.7-0 package
+% Fri Dec 27 17:00:03 2013
+\begin{table}[ht]
+\begin{center}
+\scalebox{0.9}{
+\begin{tabular}{l|r|r|r|r|r}
+  \hline
+Data Set & object.size & \multicolumn{2}{c|}{R Serialization} &
+\multicolumn{2}{c}{RProtoBuf Serialization} \\
+ & & Default & gzipped & Default & gzipped \\
+  \hline
+uspop & 584.00 & 268 & 172 & 211 & 148 \\ 
+  Titanic & 1960.00 & 633 & 257 & 481 & 249 \\ 
+  volcano & 42656.00 & 42517 & 5226 & 42476 & 4232 \\ 
+  euro.cross & 2728.00 & 1319 & 910 & 1207 & 891 \\ 
+  attenu & 14568.00 & 8234 & 2165 & 7771 & 2336 \\ 
+  ToothGrowth & 2568.00 & 1486 & 349 & 1239 & 391 \\ 
+  lynx & 1344.00 & 1028 & 429 & 971 & 404 \\ 
+  nottem & 2352.00 & 2036 & 627 & 1979 & 641 \\ 
+  sleep & 2752.00 & 746 & 282 & 483 & 260 \\ 
+  co2 & 4176.00 & 3860 & 1473 & 3803 & 1453 \\ 
+  austres & 1144.00 & 828 & 439 & 771 & 410 \\ 
+  ability.cov & 1944.00 & 716 & 357 & 589 & 341 \\ 
+  EuStockMarkets & 60664.00 & 59785 & 21232 & 59674 & 19882 \\ 
+  treering & 64272.00 & 63956 & 17647 & 63900 & 17758 \\ 
+  freeny.x & 1944.00 & 1445 & 1311 & 1372 & 1289 \\ 
+  Puromycin & 2088.00 & 813 & 306 & 620 & 320 \\ 
+  warpbreaks & 2768.00 & 1231 & 310 & 811 & 343 \\ 
+  BOD & 1088.00 & 334 & 182 & 226 & 168 \\ 
+  sunspots & 22992.00 & 22676 & 6482 & 22620 & 6742 \\ 
+  beaver2 & 4184.00 & 3423 & 751 & 3468 & 840 \\ 
+  anscombe & 2424.00 & 991 & 375 & 884 & 352 \\ 
+  esoph & 5624.00 & 3111 & 548 & 2240 & 665 \\ 
+  PlantGrowth & 1680.00 & 646 & 303 & 459 & 314 \\ 
+  infert & 15848.00 & 14328 & 1172 & 13197 & 1404 \\ 
+  BJsales & 1632.00 & 1316 & 496 & 1259 & 465 \\ 
+  stackloss & 1688.00 & 917 & 293 & 844 & 283 \\ 
+  crimtab & 7936.00 & 4641 & 713 & 1655 & 576 \\ 
+  LifeCycleSavings & 6048.00 & 3014 & 1420 & 2825 & 1407 \\ 
+  Harman74.cor & 9144.00 & 6056 & 2045 & 5861 & 2070 \\ 
+  nhtemp & 912.00 & 596 & 240 & 539 & 223 \\ 
+  faithful & 5136.00 & 4543 & 1339 & 4936 & 1776 \\ 
+  freeny & 5296.00 & 2465 & 1518 & 2271 & 1507 \\ 
+  discoveries & 1232.00 & 916 & 199 & 859 & 180 \\ 
+  state.x77 & 7168.00 & 4251 & 1754 & 4068 & 1756 \\ 
+  pressure & 1096.00 & 498 & 277 & 427 & 273 \\ 
+  fdeaths & 1008.00 & 692 & 291 & 635 & 272 \\ 
+  euro & 976.00 & 264 & 186 & 202 & 161 \\ 
+  LakeHuron & 1216.00 & 900 & 420 & 843 & 404 \\ 
+  mtcars & 6736.00 & 3798 & 1204 & 3633 & 1206 \\ 
+  precip & 4992.00 & 1793 & 813 & 1615 & 815 \\ 
+  state.area & 440.00 & 422 & 246 & 405 & 235 \\ 
+  attitude & 3024.00 & 1990 & 544 & 1920 & 561 \\ 
+  randu & 10496.00 & 9794 & 8859 & 10441 & 9558 \\ 
+  state.name & 3088.00 & 844 & 408 & 724 & 415 \\ 
+  airquality & 5496.00 & 4551 & 1241 & 2874 & 1294 \\ 
+  airmiles & 624.00 & 308 & 170 & 251 & 148 \\ 
+  quakes & 33112.00 & 32246 & 9898 & 29063 & 11595 \\ 
+  islands & 3496.00 & 1232 & 563 & 1098 & 561 \\ 
+  OrchardSprays & 3600.00 & 2164 & 445 & 1897 & 483 \\ 
+  WWWusage & 1232.00 & 916 & 274 & 859 & 251 \\ 
+   \hline
+\end{tabular}
+}
+\caption{Serialization sizes with R's built-in serialization and
+  RProtoBuf for 50 sample R datasets.}
+\label{tab:compression}
+\end{center}
+\end{table}
 
 \subsection{Performance considerations}
 
@@ -935,10 +1109,6 @@ slow with RProtoBuf, and while this is a useful class of operations,
 it is outside of the scope of RProtoBuf.  We should be very clear
 about this to clarify the goals and strengths of RProtoBuf and its
 reflection and object mapping.
-
-\subsection{Serialization comparison}
-
-TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
 
 
 \section{Descriptor lookup}
@@ -958,33 +1128,57 @@ it asks to our package if it knows the binding "foo", this is then
 implemented by the \texttt{RProtoBuf} package by calling an internal
 method of the \texttt{protobuf} C++ library.
 
-\section{Other approaches}
-
-Saptarshi Guha wrote another package that deals with integration
-of protocol buffer messages with R, taking a different angle :
-serializing any R object as a message, based on a single catch-all
-\texttt{proto} file.  Saptarshi's package is available at
-\url{http://ml.stat.purdue.edu/rhipe/doc/html/ProtoBuffers.html}.
-
-Jeroen Ooms took a similar approach influenced by Saptarshi in his
-\pkg{RProtoBufUtils} package.  Unlike Saptarshi's package,
-RProtoBufUtils depends on RProtoBuf for underlying message operations.
-This package is available at
-\url{https://github.com/jeroenooms/RProtoBufUtils}.
+%\section{Other approaches}
 
 % Phillip Yelland wrote another implementation, currently proprietary,
 % that has significant speed advantages when querying fields from a
 % large number of protocol buffers, but is less user friendly for the
 % basic cases documented here.
 
-\section{Basic usage example - tutorial.Person}
+%\section{Basic usage example - tutorial.Person}
 
-\section{Application: distributed Data Collection with MapReduce}
+\section{Application: Distributed Data Collection with MapReduce}
 
-We could describe a common MapReduce pattern of having the MR written
-in another language output protocol buffers that are later pulled into
-R.  There is some text about this in section 2 of
-http://cran.r-project.org/web/packages/HistogramTools/vignettes/HistogramTools.pdf 
+TODO(mstokely): Make this better.
+
+Many large data sets in fields such as particle physics and
+information processing are stored in binned or histogram form in order
+to reduce the data storage requirements
+\citep{scott2009multivariate}. Protocol Buffers make a particularly
+good data transport format in distributed MapReduces environments
+where large numbers of computers process a large data set for analysis.
+
+There are two common patterns for generating histograms of large data
+sets with MapReduce.  In the first method, each mapper task can
+generate a histogram over a subset of the data that is has been
+assigned, and then the histograms of each mapper are sent to one or
+more reducer tasks to merge.
+
+In the second method, each mapper rounds a data point to a bucket
+width and outputs that bucket as a key and '1' as a value.  Reducers
+then sum up all of the values with the same key and output to a data store.
+
+In both methods, the mapper tasks must choose identical
+bucket boundaries even though they are analyzing disjoint parts of the
+input set that may cover different ranges, or we must implement
+multiple phases.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\textwidth]{histogram-mapreduce-diag1.pdf}
+\end{center}
+\caption{Diagram of MapReduce Histogram Generation Pattern}
+\label{fig:mr-histogram-pattern1}
+\end{figure}
+
+Figure~\ref{fig:mr-histogram-pattern1} illustrates the second method
+described above for histogram generation of large data sets with
+MapReduce.
+
+This package is designed to be helpful if some of the Map or Reduce
+tasks are written in R, or if those components are written in other
+languages and only the resulting output histograms need to be
+manipulated in R.
 
 \section{Application: Sending/receiving Interaction With Servers}
 
