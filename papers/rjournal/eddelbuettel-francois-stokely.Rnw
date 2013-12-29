@@ -11,6 +11,11 @@
 \title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
 \author{by Dirk Eddelbuettel, Romain Fran\c{c}ois, and Murray Stokely}
 
+%% DE: I tend to have wider option(width=...) so this
+%%     guarantees better line breaks
+<<echo=FALSE,print=FALSE>>=
+options(width=65, prompt="R> ", digits=4)
+@
 
 \maketitle
 
@@ -34,11 +39,11 @@ complexity through reusability, modularity, and fault
 isolation \citep{Wegiel:2010:CTT:1932682.1869479}.  Different
 programming languages are often used for the different phases of data
 analysis -- collection, cleaning, analysis, post-processing, and
-presentation in order to take advantage of the unique combination of 
+presentation in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
 different environments.  Each stage of the data
 analysis pipeline may involve storing intermediate results in a
-file or sending them over the network.  Programming langauges such as
+file or sending them over the network.  Programming languages such as
 Java, Ruby, Python, and R include built-in serialization support, but
 these formats are tied to the specific programming language in use.
 % TODO(ms): and they often don't support versioning among other faults.
@@ -46,8 +51,8 @@ CSV files can be read and written by many applications and so are
 often used for exporting tabular data.  However, CSV files have a
 number of disadvantages, such as a limitation of exporting only
 tabular datasets, lack of type-safety, inefficient text representation
-and parsing, and abiguities in the format involving special
-characters.  JSON is another widely supported format used mostly on
+and parsing, and ambiguities in the format involving special
+characters.  JSON is another widely-supported format used mostly on
 the web that removes many of these disadvantages, but it too suffers
 from being too slow to parse and also does not provide strong typing
 between integers and floating point.  Large numbers of JSON messages
@@ -95,6 +100,8 @@ of these tradeoffs.
 Introductory section which may include references in parentheses
 \citep{R}, or cite a reference such as \citet{R} in the text.
 
+%% TODO(de,ms)  What follows is oooooold and was lifted from the webpage
+%%              Rewrite?
 Protocol buffers are a language-neutral, platform-neutral, extensible
 way of serializing structured data for use in communications
 protocols, data storage, and more.
@@ -161,6 +168,7 @@ populating its fields.
 %from a variety of data streams using a variety of different
 %languages.  The definition
 
+%% TODO(de) Can we make this not break the width of the page?
 \noindent
 \begin{table}
 \begin{tabular}{@{\hskip .01\textwidth}p{.40\textwidth}@{\hskip .015\textwidth}|@{\hskip .015\textwidth}p{0.55\textwidth}@{\hskip .01\textwidth}}
@@ -196,7 +204,7 @@ person$name
 person$name <- "Romain"
 cat(as.character(person))
 serialize(person, NULL)
-@ 
+@
 \end{minipage} \\
 \hline
 \end{tabular}
@@ -228,7 +236,7 @@ type specification from a \texttt{.proto} file.
 
 New \texttt{.proto} files are imported with the \code{readProtoFiles}
 function, which can import a single file, all files in a directory, or
-all \texttt{.proto} files provided by another R package. 
+all \texttt{.proto} files provided by another R package.
 
 The \texttt{.proto} file syntax for defining the structure of protocol
 buffer data is described comprehensively on Google Code:
@@ -424,7 +432,7 @@ generic in the S3 sense, such as \texttt{new} and
 
 Each R object stores an external pointer to an object managed by
 the \texttt{protobuf} C++ library.
-The \CRANpkg{Rcpp} \citep{eddelbuettel2011rcpp} package is used to
+The \CRANpkg{Rcpp} package \citep{eddelbuettel2011rcpp} is used to
 facilitate the integration of the R and C++ code for these objects.
 
 % Message, Descriptor, FieldDescriptor, EnumDescriptor,
@@ -768,7 +776,7 @@ The \verb|$| operator can be used to invoke pseudo-methods.
 tutorial.Person$PhoneType$value(1)
 tutorial.Person$PhoneType$value(name="HOME")
 tutorial.Person$PhoneType$value(number=1)
-@ 
+@
 
 \begin{table}[h]
 \centering
@@ -879,7 +887,7 @@ a$optional_bool <- FALSE
 a$optional_bool <- NA
 <<echo=FALSE,eval=TRUE,print=TRUE>>=
 try(a$optional_bool <- NA,silent=TRUE)
-@ 
+@
 
 \subsection{64-bit integers}
 \label{sec:int64}
@@ -940,7 +948,7 @@ length(unique(test$repeated_int64))
 
 <<echo=FALSE,print=FALSE>>=
 options("RProtoBuf.int64AsString" = FALSE)
-@ 
+@
 
 
 \section{Evaluation: data.frame to Protocol Buffer Serialization}
@@ -975,8 +983,8 @@ There are \Sexpr{n} standard data sets included in R.  We use the
 be safely converted to a serialized protocol buffer representation.
 
 <<echo=TRUE>>=
-datasets$valid.proto <- sapply(datasets$load.name, function(x) can_serialize_pb(eval(as.name(x))))
-datasets <- subset(datasets, valid.proto==TRUE)
+#datasets$valid.proto <- sapply(datasets$load.name, function(x) can_serialize_pb(eval(as.name(x))))
+#datasets <- subset(datasets, valid.proto==TRUE)
 m <- nrow(datasets)
 @
 
@@ -1039,56 +1047,56 @@ Data Set & object.size & \multicolumn{2}{c|}{R Serialization} &
 \multicolumn{2}{c}{RProtoBuf Serialization} \\
  & & Default & gzipped & Default & gzipped \\
   \hline
-uspop & 584.00 & 268 & 172 & 211 & 148 \\ 
-  Titanic & 1960.00 & 633 & 257 & 481 & 249 \\ 
-  volcano & 42656.00 & 42517 & 5226 & 42476 & 4232 \\ 
-  euro.cross & 2728.00 & 1319 & 910 & 1207 & 891 \\ 
-  attenu & 14568.00 & 8234 & 2165 & 7771 & 2336 \\ 
-  ToothGrowth & 2568.00 & 1486 & 349 & 1239 & 391 \\ 
-  lynx & 1344.00 & 1028 & 429 & 971 & 404 \\ 
-  nottem & 2352.00 & 2036 & 627 & 1979 & 641 \\ 
-  sleep & 2752.00 & 746 & 282 & 483 & 260 \\ 
-  co2 & 4176.00 & 3860 & 1473 & 3803 & 1453 \\ 
-  austres & 1144.00 & 828 & 439 & 771 & 410 \\ 
-  ability.cov & 1944.00 & 716 & 357 & 589 & 341 \\ 
-  EuStockMarkets & 60664.00 & 59785 & 21232 & 59674 & 19882 \\ 
-  treering & 64272.00 & 63956 & 17647 & 63900 & 17758 \\ 
-  freeny.x & 1944.00 & 1445 & 1311 & 1372 & 1289 \\ 
-  Puromycin & 2088.00 & 813 & 306 & 620 & 320 \\ 
-  warpbreaks & 2768.00 & 1231 & 310 & 811 & 343 \\ 
-  BOD & 1088.00 & 334 & 182 & 226 & 168 \\ 
-  sunspots & 22992.00 & 22676 & 6482 & 22620 & 6742 \\ 
-  beaver2 & 4184.00 & 3423 & 751 & 3468 & 840 \\ 
-  anscombe & 2424.00 & 991 & 375 & 884 & 352 \\ 
-  esoph & 5624.00 & 3111 & 548 & 2240 & 665 \\ 
-  PlantGrowth & 1680.00 & 646 & 303 & 459 & 314 \\ 
-  infert & 15848.00 & 14328 & 1172 & 13197 & 1404 \\ 
-  BJsales & 1632.00 & 1316 & 496 & 1259 & 465 \\ 
-  stackloss & 1688.00 & 917 & 293 & 844 & 283 \\ 
-  crimtab & 7936.00 & 4641 & 713 & 1655 & 576 \\ 
-  LifeCycleSavings & 6048.00 & 3014 & 1420 & 2825 & 1407 \\ 
-  Harman74.cor & 9144.00 & 6056 & 2045 & 5861 & 2070 \\ 
-  nhtemp & 912.00 & 596 & 240 & 539 & 223 \\ 
-  faithful & 5136.00 & 4543 & 1339 & 4936 & 1776 \\ 
-  freeny & 5296.00 & 2465 & 1518 & 2271 & 1507 \\ 
-  discoveries & 1232.00 & 916 & 199 & 859 & 180 \\ 
-  state.x77 & 7168.00 & 4251 & 1754 & 4068 & 1756 \\ 
-  pressure & 1096.00 & 498 & 277 & 427 & 273 \\ 
-  fdeaths & 1008.00 & 692 & 291 & 635 & 272 \\ 
-  euro & 976.00 & 264 & 186 & 202 & 161 \\ 
-  LakeHuron & 1216.00 & 900 & 420 & 843 & 404 \\ 
-  mtcars & 6736.00 & 3798 & 1204 & 3633 & 1206 \\ 
-  precip & 4992.00 & 1793 & 813 & 1615 & 815 \\ 
-  state.area & 440.00 & 422 & 246 & 405 & 235 \\ 
-  attitude & 3024.00 & 1990 & 544 & 1920 & 561 \\ 
-  randu & 10496.00 & 9794 & 8859 & 10441 & 9558 \\ 
-  state.name & 3088.00 & 844 & 408 & 724 & 415 \\ 
-  airquality & 5496.00 & 4551 & 1241 & 2874 & 1294 \\ 
-  airmiles & 624.00 & 308 & 170 & 251 & 148 \\ 
-  quakes & 33112.00 & 32246 & 9898 & 29063 & 11595 \\ 
-  islands & 3496.00 & 1232 & 563 & 1098 & 561 \\ 
-  OrchardSprays & 3600.00 & 2164 & 445 & 1897 & 483 \\ 
-  WWWusage & 1232.00 & 916 & 274 & 859 & 251 \\ 
+uspop & 584.00 & 268 & 172 & 211 & 148 \\
+  Titanic & 1960.00 & 633 & 257 & 481 & 249 \\
+  volcano & 42656.00 & 42517 & 5226 & 42476 & 4232 \\
+  euro.cross & 2728.00 & 1319 & 910 & 1207 & 891 \\
+  attenu & 14568.00 & 8234 & 2165 & 7771 & 2336 \\
+  ToothGrowth & 2568.00 & 1486 & 349 & 1239 & 391 \\
+  lynx & 1344.00 & 1028 & 429 & 971 & 404 \\
+  nottem & 2352.00 & 2036 & 627 & 1979 & 641 \\
+  sleep & 2752.00 & 746 & 282 & 483 & 260 \\
+  co2 & 4176.00 & 3860 & 1473 & 3803 & 1453 \\
+  austres & 1144.00 & 828 & 439 & 771 & 410 \\
+  ability.cov & 1944.00 & 716 & 357 & 589 & 341 \\
+  EuStockMarkets & 60664.00 & 59785 & 21232 & 59674 & 19882 \\
+  treering & 64272.00 & 63956 & 17647 & 63900 & 17758 \\
+  freeny.x & 1944.00 & 1445 & 1311 & 1372 & 1289 \\
+  Puromycin & 2088.00 & 813 & 306 & 620 & 320 \\
+  warpbreaks & 2768.00 & 1231 & 310 & 811 & 343 \\
+  BOD & 1088.00 & 334 & 182 & 226 & 168 \\
+  sunspots & 22992.00 & 22676 & 6482 & 22620 & 6742 \\
+  beaver2 & 4184.00 & 3423 & 751 & 3468 & 840 \\
+  anscombe & 2424.00 & 991 & 375 & 884 & 352 \\
+  esoph & 5624.00 & 3111 & 548 & 2240 & 665 \\
+  PlantGrowth & 1680.00 & 646 & 303 & 459 & 314 \\
+  infert & 15848.00 & 14328 & 1172 & 13197 & 1404 \\
+  BJsales & 1632.00 & 1316 & 496 & 1259 & 465 \\
+  stackloss & 1688.00 & 917 & 293 & 844 & 283 \\
+  crimtab & 7936.00 & 4641 & 713 & 1655 & 576 \\
+  LifeCycleSavings & 6048.00 & 3014 & 1420 & 2825 & 1407 \\
+  Harman74.cor & 9144.00 & 6056 & 2045 & 5861 & 2070 \\
+  nhtemp & 912.00 & 596 & 240 & 539 & 223 \\
+  faithful & 5136.00 & 4543 & 1339 & 4936 & 1776 \\
+  freeny & 5296.00 & 2465 & 1518 & 2271 & 1507 \\
+  discoveries & 1232.00 & 916 & 199 & 859 & 180 \\
+  state.x77 & 7168.00 & 4251 & 1754 & 4068 & 1756 \\
+  pressure & 1096.00 & 498 & 277 & 427 & 273 \\
+  fdeaths & 1008.00 & 692 & 291 & 635 & 272 \\
+  euro & 976.00 & 264 & 186 & 202 & 161 \\
+  LakeHuron & 1216.00 & 900 & 420 & 843 & 404 \\
+  mtcars & 6736.00 & 3798 & 1204 & 3633 & 1206 \\
+  precip & 4992.00 & 1793 & 813 & 1615 & 815 \\
+  state.area & 440.00 & 422 & 246 & 405 & 235 \\
+  attitude & 3024.00 & 1990 & 544 & 1920 & 561 \\
+  randu & 10496.00 & 9794 & 8859 & 10441 & 9558 \\
+  state.name & 3088.00 & 844 & 408 & 724 & 415 \\
+  airquality & 5496.00 & 4551 & 1241 & 2874 & 1294 \\
+  airmiles & 624.00 & 308 & 170 & 251 & 148 \\
+  quakes & 33112.00 & 32246 & 9898 & 29063 & 11595 \\
+  islands & 3496.00 & 1232 & 563 & 1098 & 561 \\
+  OrchardSprays & 3600.00 & 2164 & 445 & 1897 & 483 \\
+  WWWusage & 1232.00 & 916 & 274 & 859 & 251 \\
    \hline
 \end{tabular}
 }
