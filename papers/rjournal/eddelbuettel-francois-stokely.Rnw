@@ -827,10 +827,11 @@ field type & R type (non repeated) & R type (repeated) \\
 double	& \texttt{double} vector & \texttt{double} vector \\
 float	& \texttt{double} vector & \texttt{double} vector \\
 \hline
+uint32	  & \texttt{double} vector & \texttt{double} vector \\
+fixed32	  & \texttt{double} vector & \texttt{double} vector \\
+\hline
 int32	  & \texttt{integer} vector & \texttt{integer} vector \\
-uint32	  & \texttt{integer} vector & \texttt{integer} vector \\
 sint32	  & \texttt{integer} vector & \texttt{integer} vector \\
-fixed32	  & \texttt{integer} vector & \texttt{integer} vector \\
 sfixed32  & \texttt{integer} vector & \texttt{integer} vector \\
 \hline
 int64	  & \texttt{integer} or \texttt{character}
