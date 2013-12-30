@@ -1,9 +1,33 @@
-The RProtoBuf code base is a mix of many coding styles regarding
-indentation, spaces, braces, and more.
+Notes on Coding Style (C++ only for now).
 
-Murray proposes running the whole code base through
+1. Conventions: spacing, column limit, etc.
+2. clang-format
+3. excluded files
+4. Emacs FoldingMode annotations.
 
- clang-format -style="{BasedOnStyle: google, IndentWidth: 4}" -i *.cpp
+
+1. Conventions: spacing, column limit, etc.
+-------------------------------------------------------------------------------
+
+In December 2013 a pass was made through the code base with
+clang-format to enforce consistency among several competing styles
+that were used in the code base.  The new style requires:
+
+1) 4-space indents
+2) 100-character column limit
+3) no indentation for top level objects inside 'namespace {'
+4) no space inside opening/closing parenthesis of argument lists '(arg1, arg2)'
+5) space before open brackets.
+6) open brackets on same line as if conditional or switch statement.
+
+These conventions can be changed, so long as the code base remains consistent.
+
+2. clang-format
+-------------------------------------------------------------------------------
+
+These conventions can automatically be applied to files with:
+
+ clang-format -style="{BasedOnStyle: google, IndentWidth: 4, ColumnLimit: 100}" -i *.cpp
 
 There are a number of other parameters that can be set however, see the full output of
 
@@ -13,10 +37,28 @@ One changes have been made locally, you can view the diff with whitespace omitte
 
  svn diff -x -w
 
-This will still pull up all the changes where lines were broken at 80
+This will still pull up all the changes where lines were broken at 100
 characters or braces changed lines, but will ignore most of the pure
 whitespace changes for reviewing purposes before submitting.
 
-After the code base has been converted with clang-format, the emacs
-metadata comments at the top of each file will need to be updated as
-well.
+3. excluded files
+-------------------------------------------------------------------------------
+
+We exclude sisocks.h from style issues as it is written separately by
+Simon Urbanek.
+
+We exclude mutators.cpp and extractors.cpp temporarily as many other
+changes were made to those files recently and we want to allow more
+review before obfuscating the content changes with whitespace changes.
+
+We exclude Rcppsupport.h and RcppMacros.h because I don't like the
+result.  I want BEGIN_RCPP on its own line, for example.
+
+4. Emacs FoldingMode annotations.
+-------------------------------------------------------------------------------
+
+Some of the files include '{{{' '}}}' annotations in comments that are
+used to fold/unfold sections of code with Emacs folding mode (M-x
+folding-mode).  You can then right click to expand/hide these sections
+to get a higher level view of the file or drill down into specific
+sections of the code.
