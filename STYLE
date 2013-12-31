@@ -47,10 +47,6 @@ whitespace changes for reviewing purposes before submitting.
 We exclude sisocks.h from style issues as it is written separately by
 Simon Urbanek.
 
-We exclude mutators.cpp and extractors.cpp temporarily as many other
-changes were made to those files recently and we want to allow more
-review before obfuscating the content changes with whitespace changes.
-
 We exclude Rcppsupport.h and RcppMacros.h because I don't like the
 result.  I want BEGIN_RCPP on its own line, for example.
 
