@@ -3,7 +3,7 @@ Notes on Coding Style (C++ only for now).
 1. Conventions: spacing, column limit, etc.
 2. clang-format
 3. excluded files
-4. Emacs FoldingMode annotations.
+4. Emacs considerations (file-local config, dir-level config, and FoldingMode annotations.)
 
 
 1. Conventions: spacing, column limit, etc.
@@ -19,6 +19,7 @@ that were used in the code base.  The new style requires:
 4) no space inside opening/closing parenthesis of argument lists '(arg1, arg2)'
 5) space before open brackets.
 6) open brackets on same line as if conditional or switch statement.
+7) Unused arguments in functions should be named with 'unused_' prefix.
 
 These conventions can be changed, so long as the code base remains consistent.
 
@@ -50,11 +51,28 @@ Simon Urbanek.
 We exclude Rcppsupport.h and RcppMacros.h because I don't like the
 result.  I want BEGIN_RCPP on its own line, for example.
 
-4. Emacs FoldingMode annotations.
+4. Emacs considerations
 -------------------------------------------------------------------------------
 
-Some of the files include '{{{' '}}}' annotations in comments that are
-used to fold/unfold sections of code with Emacs folding mode (M-x
-folding-mode).  You can then right click to expand/hide these sections
-to get a higher level view of the file or drill down into specific
-sections of the code.
+A directory level configuration file is present in pkg/src to enforce
+common standard for files in that directory.  Modern emacs should read
+this file and apply its settings for new or existing file buffers in
+that directory.
+
+The file level prop line at the top of a file can be generated from
+the directory level config with 
+M-x copy-dir-locals-to-file-locals-prop-line
+
+The relevant prop line was added to all of the .cpp files in this
+directory by running awk in a loop:
+
+awk -v s="// -*- indent-tabs-mode: nil; tab-width: 4; show-trailing-whitespace: t; c-indent-level: 4; c-basic-offset: 4; -*-" 'NR == 1 {print s} {print}' $x > $x.new
+
+In addition to the buffer C++ mode settings, some of the files include
+'{{{' '}}}' annotations in comments that are used to fold/unfold
+sections of code with Emacs folding mode (M-x folding-mode).  You can
+then right click to expand/hide these sections to get a higher level
+view of the file or drill down into specific sections of the code.
+
+These folding annotations are also used by other editors and are not
+specific to Emacs.
