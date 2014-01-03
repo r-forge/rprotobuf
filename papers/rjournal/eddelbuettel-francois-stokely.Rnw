@@ -36,16 +36,24 @@ options(width=65, prompt="R> ", digits=4)
 Modern data collection and analysis pipelines are increasingly being
 built using collections of components to better manage software
 complexity through reusability, modularity, and fault
-isolation \citep{Wegiel:2010:CTT:1932682.1869479}.  Different
-programming languages are often used for the different phases of data
+isolation \citep{Wegiel:2010:CTT:1932682.1869479}.  
+Data analysis patterns such as Split-Apply-Combine
+\citep{wickham2011split} explicitly break up large problems into
+manageable pieces.  These patterns are frequently employed with
+different programming languages used for the different phases of data
 analysis -- collection, cleaning, analysis, post-processing, and
 presentation in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
 different environments.  Each stage of the data
 analysis pipeline may involve storing intermediate results in a
-file or sending them over the network.  Programming languages such as
-Java, Ruby, Python, and R include built-in serialization support, but
-these formats are tied to the specific programming language in use.
+file or sending them over the network.
+
+Programming languages such as Java, Ruby, Python, and R include
+built-in serialization support, but these formats are tied to the
+specific programming language in use and thus lock the user into a
+single environment.
+%
+% do not facilitate
 % TODO(ms): and they often don't support versioning among other faults.
 CSV files can be read and written by many applications and so are
 often used for exporting tabular data.  However, CSV files have a
@@ -55,24 +63,42 @@ and parsing, and ambiguities in the format involving special
 characters.  JSON is another widely-supported format used mostly on
 the web that removes many of these disadvantages, but it too suffers
 from being too slow to parse and also does not provide strong typing
-between integers and floating point.  Large numbers of JSON messages
-would also be required to duplicate the field names with each message.
+between integers and floating point.  Because the schema information
+is not kept separately, multiple JSON messages of the same
+type needlessly duplicate the field names with each message.
+%
+%
+%
+A number of binary formats based on JSON have been proposed that
+reduce the parsing cost and improve the efficiency.  MessagePack
+\citep{msgpackR} and BSON \citep{rmongodb} both have R interfaces, but
+these formats lack a separate schema for the serialized data and thus
+still duplicate field names with each message sent over the network or
+stored in a file.  Such formats also lack support for versioning when
+data storage needs evolve over time.
 
-TODO(ms): Also work in reference to Split-Apply-Combine pattern for
-data analysis \citep{wickham2011split}, since that is a great pattern
-but it seems overly optimistic to expect all of those phases to always
-be done in the same language.
+% TODO(mstokely): Take a more conversational tone here asking
+% questions and motivating protocol buffers?
 
 This article describes the basics of Google's Protocol Buffers through
 an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
 basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
 several common use cases for protocol buffers in data analysis.
 
+\section{Protocol Buffers}
+% This content is good.  Maybe use and cite?
+% http://martin.kleppmann.com/2012/12/05/schema-evolution-in-avro-protocol-buffers-thrift.html
+
+Protocol Buffers are a widely used modern language-neutral,
+platform-neutral, extensible mechanism for sharing structured data.
+
+
+one of the more popular examples of the modern 
+
+
 XXX Related work on IDLs (greatly expanded )
 
 XXX Design tradeoffs: reflection vs proto compiler
-
-\section{Protocol Buffers}
 
 Once the data serialization needs get complex enough, application
 developers typically benefit from the use of an \emph{interface
@@ -138,6 +164,14 @@ Besides the officially supported C++, Java and Python implementations, several p
 created to support protocol buffers for many languages. The list of known
 languages to support protocol buffers is compiled as part of the
 project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
+
+\begin{figure}[t]
+\begin{center}
+\includegraphics[width=\textwidth]{protobuf-distributed-system-crop.pdf}
+\end{center}
+\caption{Example protobuf usage}
+\label{fig:protobuf-distributed-usecase}
+\end{figure}
 
 \section{Basic Usage: Messages and Descriptors}
 
