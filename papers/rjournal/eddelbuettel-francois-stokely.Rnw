@@ -223,7 +223,7 @@ serialize(person, NULL)
 %  \label{figure:rlogo}
 %\end{figure}
 
-\subsection{Importing Message Descriptors from \texttt{.proto} files}
+\subsection{Importing Message Descriptors from .proto files}
 
 %The three basic abstractions of \CRANpkg{RProtoBuf} are Messages,
 %which encapsulate a data structure, Descriptors, which define the
@@ -871,7 +871,7 @@ message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \textt
 
 R booleans can accept three values: \texttt{TRUE}, \texttt{FALSE}, and
 \texttt{NA}.  However, most other languages, including the protocol
-buffer schema, only accept \text{TRUE} or \text{FALSE}.  This means
+buffer schema, only accept \texttt{TRUE} or \texttt{FALSE}.  This means
 that we simply can not store R logical vectors that include all three
 possible values as booleans.  The library will refuse to store
 \texttt{NA}s in protocol buffer boolean fields, and users must instead
@@ -1067,7 +1067,7 @@ TODO comparison of protobuf serialization sizes/times for various vectors.  Comp
 %
 % latex table generated in R 3.0.2 by xtable 1.7-0 package
 % Fri Dec 27 17:00:03 2013
-\begin{table}[ht]
+\begin{table}[h!]
 \begin{center}
 \scalebox{0.9}{
 \begin{tabular}{l|r|r|r|r|r}
@@ -1258,16 +1258,3 @@ suggestions.  Saptarshi Guha's contemporaneous work on \pkg{RHIPE} was a
 strong motivator.
 
 \bibliography{eddelbuettel-francois-stokely}
-
-\address{Dirk Eddelbuettel\\
-  Debian and R Projects\\
-  711 Monroe Avenue, River Forest, IL 60305\\
-  USA}
-\email{edd@debian.org}
-
-\address{Murray Stokely\\
-  Google, Inc.\\
-  1600 Amphitheatre Parkway\\
-  Mountain View, CA 94043\\
-  USA}
-\email{mstokely@google.com}

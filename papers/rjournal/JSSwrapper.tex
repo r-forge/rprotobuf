@@ -1,0 +1,79 @@
+\documentclass[article]{jss}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%
+% Local helpers to make this more compatible with R Journal style.
+%
+\newcommand{\CRANpkg}[1]{\pkg{#1}}
+\RequirePackage{fancyvrb}
+\RequirePackage{alltt}
+\DefineVerbatimEnvironment{example}{Verbatim}{}
+
+%% almost as usual
+\author{Dirk Eddelbuettel\\Debian and R Projects \And 
+        Murray Stokely\\Google, Inc}
+\title{\pkg{RProtoBuf}: Efficient Cross-Language Data Serialization in R}
+
+%% for pretty printing and a nice hypersummary also set:
+\Plainauthor{Dirk Eddelbuettel, Murray Stokely} %% comma-separated
+\Plaintitle{RProtoBuf: Efficient Cross-Language Data Serialization in R}
+\Shorttitle{\pkg{RProtoBuf}: Protocol Buffers in R} %% a short title (if necessary)
+
+%% an abstract and keywords
+\Abstract{
+Modern data collection and analysis pipelines often involve
+a sophisticated mix of applications written in general purpose and
+specialized programming languages.  Protocol Buffers are a popular
+method of serializing structured data between applications---while remaining
+independent of programming languages or operating system.  The
+\CRANpkg{RProtoBuf} package provides a complete interface to this
+library.
+}
+\Keywords{r, protocol buffers, serialization, cross-platform}
+\Plainkeywords{r, protocol buffers, serialization, cross-platform} %% without formatting
+%% at least one keyword must be supplied
+
+%% publication information
+%% NOTE: Typically, this can be left commented and will be filled out by the technical editor
+%% \Volume{50}
+%% \Issue{9}
+%% \Month{June}
+%% \Year{2012}
+%% \Submitdate{2012-06-04}
+%% \Acceptdate{2012-06-04}
+
+%% The address of (at least) one author should be given
+%% in the following format:
+\Address{
+  Murray Stokely\\
+  Google, Inc.\\
+  1600 Amphitheatre Parkway\\
+  Mountain View, CA 94040\\
+  USA\\
+  E-mail: \email{mstokely@google.com}\\
+  URL: \url{http://www.stokely.org/}
+}
+%% It is also possible to add a telephone and fax number
+%% before the e-mail in the following format:
+%% Telephone: +43/512/507-7103
+%% Fax: +43/512/507-2851
+
+%% for those who use Sweave please include the following line (with % symbols):
+%% need no \usepackage{Sweave.sty}
+
+%% end of declarations %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\begin{document}
+
+\include{eddelbuettel-francois-stokely}
+%% include your article here, just as usual
+%% Note that you should use the \pkg{}, \proglang{} and \code{} commands.
+
+%\section[About Java]{About \proglang{Java}}
+%% Note: If there is markup in \(sub)section, then it has to be escape as above.
+
+\end{document}
