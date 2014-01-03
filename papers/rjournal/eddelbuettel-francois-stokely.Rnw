@@ -48,24 +48,23 @@ different environments.  Each stage of the data
 analysis pipeline may involve storing intermediate results in a
 file or sending them over the network.
 
-Programming languages such as Java, Ruby, Python, and R include
-built-in serialization support, but these formats are tied to the
-specific programming language in use and thus lock the user into a
-single environment.
-%
-% do not facilitate
-% TODO(ms): and they often don't support versioning among other faults.
-CSV files can be read and written by many applications and so are
-often used for exporting tabular data.  However, CSV files have a
-number of disadvantages, such as a limitation of exporting only
+Given these requirements, how do we safely share intermediate results
+between different applications, possibly written in different
+languages, and possibly running on different computers?  Programming
+languages such as R, Java, Julia, and Python include built-in
+serialization support, but these formats are tied to the specific
+programming language in use and thus lock the user into a single
+environment.  CSV files can be read and written by many applications
+and so are often used for exporting tabular data.  However, CSV files
+have a number of disadvantages, such as a limitation of exporting only
 tabular datasets, lack of type-safety, inefficient text representation
 and parsing, and ambiguities in the format involving special
 characters.  JSON is another widely-supported format used mostly on
 the web that removes many of these disadvantages, but it too suffers
 from being too slow to parse and also does not provide strong typing
 between integers and floating point.  Because the schema information
-is not kept separately, multiple JSON messages of the same
-type needlessly duplicate the field names with each message.
+is not kept separately, multiple JSON messages of the same type
+needlessly duplicate the field names with each message.
 %
 %
 %
@@ -77,6 +76,19 @@ still duplicate field names with each message sent over the network or
 stored in a file.  Such formats also lack support for versioning when
 data storage needs evolve over time.
 
+Once the data serialization needs of an application become complex
+enough, developers typically benefit from the use of an
+\emph{interface description language}, or \emph{IDL}.  IDLs like
+Google's Protocol Buffers, Apache Thrift, and Apache Avro provide a compact
+well-documented schema for cross-langauge data structures and
+efficient binary interchange formats.  The schema can be used to
+generate model classes for statically typed programming languages such
+as C++ and Java, or can be used with reflection for dynamically typed
+programming languages.  Since the schema is provided separately from
+the encoded data, the data can be efficiently encoded to minimize
+storage costs of the stored data when compared with simple
+``schema-less'' binary interchange formats.
+
 % TODO(mstokely): Take a more conversational tone here asking
 % questions and motivating protocol buffers?
 
@@ -85,12 +97,12 @@ an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
 basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
 several common use cases for protocol buffers in data analysis.
 
+
 \section{Protocol Buffers}
 % This content is good.  Maybe use and cite?
 % http://martin.kleppmann.com/2012/12/05/schema-evolution-in-avro-protocol-buffers-thrift.html
 
-Protocol Buffers are a widely used modern language-neutral,
-platform-neutral, extensible mechanism for sharing structured data.
+Protocol Buffers are a widely used modern language-neutral, platform-neutral, extensible mechanism for sharing structured data.
 
 
 one of the more popular examples of the modern 
@@ -100,18 +112,6 @@ XXX Related work on IDLs (greatly expanded )
 
 XXX Design tradeoffs: reflection vs proto compiler
 
-Once the data serialization needs get complex enough, application
-developers typically benefit from the use of an \emph{interface
-description language}, or \emph{IDL}.  IDLs like Google's Protocol
-Buffers and Apache Thrift provide a compact well-documented schema for
-cross-langauge data structures as well efficient binary interchange
-formats.  The schema can be used to generate model classes for
-statically typed programming languages such as C++ and Java, or can be
-used with reflection for dynamically typed programming languages.
-Since the schema is provided separately from the encoded data, the
-data can be efficiently encoded to minimize storage costs of the
-stored data when compared with simple ``schema-less'' binary
-interchange formats like BSON.
 
 % TODO(ms) Also talk about versioning and why its useful.
 
