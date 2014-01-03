@@ -9,7 +9,7 @@
 \renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
 
 \title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
-\author{by Dirk Eddelbuettel, Romain Fran\c{c}ois, and Murray Stokely}
+\author{by Dirk Eddelbuettel and Murray Stokely}
 
 %% DE: I tend to have wider option(width=...) so this
 %%     guarantees better line breaks
@@ -540,11 +540,19 @@ has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
 
 \subsection{Descriptors}
 
-Message descriptors are represented in R with the \emph{Descriptor} S4
+Descriptors describe the type of a Message.  This includes what fields
+a message contains and what the types of those fields are.  Message
+descriptors are represented in R with the \emph{Descriptor} S4
 class. The class contains the slots \texttt{pointer} and
 \texttt{type}.  Similarly to messages, the \verb|$| operator can be
 used to retrieve descriptors that are contained in the descriptor, or
 invoke pseudo-methods.
+
+When \CRANpkg{RProtoBuf} is first loaded it calls
+\texttt{readProtoFiles} to read in an example \texttt{.proto} file
+included with the package.  The \texttt{tutorial.Person} descriptor
+and any other descriptors defined in loaded \texttt{.proto} files are
+then available on the search path.
 
 <<>>=
 # field descriptor
@@ -890,6 +898,23 @@ a$optional_bool <- NA
 try(a$optional_bool <- NA,silent=TRUE)
 @
 
+\subsection{Unsigned Integers}
+
+R lacks a native unsigned integer type.  Values between $2^{31}$ and
+$2^{32} - 1$ read from unsigned int protocol buffer fields must be
+stored as doubles in R.
+
+<<>>=
+as.integer(2^31-1)
+<<eval=F>>=
+as.integer(2^31 - 1) + as.integer(1)
+<<echo=FALSE,eval=TRUE,print=TRUE>>=
+try(as.integer(2^31 - 1) + as.integer(1))
+
+2^31
+class(2^31)
+@
+
 \subsection{64-bit integers}
 \label{sec:int64}
 
@@ -936,7 +961,10 @@ test$repeated_int64 <- c("9007199254740992", "9007199254740993")
 When reading the value back into R, numeric types are returned by
 default, but when the full precision is required a character value
 will be returned if the \texttt{RProtoBuf.int64AsString} option is set
-to \texttt{TRUE}.
+to \texttt{TRUE}.  The character values are useful because they can
+accurately be used as unique identifiers and can easily be passed to R
+packages such as \CRANpkg{int64} \citep{int64} or \CRANpkg{bit64}
+\citep{bit64} which represent 64-bit integers in R.
 
 <<>>=
 options("RProtoBuf.int64AsString" = FALSE)
@@ -1211,6 +1239,24 @@ as \citep{Sumaray:2012:CDS:2184751.2184810}
 
 %This file is only a basic article template. For full details of \emph{The R Journal} style and information on how to prepare your article for submission, see the \href{http://journal.r-project.org/latex/RJauthorguide.pdf}{Instructions for Authors}.
 
+\section{Acknowledgement}
+
+\CRANpkg{RProtoBuf} was originally written in 2009 by Romain
+Fran\c{c}ois and Dirk Eddelbuettel.  The authors would particularly
+like to thank Romain for his initial implementation and continued
+design discussions. Several features of this package are based
+on the design of the \CRANpkg{rJava} package by Simon Urbanek
+(dispatch on new, S4 class structures using external pointers). We'd
+like to thank Simon for his indirect involvment on
+\CRANpkg{RProtoBuf}.  The user defined table mechanism, implemented by
+Duncan Temple Lang for the purpose of the \pkg{RObjectTables}
+package allowed the dynamic symbol lookup. Many thanks to Duncan for
+this amazing feature.  Kenton Varda was generous with his time in
+reviewing code and explaining obscure protocol buffer semantics.  Karl
+Millar and Jeroen Ooms were helpful in reviewing code or offering
+suggestions.  Saptarshi Guha's contemporaneous work on \pkg{RHIPE} was a
+strong motivator.
+
 \bibliography{eddelbuettel-francois-stokely}
 
 \address{Dirk Eddelbuettel\\
@@ -1218,12 +1264,6 @@ as \citep{Sumaray:2012:CDS:2184751.2184810}
   711 Monroe Avenue, River Forest, IL 60305\\
   USA}
 \email{edd@debian.org}
-
-\address{Author Two\\
-  Affiliation\\
-  Address\\
-  Country}
-\email{author2@work}
 
 \address{Murray Stokely\\
   Google, Inc.\\
