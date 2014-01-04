@@ -248,13 +248,14 @@ populating its fields.
 %from a variety of data streams using a variety of different
 %languages.  The definition
 
+
 %% TODO(de) Can we make this not break the width of the page?
 \noindent
 \begin{table}
-\begin{tabular}{@{\hskip .01\textwidth}p{.40\textwidth}@{\hskip .015\textwidth}|@{\hskip .015\textwidth}p{0.55\textwidth}@{\hskip .01\textwidth}}
-\hline
+\begin{tabular}{@{\hskip .01\textwidth}p{.40\textwidth}@{\hskip .02\textwidth}@{\hskip .02\textwidth}p{0.55\textwidth}@{\hskip .01\textwidth}}
+\toprule
 Schema : \texttt{addressbook.proto} & Example R Session\\
-\hline
+\cmidrule{1-2}
 \begin{minipage}{.35\textwidth}
 \vspace{2mm}
 \begin{example}
@@ -275,18 +276,18 @@ message Person {
 }
 \end{example}
 \vspace{2mm}
-\end{minipage} & \begin{minipage}{.45\textwidth}
+\end{minipage} & \begin{minipage}{.5\textwidth}
 <<echo=TRUE>>=
 library(RProtoBuf)
-person <- new(tutorial.Person, id=1, name="Dirk")
-person
-person$name
-person$name <- "Romain"
-cat(as.character(person))
-serialize(person, NULL)
+p <- new(tutorial.Person, id=1, name="Dirk")
+class(p)
+p$name
+p$name <- "Murray"
+cat(as.character(p))
+serialize(p, NULL)
 @
 \end{minipage} \\
-\hline
+\bottomrule
 \end{tabular}
 \caption{The schema representation from a \texttt{.proto} file for the
   \texttt{tutorial.Person} class (left) and simple R code for creating
@@ -1324,7 +1325,7 @@ The first versions of \CRANpkg{RProtoBuf} were written during 2009-2010,
 with very significant contributions, both in code and design, made by
 Romain Fran\c{c}ois. His continued influence on design and code is
 appreciated. Several features of the package are influenced
-by on the design of the \CRANpkg{rJava} package by Simon Urbanek
+by the design of the \CRANpkg{rJava} package by Simon Urbanek
 The user-defined table mechanism, implemented by Duncan Temple Lang for the
 purpose of the \pkg{RObjectTables} package allowed the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
