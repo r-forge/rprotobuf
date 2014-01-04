@@ -24,8 +24,8 @@ options(width=65, prompt="R> ", digits=4)
  specialized programming languages.  Protocol Buffers are a popular
  method of serializing structured data between applications---while remaining
  independent of programming languages or operating system.  The
- \CRANpkg{RProtoBuf} package provides a complete interface to this
- library.
+ \CRANpkg{RProtoBuf} package provides a complete interface between this
+ library and the R environment for statistical computing.
  %TODO(ms) keep it less than 150 words.
 }
 
@@ -36,7 +36,7 @@ options(width=65, prompt="R> ", digits=4)
 Modern data collection and analysis pipelines are increasingly being
 built using collections of components to better manage software
 complexity through reusability, modularity, and fault
-isolation \citep{Wegiel:2010:CTT:1932682.1869479}.  
+isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
 Data analysis patterns such as Split-Apply-Combine
 \citep{wickham2011split} explicitly break up large problems into
 manageable pieces.  These patterns are frequently employed with
@@ -47,12 +47,15 @@ performance, speed of development, and library support offered by
 different environments.  Each stage of the data
 analysis pipeline may involve storing intermediate results in a
 file or sending them over the network.
+% DE: Nice!
 
 Given these requirements, how do we safely share intermediate results
 between different applications, possibly written in different
-languages, and possibly running on different computers?  Programming
+languages, and possibly running on different computer system, possibly
+spanning different operating systems?  Programming
 languages such as R, Julia, Java, and Python include built-in
 serialization support, but these formats are tied to the specific
+% DE: need to define serialization?
 programming language in use and thus lock the user into a single
 environment.  CSV files can be read and written by many applications
 and so are often used for exporting tabular data.  However, CSV files
@@ -74,7 +77,9 @@ reduce the parsing cost and improve the efficiency.  MessagePack
 these formats lack a separate schema for the serialized data and thus
 still duplicate field names with each message sent over the network or
 stored in a file.  Such formats also lack support for versioning when
-data storage needs evolve over time.
+data storage needs evolve over time, or when application logic and
+requirement changes dictate update to the message format.
+% DE: Need to talk about XML ?
 
 Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
@@ -82,8 +87,8 @@ enough, developers typically benefit from the use of an
 Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro provide a compact
 well-documented schema for cross-langauge data structures and
 efficient binary interchange formats.  The schema can be used to
-generate model classes for statically typed programming languages such
-as C++ and Java, or can be used with reflection for dynamically typed
+generate model classes for statically-typed programming languages such
+as C++ and Java, or can be used with reflection for dynamically-typed
 programming languages.  Since the schema is provided separately from
 the encoded data, the data can be efficiently encoded to minimize
 storage costs of the stored data when compared with simple
@@ -104,7 +109,7 @@ several common use cases for protocol buffers in data analysis.
 
 \section{Protocol Buffers}
 
-Introductory section which may include references in parentheses
+FIXME Introductory section which may include references in parentheses
 \citep{R}, or cite a reference such as \citet{R} in the text.
 
 % This content is good.  Maybe use and cite?
@@ -113,14 +118,18 @@ Introductory section which may include references in parentheses
 
 %% TODO(de,ms)  What follows is oooooold and was lifted from the webpage
 %%              Rewrite?
-Protocol Buffers are a modern language-neutral, platform-neutral,
-extensible mechanism for sharing and storing structured data.  They
-have been widely adopted in industry with applications as varied as Sony
-Playstations, Twitter, Google Search, Hadoop, and Open Street Map.  While
-traditional IDLs were previously characterized by bloat and
-complexity, Protocol Buffers is based on a simple list and records
-model that is flexible and easy to use.  Some of the key features
-provided by Protocol Buffers for data analysis include:
+Protocol Buffers can be described as a modern, language-neutral, platform-neutral,
+extensible mechanism for sharing and storing structured data.  Since their
+introduction, Protocol Buffers have been widely adopted in industry with
+applications as varied as database-internal messaging (Drizzle), % DE: citation?
+Sony Playstations, Twitter, Google Search, Hadoop, and Open Street Map.  While
+% TODO(DE): This either needs a citation, or remove the name drop
+traditional IDLs have at time been criticized for code bloat and
+complexity, Protocol Buffers are based on a simple list and records
+model that is compartively flexible and simple to use.
+
+Some of the key features provided by Protocol Buffers for data analysis
+include:
 
 \begin{itemize}
 \item \emph{Portable}:  Allows users to send and receive data between
@@ -138,13 +147,13 @@ communication workflow with protocol buffers and an interactive R
 session.  Common use cases include populating a request RPC protocol
 buffer in R that is then serialized and sent over the network to a
 remote server.  The server would then deserialize the message, act on
-the request, and respond with a new protocol buffer over the network.
+the request, and respond with a new protocol buffer over the network. The key
+difference to, say, a request to an Rserve instance is that the remote server
+may not even know the R language.
 
 %Protocol buffers are a language-neutral, platform-neutral, extensible
 %way of serializing structured data for use in communications
 %protocols, data storage, and more.
-
-
 
 %Protocol Buffers offer key features such as an efficient data interchange
 %format that is both language- and operating system-agnostic yet uses a
@@ -160,7 +169,7 @@ the request, and respond with a new protocol buffer over the network.
 
 Many sources compare data serialization formats and show protocol
 buffers very favorably to the alternatives, such
-as \citep{Sumaray:2012:CDS:2184751.2184810}
+as \citet{Sumaray:2012:CDS:2184751.2184810}
 
 %The flexibility of the reflection-based API is particularly well
 %suited for interactive data analysis.
