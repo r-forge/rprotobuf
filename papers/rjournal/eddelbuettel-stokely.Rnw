@@ -1067,22 +1067,20 @@ Saptarshi Guha wrote the RHIPE package \citep{rhipe} which includes
 protocol buffer integration with R.  However, this implementation
 takes a different approach: any R object is serialized into a message
 based on a single catch-all \texttt{proto} schema.  Jeroen Ooms took a
-similar approach influenced by Saptarshi in his \pkg{RProtoBufUtils}
-package.  Unlike Saptarshi's package, however, RProtoBufUtils depends
-on RProtoBuf for underlying message operations.  This package is
-available at \url{https://github.com/jeroenooms/RProtoBufUtils}.
+similar approach influenced by Saptarshi in the \pkg{RProtoBufUtils}
+package (which has now been integrated in \pkg{RProtoBuf}).  Unlike
+Saptarshi's package, however, RProtoBufUtils depends 
+on, and extends, RProtoBuf for underlying message operations.  
 
-The \textbf{RProtoBufUtils} package by Jereoen Ooms provides a
+One key extension of \pkg{RProtoBufUtils} is the 
 \texttt{serialize\_pb} method to convert R objects into serialized
-protocol buffers in this format, and the \texttt{can\_serialize\_pb}
+protocol buffers in the catch-all schema. The \texttt{can\_serialize\_pb}
 method can be used to determine whether the given R object can safely
-be expressed in this way.  To show how how this method works, we
+be expressed in this way.  To illustrate how this method works, we
 attempt to convert all of the built-in datasets from R into this
 serialized protocol buffer representation.
 
 <<echo=TRUE>>=
-library(RProtoBufUtils)
-
 datasets <- subset(as.data.frame(data()$results), Package=="datasets")
 datasets$load.name <- sub("\\s+.*$", "", datasets$Item)
 n <- nrow(datasets)
