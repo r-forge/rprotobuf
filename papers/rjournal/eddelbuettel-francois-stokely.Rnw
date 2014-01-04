@@ -1130,7 +1130,7 @@ serialization format \citep{serialization}.  One takeaway from this
 table is that RProtoBuf does not in general provide any significant
 space-savings over R's normal serialization mechanism.  The benefit
 from RProtoBuf comes from its interoperability with other
-environments.
+environments, safe versioning, 
 
 TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
 
@@ -1297,6 +1297,9 @@ with an RPC system this means that one can interactively craft request
 messages, send the serialized message to a remote server, read back a
 response, and then parse the response protocol buffer interactively.
 
+TODO(mstokely): Talk about Jeroen Ooms OpenCPU, or talk about Andy
+Chu's Poly.
+
 \section{Summary}
 
 % RProtoBuf has been used.
@@ -1308,20 +1311,16 @@ response, and then parse the response protocol buffer interactively.
 
 \section{Acknowledgement}
 
-\CRANpkg{RProtoBuf} was originally written in 2009 by Romain
-Fran\c{c}ois and Dirk Eddelbuettel.  The authors would particularly
-like to thank Romain for his initial implementation and continued
-design discussions. Several features of this package are based
-on the design of the \CRANpkg{rJava} package by Simon Urbanek
-(dispatch on new, S4 class structures using external pointers). We'd
-like to thank Simon for his indirect involvment on
-\CRANpkg{RProtoBuf}.  The user defined table mechanism, implemented by
-Duncan Temple Lang for the purpose of the \pkg{RObjectTables}
-package allowed the dynamic symbol lookup. Many thanks to Duncan for
-this amazing feature.  Kenton Varda was generous with his time in
-reviewing code and explaining obscure protocol buffer semantics.  Karl
-Millar and Jeroen Ooms were helpful in reviewing code or offering
-suggestions.  Saptarshi Guha's contemporaneous work on \pkg{RHIPE} was a
-strong motivator.
+The first versions of \CRANpkg{RProtoBuf} were written during 2009-2010,
+with very significant contributions, both in code and design, made by
+Romain Fran\c{c}ois. His continued influence on design and code is
+appreciated. Several features of the package are influenced
+by on the design of the \CRANpkg{rJava} package by Simon Urbanek
+The user-defined table mechanism, implemented by Duncan Temple Lang for the
+purpose of the \pkg{RObjectTables} package allowed the dynamic symbol lookup.
+Kenton Varda was generous with his time in reviewing code and explaining
+obscure protocol buffer semantics.  Karl Millar and Jeroen Ooms were
+helpful in reviewing code or offering suggestions.  The contemporaneous
+work by Saptarshi Guha on \pkg{RHIPE} was a strong initial motivator.
 
 \bibliography{eddelbuettel-francois-stokely}
