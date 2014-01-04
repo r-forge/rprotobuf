@@ -1139,7 +1139,7 @@ serialization format \citep{serialization}.  One takeaway from this
 table is that RProtoBuf does not in general provide any significant
 space-savings over R's normal serialization mechanism.  The benefit
 from RProtoBuf comes from its interoperability with other
-environments, safe versioning, 
+environments, safe versioning,
 
 TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
 
@@ -1332,4 +1332,4 @@ obscure protocol buffer semantics.  Karl Millar and Jeroen Ooms were
 helpful in reviewing code or offering suggestions.  The contemporaneous
 work by Saptarshi Guha on \pkg{RHIPE} was a strong initial motivator.
 
-\bibliography{eddelbuettel-francois-stokely}
+\bibliography{eddelbuettel-stokely}
