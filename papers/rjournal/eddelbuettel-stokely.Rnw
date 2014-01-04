@@ -311,8 +311,8 @@ serialize(p, NULL)
 %schema used by one or more messages, and DescriptorPools, which
 %provide access to descriptors.
 
-Before we can create a new Protocol Buffer Message or parse a
-serialized stream of bytes as a Message, we must read in the message
+Before one can create a new Protocol Buffer Message or parse a
+serialized stream of bytes as a Message, one must first read in the message
 type specification from a \texttt{.proto} file.
 
 New \texttt{.proto} files are imported with the \code{readProtoFiles}
@@ -329,7 +329,7 @@ special environment. The underlying mechanism used here is
 described in more detail in Section~\ref{sec-lookup}.
 
 <<>>=
-ls( "RProtoBuf:DescriptorPool" )
+ls("RProtoBuf:DescriptorPool")
 @
 
 %\subsection{Importing proto files}
@@ -354,8 +354,8 @@ to set in the message.
 %function to create messages.
 
 <<>>=
-p1 <- new( tutorial.Person )
-p <- new( tutorial.Person, name = "Romain", id = 1 )
+p1 <- new(tutorial.Person)
+p <- new(tutorial.Person, name = "Murray", id = 1)
 @
 
 \subsection{Access and modify fields of a message}
@@ -367,7 +367,7 @@ buffer messages seem like lists.
 <<>>=
 p$name
 p$id
-p$email <- "francoisromain@free.fr"
+p$email <- "murray@stokely.org"
 @
 
 However, as opposed to R lists, no partial matching is performed
@@ -377,7 +377,7 @@ The \verb|[[| operator can also be used to query and set fields
 of a mesages, supplying either their name or their tag number :
 
 <<>>=
-p[["name"]] <- "Romain Francois"
+p[["name"]] <- "Murray Stokely"
 p[[ 2 ]] <- 3
 p[[ "email" ]]
 @
@@ -403,7 +403,7 @@ the \texttt{as.character} method provides a more complete ASCII
 representation of the contents of a message.
 
 <<>>=
-writeLines( as.character( p ) )
+writeLines(as.character(p))
 @
 
 \subsection{Serializing messages}
@@ -416,25 +416,25 @@ bytes that represents the message.
 %(raw vector in R speech) that represents the message.
 
 <<>>=
-serialize( p, NULL )
+serialize(p, NULL)
 @
 
 The same method can also be used to serialize messages to files :
 
 <<>>=
 tf1 <- tempfile()
-serialize( p, tf1 )
-readBin( tf1, raw(0), 500 )
+serialize(p, tf1)
+readBin(tf1, raw(0), 500)
 @
 
 Or to arbitrary binary connections:
 
 <<>>=
 tf2 <- tempfile()
-con <- file( tf2, open = "wb" )
-serialize( p, con )
-close( con )
-readBin( tf2, raw(0), 500 )
+con <- file(tf2, open = "wb")
+serialize(p, con)
+close(con)
+readBin(tf2, raw(0), 500)
 @
 
 \texttt{serialize} can also be used in a more traditional
@@ -442,11 +442,11 @@ object oriented fashion using the dollar operator :
 
 <<>>=
 # serialize to a file
-p$serialize( tf1 )
+p$serialize(tf1)
 # serialize to a binary connection
-con <- file( tf2, open = "wb" )
-p$serialize( con )
-close( con )
+con <- file(tf2, open = "wb")
+p$serialize(con)
+close(con)
 @
 
 
@@ -465,26 +465,26 @@ infer the message type, so we have to provide this information
 to the \texttt{read} function in the form of a descriptor :
 
 <<>>=
-msg <- read( tutorial.Person, tf1 )
-writeLines( as.character( msg ) )
+msg <- read(tutorial.Person, tf1)
+writeLines(as.character(msg))
 @
 
 The \texttt{input} argument of \texttt{read} can also be a binary
 readable R connection, such as a binary file connection:
 
 <<>>=
-con <- file( tf2, open = "rb" )
-message <- read( tutorial.Person, con )
-close( con )
-writeLines( as.character( message ) )
+con <- file(tf2, open = "rb")
+message <- read(tutorial.Person, con)
+close(con)
+writeLines(as.character(message))
 @
 
 Finally, the payload of the message can be used :
 
 <<>>=
 # reading the raw vector payload of the message
-payload <- readBin( tf1, raw(0), 5000 )
-message <- read( tutorial.Person, payload )
+payload <- readBin(tf1, raw(0), 5000)
+message <- read(tutorial.Person, payload)
 @
 
 
@@ -493,13 +493,13 @@ object :
 
 <<>>=
 # reading from a file
-message <- tutorial.Person$read( tf1 )
+message <- tutorial.Person$read(tf1)
 # reading from a binary connection
-con <- file( tf2, open = "rb" )
-message <- tutorial.Person$read( con )
-close( con )
+con <- file(tf2, open = "rb")
+message <- tutorial.Person$read(con)
+close(con)
 # read from the payload
-message <- tutorial.Person$read( payload )
+message <- tutorial.Person$read(payload)
 @
 
 
@@ -513,7 +513,7 @@ generic in the S3 sense, such as \texttt{new} and
 
 Each R object stores an external pointer to an object managed by
 the \texttt{protobuf} C++ library.
-The \CRANpkg{Rcpp} package \citep{eddelbuettel2011rcpp} is used to
+The \CRANpkg{Rcpp} package \citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to
 facilitate the integration of the R and C++ code for these objects.
 
 % Message, Descriptor, FieldDescriptor, EnumDescriptor,
@@ -530,12 +530,12 @@ in the protobuf library.  Wrapping each method individually allows us
 to add user friendly custom error handling, type coercion, and
 performance improvements at the cost of a more verbose
 implementation.  The RProtoBuf implementation in many ways motivated
-the development of Rcpp Modules \citep{eddelbuettel2010exposing},
+the development of Rcpp Modules \citep{eddelbuettel2013exposing},
 which provide a more concise way of wrapping C++ functions and classes
 in a single entity.
 
 The \texttt{RProtoBuf} package combines the \emph{R typical} dispatch
-of the form \verb|method( object, arguments)| and the more traditional
+of the form \verb|method(object, arguments)| and the more traditional
 object oriented notation \verb|object$method(arguments)|.
 Additionally, \texttt{RProtoBuf} implements the \texttt{.DollarNames} S3 generic function
 (defined in the \texttt{utils} package) for all classes to enable tab
