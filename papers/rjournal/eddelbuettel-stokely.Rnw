@@ -1,4 +1,4 @@
-% !TeX root = RJwrapper.tex
+
 % We don't want a left margin for Sinput or Soutput for our table 1.
 %\DefineVerbatimEnvironment{Sinput}{Verbatim} {xleftmargin=0em}
 %\DefineVerbatimEnvironment{Soutput}{Verbatim}{xleftmargin=0em}
@@ -1307,6 +1307,213 @@ response, and then parse the response protocol buffer interactively.
 
 TODO(mstokely): Talk about Jeroen Ooms OpenCPU, or talk about Andy
 Chu's Poly.
+
+\section{Application: Protocol Buffers for Data Interchange in Web Services}
+
+As the name implies, the primary application of protocol buffers is
+data interchange in the context of inter-system communications. 
+Network protocols such as HTTP describe procedures on client-server
+communication, i.e. how to iniate requests, authenticate, send messages, 
+etc. However, network 
+protocols generally do not regulate \emph{content} of messages: they allow
+transfer of any media type, such as web pages, files or video.
+When designing systems where various components require exchange of specific data
+structures, we need something on top of the protocol that prescribes 
+how these structures are to be respresented in messages (buffers) on the
+network. Protocol buffers solve exactly this problem by providing
+a cross platform method for serializing arbitrary structures into well defined
+messages, that can be exchanged using any protocol. The descriptors
+(\texttt{.proto} files) are used to formally define the interface of a
+remote API or network application. Libraries to parse and generate protobuf
+messages are available for many programming languages, making it 
+relatively straight forward to implement clients and servers.
+
+
+\subsection{Interacting with R through HTTPS and Protocol Buffers}
+
+One example of a system that supports protocol buffers to interact
+with R is OpenCPU \citep{opencpu}. OpenCPU is a framework for embedded statistical 
+computation and reproducible research based on R and Latex. It exposes a 
+HTTP(S) API to access and manipulate R objects and allows for performing 
+remote R function calls. Clients do not need to understand 
+or generate any R code: HTTP requests are automatically mapped to 
+function calls, and arguments/return values can be posted/retrieved
+using several data interchange formats, such as protocol buffers.  
+OpenCPU uses the \texttt{serialize\_pb} and \texttt{unserialize\_pb} functions
+from the \texttt{RProtoBuf} package to convert between R objects and protobuf
+messages. Therefore, clients need the \texttt{rexp.proto} descriptor mentioned
+earlier to parse and generate protobuf messages when interacting with OpenCPU.
+
+\subsection{HTTP GET: Retrieving an R object}
+
+The \texttt{HTTP GET} method is used to read a resource from OpenCPU. For example,
+to access the dataset \texttt{Animals} from the package \texttt{MASS}, a 
+client performs the following HTTP request:
+
+\begin{verbatim}
+  GET https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb
+\end{verbatim}
+The postfix \texttt{/pb} in the URL tells the server to send this
+object in the form of a protobuf message. Alternative formats include 
+\texttt{/json}, \texttt{/csv}, \texttt{/rds} and others. If the request
+is successful, OpenCPU returns the serialized object with HTTP status 
+code 200 and HTTP response header \texttt{Content-Type: application/x-protobuf}. 
+The latter is the conventional MIME type that formally notifies the client to
+interpret the response as a protobuf message. 
+
+Because both HTTP and Protocol Buffers have libraries available for many 
+languages, clients can be implemented in just a few lines of code. Below
+example code for both R and Python that retrieve a dataset from R with 
+OpenCPU using a protobuf message. In R, we use the HTTP client from 
+the \texttt{httr} package \citep{httr}, and the protobuf
+parser from the \texttt{RProtoBuf} package. In this illustrative example we
+download a dataset which is part of the base R distribution, so we can actually
+verify that the object was transferred without loss of information.
+
+<<eval=FALSE>>=
+# Load packages
+library(RProtoBuf)
+library(httr)
+
+# Retrieve and parse message
+req <- GET ('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
+output <- unserialize_pb(req$content)
+
+# Check that no information was lost
+identical(output, MASS::Animals)
+@
+This code suggests a method for exchanging objects between R servers, however this can 
+also be done without protocol buffers. The main advantage of using an inter-operable format 
+is that we can actually access R objects from within another
+programming language. For example, in a very similar fasion we can retrieve the same
+dataset in a Python client. To parse messages in Python, we first compile the 
+\texttt{rexp.proto} descriptor into a python module using the \texttt{protoc} compiler:
+
+\begin{verbatim}
+  protoc rexp.proto --python_out=.
+\end{verbatim}
+This generates python module called \texttt{rexp\_pb2.py}, containing both the 
+descriptor information as well as methods to read and manipulate the R object 
+message. In the example below we use the HTTP client from the \texttt{urllib2}
+module. 
+
+\begin{verbatim}
+# Import modules
+import urllib2
+from rexp_pb2 import REXP
+
+# Retrieve message
+req = urllib2.Request('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
+res = urllib2.urlopen(req)
+        
+# Parse rexp.proto message
+msg = REXP()
+msg.ParseFromString(res.read())
+print(msg)
+\end{verbatim}
+The \texttt{msg} object contains all data from the Animals dataset. From here we
+can easily extract the desired fields for further use in Python.
+
+
+\subsection{HTTP POST: Calling an R function}
+
+The example above shows how the \texttt{HTTP GET} method retrieves a 
+resource from OpenCPU, for example an R object. The \texttt{HTTP POST} 
+method on the other hand is used for calling functions and running scripts, 
+which is the primary purpose of the framework. As before, the \texttt{/pb} 
+postfix requests to retrieve the output as a protobuf message, in this
+case the function return value. However, OpenCPU allows us to supply the
+arguments of the function call in the form of protobuf messages as well.
+This is a bit more work, because clients needs to both generate messages 
+containing R objects to post to the server, as well as retrieve and parse
+protobuf messages returned by the server. Using protocol buffers to post
+function arguments is not required, and for simple (scalar) arguments 
+the standard \texttt{appliation/www-url-encoded} format might be sufficient.
+However, with protocol buffers the client can perform function calls with
+more complex arguments such as R vectors or lists. The result is a complete
+RPC system to do arbitrary R function calls from within 
+any programming language.
+
+The following example R client code performs the remote function call 
+\texttt{stats::rnorm(n=42, mean=100)}. The function arguments (in this
+case \texttt{n} and \texttt{mean}) as well as the return value (a vector
+with 42 random numbers) are transferred using a protobuf message. RPC in
+OpenCPU works like the \texttt{do.call} function in R, hence all arguments
+are contained within a list.
+
+<<>>=
+#requires httr >= 0.2.99
+library(httr)
+library(RProtoBuf)
+
+args <- list(n=42, mean=100)
+payload <- serialize_pb(args, NULL)
+
+req <- POST (
+  url = "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb",
+  body = payload,
+  add_headers (
+    "Content-Type" = "application/x-protobuf"
+  )
+)
+
+#This is the output of stats::rnorm(n=42, mean=100)
+output <- unserialize_pb(req$content)
+print(output)
+@
+The OpenCPU server basically performs the following steps to process the above RPC request:  
+
+<<eval=FALSE>>=
+fnargs <- unserialize_pb(inputmsg)
+val <- do.call(stats::rnorm, fnargs)
+outputmsg <- serialize_pb(val)
+@
+In reality the OpenCPU provides a lot of meta functionality such as handling
+of sessions, exceptions, security, and much more. OpenCPU also makes it possible to store
+output of a function call on the server, instead of directly retrieving it. Thereby 
+objects can be shared with other users or used as arguments in a subsequent
+function call. But in its essence, the HTTP API provides a simple way to perform remote 
+R function calls over HTTPS. The same request can be performed in Python as follows:
+
+\begin{verbatim}
+import urllib2;
+from rexp_pb2 import *;
+
+#create the post payload, i.e. list(n=42, mean=100)
+payload = REXP(
+  rclass = 5,
+    rexpValue = [
+      REXP(rclass = 2, realValue = [42]), 
+      REXP(rclass = 2, realValue = [100])
+    ],
+    attrName = [
+      "names"
+    ],
+    attrValue = [
+      REXP(rclass = 0, stringValue = [STRING(strval="n"), STRING(strval="mean")])
+    ]
+);
+
+#HTTP POST
+req = urllib2.Request(
+  "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb", 
+  data = payload.SerializeToString(), 
+  headers = {
+    'Content-type': 'application/x-protobuf'
+  }
+)
+res = urllib2.urlopen(req);
+        
+#parse output pb
+msg = REXP();
+msg.ParseFromString(res.read());
+
+#the return value is a double vector in this case
+print(msg.realValue);
+\end{verbatim}
+
+
+
 
 \section{Summary}
 
