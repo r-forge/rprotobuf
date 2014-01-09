@@ -1060,7 +1060,6 @@ length(unique(test$repeated_int64))
 options("RProtoBuf.int64AsString" = FALSE)
 @
 
-
 \section{Evaluation: data.frame to Protocol Buffer Serialization}
 
 Saptarshi Guha wrote the RHIPE package \citep{rhipe} which includes
@@ -1253,60 +1252,17 @@ method of the \texttt{protobuf} C++ library.
 
 %\section{Basic usage example - tutorial.Person}
 
-\section{Application: Distributed Data Collection with MapReduce}
+\include{app-mapreduce}
 
-TODO(mstokely): Make this better.
+%\section{Application: Sending/receiving Interaction With Servers}
+%
+%Combined
+%with an RPC system this means that one can interactively craft request
+%messages, send the serialized message to a remote server, read back a
+%response, and then parse the response protocol buffer interactively.
 
-Many large data sets in fields such as particle physics and
-information processing are stored in binned or histogram form in order
-to reduce the data storage requirements
-\citep{scott2009multivariate}. Protocol Buffers make a particularly
-good data transport format in distributed MapReduces environments
-where large numbers of computers process a large data set for analysis.
-
-There are two common patterns for generating histograms of large data
-sets with MapReduce.  In the first method, each mapper task can
-generate a histogram over a subset of the data that is has been
-assigned, and then the histograms of each mapper are sent to one or
-more reducer tasks to merge.
-
-In the second method, each mapper rounds a data point to a bucket
-width and outputs that bucket as a key and '1' as a value.  Reducers
-then sum up all of the values with the same key and output to a data store.
-
-In both methods, the mapper tasks must choose identical
-bucket boundaries even though they are analyzing disjoint parts of the
-input set that may cover different ranges, or we must implement
-multiple phases.
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=\textwidth]{histogram-mapreduce-diag1.pdf}
-\end{center}
-\caption{Diagram of MapReduce Histogram Generation Pattern}
-\label{fig:mr-histogram-pattern1}
-\end{figure}
-
-Figure~\ref{fig:mr-histogram-pattern1} illustrates the second method
-described above for histogram generation of large data sets with
-MapReduce.
-
-This package is designed to be helpful if some of the Map or Reduce
-tasks are written in R, or if those components are written in other
-languages and only the resulting output histograms need to be
-manipulated in R.
-
-\section{Application: Sending/receiving Interaction With Servers}
-
-Unlike Apache Thrift, Protocol Buffers do not include a concrete RPC
-implementation.  However, serialized protocol buffers can trivially be
-sent over TCP or integrated with a proprietary RPC system.  Combined
-with an RPC system this means that one can interactively craft request
-messages, send the serialized message to a remote server, read back a
-response, and then parse the response protocol buffer interactively.
-
-TODO(mstokely): Talk about Jeroen Ooms OpenCPU, or talk about Andy
-Chu's Poly.
+%TODO(mstokely): Talk about Jeroen Ooms OpenCPU, or talk about Andy
+%Chu's Poly.
 
 \section{Application: Protocol Buffers for Data Interchange in Web Services}
 
