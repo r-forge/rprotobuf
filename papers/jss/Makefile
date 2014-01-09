@@ -1,13 +1,7 @@
 all: clean article.pdf
 
 clean:
-	rm -fr article.pdf
-	rm -fr article.out
-	rm -fr article.aux
-	rm -fr article.log
-	rm -fr article.bbl
-	rm -fr article.blg
-	rm -fr article.brf
+	rm -fr article.{pdf,out,aux,log,bbl,blg,brf}
 
 article.pdf: article.Rnw
 	R CMD Sweave article.Rnw
