@@ -30,8 +30,9 @@ a sophisticated mix of applications written in general purpose and
 specialized programming languages.  Protocol Buffers are a popular
 method of serializing structured data between applications---while remaining
 independent of programming languages or operating system.  The
-\CRANpkg{RProtoBuf} package provides a complete interface to this
-library.
+\CRANpkg{RProtoBuf} package provides a complete interface between this
+library and the R environment for statistical computing.
+%TODO(ms) keep it less than 150 words.
 }
 \Keywords{r, protocol buffers, serialization, cross-platform}
 \Plainkeywords{r, protocol buffers, serialization, cross-platform} %% without formatting
@@ -91,18 +92,11 @@ library.
 
 %% DE: I tend to have wider option(width=...) so this
 %%     guarantees better line breaks
+<<echo=FALSE,print=FALSE>>=
+options(width=65, prompt="R> ", digits=4)
+@
 
 \maketitle
-
-\abstract{Modern data collection and analysis pipelines often involve
- a sophisticated mix of applications written in general purpose and
- specialized programming languages.  Protocol Buffers are a popular
- method of serializing structured data between applications---while remaining
- independent of programming languages or operating system.  The
- \CRANpkg{RProtoBuf} package provides a complete interface between this
- library and the R environment for statistical computing.
- %TODO(ms) keep it less than 150 words.
-}
 
 %TODO(de) 'protocol buffers' or 'Protocol Buffers' ?
 
@@ -177,19 +171,34 @@ storage costs of the stored data when compared with simple
 % but its useful for this paper I think because we have a boring bit
 % in the middle (full class/method details) and interesting
 % applications at the end.
-This article describes the basics of Google's Protocol Buffers through
-an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
-basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
-several common use cases for protocol buffers in data analysis.
+
+Section~\ref{sec:protobuf} provides a general overview of Protocol
+Buffers.  Section~\ref{sec:rprotobuf-basic} describes the interactive
+R interface provided by \CRANpkg{RProtoBuf} and introduces the two
+main abstractions: \emph{Messages} and \emph{Descriptors}.
+Section~\ref{sec:rprotobuf-classes} describes the implementation
+details of the main S4 classes making up this package.
+Section~\ref{sec:types} describes the challenges of type coercion
+between R and other languages.  Section~\ref{sec:evaluation}
+introduces a general R language schema for serializing arbitrary R
+objects and evaluates it against R's built-in serialization.
+Sections~\label{sec:opencpu} and \label{sec:mapreduce} provide
+real-world use cases of \CRANpkg{RProtoBuf} in web service and
+MapReduce environments, respectively.
+
+%This article describes the basics of Google's Protocol Buffers through
+%an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
+%basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
+%several common use cases for protocol buffers in data analysis.
 
 \section{Protocol Buffers}
+\label{sec:protobuf}
 
-FIXME Introductory section which may include references in parentheses
-\citep{R}, or cite a reference such as \citet{R} in the text.
+%FIXME Introductory section which may include references in parentheses
+%\citep{R}, or cite a reference such as \citet{R} in the text.
 
 % This content is good.  Maybe use and cite?
 % http://martin.kleppmann.com/2012/12/05/schema-evolution-in-avro-protocol-buffers-thrift.html
-
 
 %% TODO(de,ms)  What follows is oooooold and was lifted from the webpage
 %%              Rewrite?
@@ -292,6 +301,7 @@ on the name fields of the specified message type.
 \end{figure}
 
 \section{Basic Usage: Messages and Descriptors}
+\label{sec:rprotobuf-basic}
 
 This section describes how to use the R API to create and manipulate
 protocol buffer messages in R, and how to read and write the
@@ -352,38 +362,15 @@ message Person {
 \end{example}
 \vspace{2mm}
 \end{minipage} & \begin{minipage}{.5\textwidth}
-\begin{Schunk}
-\begin{Sinput}
-R> library(RProtoBuf)
-R> p <- new(tutorial.Person, id=1, name="Dirk")
-R> class(p)
-\end{Sinput}
-\begin{Soutput}
-[1] "Message"
-attr(,"package")
-[1] "RProtoBuf"
-\end{Soutput}
-\begin{Sinput}
-R> p$name
-\end{Sinput}
-\begin{Soutput}
-[1] "Dirk"
-\end{Soutput}
-\begin{Sinput}
-R> p$name <- "Murray"
-R> cat(as.character(p))
-\end{Sinput}
-\begin{Soutput}
-name: "Murray"
-id: 1
-\end{Soutput}
-\begin{Sinput}
-R> serialize(p, NULL)
-\end{Sinput}
-\begin{Soutput}
- [1] 0a 06 4d 75 72 72 61 79 10 01
-\end{Soutput}
-\end{Schunk}
+<<echo=TRUE>>=
+library(RProtoBuf)
+p <- new(tutorial.Person, id=1, name="Dirk")
+class(p)
+p$name
+p$name <- "Murray"
+cat(as.character(p))
+serialize(p, NULL)
+@
 \end{minipage} \\
 \bottomrule
 \end{tabular}
@@ -426,24 +413,9 @@ are available in the R search path in the \texttt{RProtoBuf:DescriptorPool}
 special environment. The underlying mechanism used here is
 described in more detail in Section~\ref{sec-lookup}.
 
-\begin{Schunk}
-\begin{Sinput}
-R> ls("RProtoBuf:DescriptorPool")
-\end{Sinput}
-\begin{Soutput}
- [1] "rexp.CMPLX"                  
- [2] "rexp.REXP"                   
- [3] "rexp.STRING"                 
- [4] "rprotobuf.HelloWorldRequest" 
- [5] "rprotobuf.HelloWorldResponse"
- [6] "tutorial.AddressBook"        
- [7] "tutorial.Person"             
- [8] "tutorial.Test1"              
- [9] "tutorial.Test2"              
-[10] "tutorial.Test3"              
-[11] "tutorial.Test4"              
-\end{Soutput}
-\end{Schunk}
+<<>>=
+ls("RProtoBuf:DescriptorPool")
+@
 
 %\subsection{Importing proto files}
 %In contrast to the other languages (Java, C++, Python) that are officially
@@ -466,12 +438,10 @@ to set in the message.
 %purpose of this section, descriptors are just used with the \texttt{new}
 %function to create messages.
 
-\begin{Schunk}
-\begin{Sinput}
-R> p1 <- new(tutorial.Person)
-R> p <- new(tutorial.Person, name = "Murray", id = 1)
-\end{Sinput}
-\end{Schunk}
+<<>>=
+p1 <- new(tutorial.Person)
+p <- new(tutorial.Person, name = "Murray", id = 1)
+@
 
 \subsection{Access and modify fields of a message}
 
@@ -479,23 +449,11 @@ Once the message is created, its fields can be queried
 and modified using the dollar operator of R, making protocol
 buffer messages seem like lists.
 
-\begin{Schunk}
-\begin{Sinput}
-R> p$name
-\end{Sinput}
-\begin{Soutput}
-[1] "Murray"
-\end{Soutput}
-\begin{Sinput}
-R> p$id
-\end{Sinput}
-\begin{Soutput}
-[1] 1
-\end{Soutput}
-\begin{Sinput}
-R> p$email <- "murray@stokely.org"
-\end{Sinput}
-\end{Schunk}
+<<>>=
+p$name
+p$id
+p$email <- "murray@stokely.org"
+@
 
 However, as opposed to R lists, no partial matching is performed
 and the name must be given entirely.
@@ -503,16 +461,11 @@ and the name must be given entirely.
 The \verb|[[| operator can also be used to query and set fields
 of a mesages, supplying either their name or their tag number :
 
-\begin{Schunk}
-\begin{Sinput}
-R> p[["name"]] <- "Murray Stokely"
-R> p[[ 2 ]] <- 3
-R> p[[ "email" ]]
-\end{Sinput}
-\begin{Soutput}
-[1] "murray@stokely.org"
-\end{Soutput}
-\end{Schunk}
+<<>>=
+p[["name"]] <- "Murray Stokely"
+p[[ 2 ]] <- 3
+p[[ "email" ]]
+@
 
 Protocol buffers include a 64-bit integer type, but R lacks native
 64-bit integer support.  A workaround is available and described in
@@ -526,29 +479,17 @@ Section~\ref{sec:int64} for working with large integer values.
 Protocol buffer messages and descriptors implement \texttt{show}
 methods that provide basic information about the message :
 
-\begin{Schunk}
-\begin{Sinput}
-R> p
-\end{Sinput}
-\begin{Soutput}
-[1] "message of type 'tutorial.Person' with 3 fields set"
-\end{Soutput}
-\end{Schunk}
+<<>>=
+p
+@
 
 For additional information, such as for debugging purposes,
 the \texttt{as.character} method provides a more complete ASCII
 representation of the contents of a message.
 
-\begin{Schunk}
-\begin{Sinput}
-R> writeLines(as.character(p))
-\end{Sinput}
-\begin{Soutput}
-name: "Murray Stokely"
-id: 3
-email: "murray@stokely.org"
-\end{Soutput}
-\end{Schunk}
+<<>>=
+writeLines(as.character(p))
+@
 
 \subsection{Serializing messages}
 
@@ -559,59 +500,39 @@ protocol buffer messages to serialize a message into a sequence of
 bytes that represents the message.
 %(raw vector in R speech) that represents the message.
 
-\begin{Schunk}
-\begin{Sinput}
-R> serialize(p, NULL)
-\end{Sinput}
-\begin{Soutput}
- [1] 0a 0e 4d 75 72 72 61 79 20 53 74 6f 6b 65 6c 79 10 03 1a 12
-[21] 6d 75 72 72 61 79 40 73 74 6f 6b 65 6c 79 2e 6f 72 67
-\end{Soutput}
-\end{Schunk}
+<<>>=
+serialize(p, NULL)
+@
 
 The same method can also be used to serialize messages to files :
 
-\begin{Schunk}
-\begin{Sinput}
-R> tf1 <- tempfile()
-R> serialize(p, tf1)
-R> readBin(tf1, raw(0), 500)
-\end{Sinput}
-\begin{Soutput}
- [1] 0a 0e 4d 75 72 72 61 79 20 53 74 6f 6b 65 6c 79 10 03 1a 12
-[21] 6d 75 72 72 61 79 40 73 74 6f 6b 65 6c 79 2e 6f 72 67
-\end{Soutput}
-\end{Schunk}
+<<>>=
+tf1 <- tempfile()
+serialize(p, tf1)
+readBin(tf1, raw(0), 500)
+@
 
 Or to arbitrary binary connections:
 
-\begin{Schunk}
-\begin{Sinput}
-R> tf2 <- tempfile()
-R> con <- file(tf2, open = "wb")
-R> serialize(p, con)
-R> close(con)
-R> readBin(tf2, raw(0), 500)
-\end{Sinput}
-\begin{Soutput}
- [1] 0a 0e 4d 75 72 72 61 79 20 53 74 6f 6b 65 6c 79 10 03 1a 12
-[21] 6d 75 72 72 61 79 40 73 74 6f 6b 65 6c 79 2e 6f 72 67
-\end{Soutput}
-\end{Schunk}
+<<>>=
+tf2 <- tempfile()
+con <- file(tf2, open = "wb")
+serialize(p, con)
+close(con)
+readBin(tf2, raw(0), 500)
+@
 
 \texttt{serialize} can also be used in a more traditional
 object oriented fashion using the dollar operator :
 
-\begin{Schunk}
-\begin{Sinput}
-R> # serialize to a file
-R> p$serialize(tf1)
-R> # serialize to a binary connection
-R> con <- file(tf2, open = "wb")
-R> p$serialize(con)
-R> close(con)
-\end{Sinput}
-\end{Schunk}
+<<>>=
+# serialize to a file
+p$serialize(tf1)
+# serialize to a binary connection
+con <- file(tf2, open = "wb")
+p$serialize(con)
+close(con)
+@
 
 
 \subsection{Parsing messages}
@@ -628,64 +549,47 @@ does not contain information that can be used to dynamically
 infer the message type, so we have to provide this information
 to the \texttt{read} function in the form of a descriptor :
 
-\begin{Schunk}
-\begin{Sinput}
-R> msg <- read(tutorial.Person, tf1)
-R> writeLines(as.character(msg))
-\end{Sinput}
-\begin{Soutput}
-name: "Murray Stokely"
-id: 3
-email: "murray@stokely.org"
-\end{Soutput}
-\end{Schunk}
+<<>>=
+msg <- read(tutorial.Person, tf1)
+writeLines(as.character(msg))
+@
 
 The \texttt{input} argument of \texttt{read} can also be a binary
 readable R connection, such as a binary file connection:
 
-\begin{Schunk}
-\begin{Sinput}
-R> con <- file(tf2, open = "rb")
-R> message <- read(tutorial.Person, con)
-R> close(con)
-R> writeLines(as.character(message))
-\end{Sinput}
-\begin{Soutput}
-name: "Murray Stokely"
-id: 3
-email: "murray@stokely.org"
-\end{Soutput}
-\end{Schunk}
+<<>>=
+con <- file(tf2, open = "rb")
+message <- read(tutorial.Person, con)
+close(con)
+writeLines(as.character(message))
+@
 
 Finally, the payload of the message can be used :
 
-\begin{Schunk}
-\begin{Sinput}
-R> # reading the raw vector payload of the message
-R> payload <- readBin(tf1, raw(0), 5000)
-R> message <- read(tutorial.Person, payload)
-\end{Sinput}
-\end{Schunk}
+<<>>=
+# reading the raw vector payload of the message
+payload <- readBin(tf1, raw(0), 5000)
+message <- read(tutorial.Person, payload)
+@
 
 
 \texttt{read} can also be used as a pseudo method of the descriptor
 object :
 
-\begin{Schunk}
-\begin{Sinput}
-R> # reading from a file
-R> message <- tutorial.Person$read(tf1)
-R> # reading from a binary connection
-R> con <- file(tf2, open = "rb")
-R> message <- tutorial.Person$read(con)
-R> close(con)
-R> # read from the payload
-R> message <- tutorial.Person$read(payload)
-\end{Sinput}
-\end{Schunk}
+<<>>=
+# reading from a file
+message <- tutorial.Person$read(tf1)
+# reading from a binary connection
+con <- file(tf2, open = "rb")
+message <- tutorial.Person$read(con)
+close(con)
+# read from the payload
+message <- tutorial.Person$read(payload)
+@
 
 
 \section{Under the hood: S4 Classes, Methods, and Pseudo Methods}
+\label{sec:rprotobuf-classes}
 
 The \CRANpkg{RProtoBuf} package uses the S4 system to store
 information about descriptors and messages.  Using the S4 system
@@ -817,36 +721,18 @@ included with the package.  The \texttt{tutorial.Person} descriptor
 and any other descriptors defined in loaded \texttt{.proto} files are
 then available on the search path.
 
-\begin{Schunk}
-\begin{Sinput}
-R> # field descriptor
-R> tutorial.Person$email
-\end{Sinput}
-\begin{Soutput}
-[1] "descriptor for field 'email' of type 'tutorial.Person' "
-\end{Soutput}
-\begin{Sinput}
-R> # enum descriptor
-R> tutorial.Person$PhoneType
-\end{Sinput}
-\begin{Soutput}
-[1] "descriptor for enum 'PhoneType' of type 'tutorial.Person' with 3 values"
-\end{Soutput}
-\begin{Sinput}
-R> # nested type descriptor
-R> tutorial.Person$PhoneNumber
-\end{Sinput}
-\begin{Soutput}
-[1] "descriptor for type 'tutorial.Person.PhoneNumber' "
-\end{Soutput}
-\begin{Sinput}
-R> # same as
-R> tutorial.Person.PhoneNumber
-\end{Sinput}
-\begin{Soutput}
-[1] "descriptor for type 'tutorial.Person.PhoneNumber' "
-\end{Soutput}
-\end{Schunk}
+<<>>=
+# field descriptor
+tutorial.Person$email
+
+# enum descriptor
+tutorial.Person$PhoneType
+
+# nested type descriptor
+tutorial.Person$PhoneNumber
+# same as
+tutorial.Person.PhoneNumber
+@
 
 Table~\ref{Descriptor-methods-table} provides a complete list of the
 slots and avalailable methods for Descriptors.
@@ -964,20 +850,10 @@ The \verb|$| operator can be used to retrieve the value of enum
 constants contained in the EnumDescriptor, or to invoke
 pseudo-methods.
 
-\begin{Schunk}
-\begin{Sinput}
-R> tutorial.Person$PhoneType
-\end{Sinput}
-\begin{Soutput}
-[1] "descriptor for enum 'PhoneType' of type 'tutorial.Person' with 3 values"
-\end{Soutput}
-\begin{Sinput}
-R> tutorial.Person$PhoneType$WORK
-\end{Sinput}
-\begin{Soutput}
-[1] 2
-\end{Soutput}
-\end{Schunk}
+<<>>=
+tutorial.Person$PhoneType
+tutorial.Person$PhoneType$WORK
+@
 
 \begin{table}[h]
 \centering
@@ -1026,21 +902,11 @@ defined for the \texttt{FileDescriptor} class.
 The \verb|$| operator can be used to retrieve named fields defined in
 the FileDescriptor, or to invoke pseudo-methods.
 
-\begin{Schunk}
-\begin{Sinput}
-R> f <- tutorial.Person$fileDescriptor()
-R> f
-\end{Sinput}
-\begin{Soutput}
-[1] "file descriptor for package tutorial (/usr/local/google/R/RProtoBuf/proto/addressbook.proto)"
-\end{Soutput}
-\begin{Sinput}
-R> f$Person
-\end{Sinput}
-\begin{Soutput}
-[1] "descriptor for type 'tutorial.Person' "
-\end{Soutput}
-\end{Schunk}
+<<>>=
+f <- tutorial.Person$fileDescriptor()
+f
+f$Person
+@
 
 \begin{table}[h]
 \centering
@@ -1081,26 +947,11 @@ defined for the \texttt{EnumValueDescriptor} class.
 
 The \verb|$| operator can be used to invoke pseudo-methods.
 
-\begin{Schunk}
-\begin{Sinput}
-R> tutorial.Person$PhoneType$value(1)
-\end{Sinput}
-\begin{Soutput}
-[1] "enum value descriptor tutorial.Person.MOBILE"
-\end{Soutput}
-\begin{Sinput}
-R> tutorial.Person$PhoneType$value(name="HOME")
-\end{Sinput}
-\begin{Soutput}
-[1] "enum value descriptor tutorial.Person.HOME"
-\end{Soutput}
-\begin{Sinput}
-R> tutorial.Person$PhoneType$value(number=1)
-\end{Sinput}
-\begin{Soutput}
-[1] "enum value descriptor tutorial.Person.HOME"
-\end{Soutput}
-\end{Schunk}
+<<>>=
+tutorial.Person$PhoneType$value(1)
+tutorial.Person$PhoneType$value(name="HOME")
+tutorial.Person$PhoneType$value(number=1)
+@
 
 \begin{table}[h]
 \centering
@@ -1131,6 +982,7 @@ R> tutorial.Person$PhoneType$value(number=1)
 \end{table}
 
 \section{Type Coercion}
+\label{sec:types}
 
 One of the benefits of using an Interface Definition Language (IDL)
 like Protocol Buffers is that it provides a highly portable basic type
@@ -1194,28 +1046,25 @@ possible values as booleans.  The library will refuse to store
 choose another type (such as integers) capable of storing three
 distinct values.
 
+<<echo=FALSE,print=FALSE>>=
+    if (!exists("protobuf_unittest.TestAllTypes",
+                "RProtoBuf:DescriptorPool")) {
+        unittest.proto.file <- system.file("unitTests", "data",
+                                           "unittest.proto",
+                                           package="RProtoBuf")
+        readProtoFiles(file=unittest.proto.file)
+    }
+@
 
-\begin{Schunk}
-\begin{Sinput}
-R> a <- new(protobuf_unittest.TestAllTypes)
-R> a$optional_bool <- TRUE
-R> a$optional_bool <- FALSE
-\end{Sinput}
-\end{Schunk}
-\begin{Schunk}
-\begin{Sinput}
-R> a$optional_bool <- NA
-\end{Sinput}
-\end{Schunk}
-\begin{Schunk}
-\begin{Soutput}
-[1] "Error in eval(expr, envir, enclos) : \n  NA boolean values can not be stored in bool protocol buffer fields\n"
-attr(,"class")
-[1] "try-error"
-attr(,"condition")
-<Rcpp::exception in eval(expr, envir, enclos): NA boolean values can not be stored in bool protocol buffer fields>
-\end{Soutput}
-\end{Schunk}
+<<>>=
+a <- new(protobuf_unittest.TestAllTypes)
+a$optional_bool <- TRUE
+a$optional_bool <- FALSE
+<<eval=F>>=
+a$optional_bool <- NA
+<<echo=FALSE,eval=TRUE,print=TRUE>>=
+try(a$optional_bool <- NA,silent=TRUE)
+@
 
 \subsection{Unsigned Integers}
 
@@ -1223,30 +1072,16 @@ R lacks a native unsigned integer type.  Values between $2^{31}$ and
 $2^{32} - 1$ read from unsigned int protocol buffer fields must be
 stored as doubles in R.
 
-\begin{Schunk}
-\begin{Sinput}
-R> as.integer(2^31-1)
-\end{Sinput}
-\begin{Soutput}
-[1] 2147483647
-\end{Soutput}
-\end{Schunk}
-\begin{Schunk}
-\begin{Sinput}
-R> as.integer(2^31 - 1) + as.integer(1)
-\end{Sinput}
-\end{Schunk}
-\begin{Schunk}
-\begin{Soutput}
-[1] NA
-\end{Soutput}
-\begin{Soutput}
-[1] 2.147e+09
-\end{Soutput}
-\begin{Soutput}
-[1] "numeric"
-\end{Soutput}
-\end{Schunk}
+<<>>=
+as.integer(2^31-1)
+<<eval=F>>=
+as.integer(2^31 - 1) + as.integer(1)
+<<echo=FALSE,eval=TRUE,print=TRUE>>=
+try(as.integer(2^31 - 1) + as.integer(1))
+
+2^31
+class(2^31)
+@
 
 \subsection{64-bit integers}
 \label{sec:int64}
@@ -1255,44 +1090,41 @@ R does not have native 64-bit integer support.  Instead, R treats
 large integers as doubles which have limited precision.  For example,
 it loses the ability to distinguish some distinct integers:
 
-\begin{Schunk}
-\begin{Sinput}
-R> 2^53 == (2^53 + 1)
-\end{Sinput}
-\begin{Soutput}
-[1] TRUE
-\end{Soutput}
-\end{Schunk}
+<<>>=
+2^53 == (2^53 + 1)
+@
 
 Protocol Buffers are frequently used to pass data between different
 systems, however, and most other modern systems do have support for
 64-bit integers.  To work around this, RProtoBuf allows users to get
 and set 64-bit integer types by treating them as characters.
 
+<<echo=FALSE,print=FALSE>>=
+if (!exists("protobuf_unittest.TestAllTypes",
+            "RProtoBuf:DescriptorPool")) {
+    unittest.proto.file <- system.file("unitTests", "data",
+                                       "unittest.proto",
+                                       package="RProtoBuf")
+    readProtoFiles(file=unittest.proto.file)
+}
+@
 
 If we try to set an int64 field in R to double values, we lose
 precision:
 
-\begin{Schunk}
-\begin{Sinput}
-R> test <- new(protobuf_unittest.TestAllTypes)
-R> test$repeated_int64 <- c(2^53, 2^53+1)
-R> length(unique(test$repeated_int64))
-\end{Sinput}
-\begin{Soutput}
-[1] 1
-\end{Soutput}
-\end{Schunk}
+<<>>=
+test <- new(protobuf_unittest.TestAllTypes)
+test$repeated_int64 <- c(2^53, 2^53+1)
+length(unique(test$repeated_int64))
+@
 
 However, we can specify the values as character strings so that the
 C++ library on which RProtoBuf is based can store a true 64-bit
 integer representation of the data.
 
-\begin{Schunk}
-\begin{Sinput}
-R> test$repeated_int64 <- c("9007199254740992", "9007199254740993")
-\end{Sinput}
-\end{Schunk}
+<<>>=
+test$repeated_int64 <- c("9007199254740992", "9007199254740993")
+@
 
 When reading the value back into R, numeric types are returned by
 default, but when the full precision is required a character value
@@ -1302,37 +1134,21 @@ accurately be used as unique identifiers and can easily be passed to R
 packages such as \CRANpkg{int64} \citep{int64} or \CRANpkg{bit64}
 \citep{bit64} which represent 64-bit integers in R.
 
-\begin{Schunk}
-\begin{Sinput}
-R> options("RProtoBuf.int64AsString" = FALSE)
-R> test$repeated_int64
-\end{Sinput}
-\begin{Soutput}
-[1] 9.007e+15 9.007e+15
-\end{Soutput}
-\begin{Sinput}
-R> length(unique(test$repeated_int64))
-\end{Sinput}
-\begin{Soutput}
-[1] 1
-\end{Soutput}
-\begin{Sinput}
-R> options("RProtoBuf.int64AsString" = TRUE)
-R> test$repeated_int64
-\end{Sinput}
-\begin{Soutput}
-[1] "9007199254740992" "9007199254740993"
-\end{Soutput}
-\begin{Sinput}
-R> length(unique(test$repeated_int64))
-\end{Sinput}
-\begin{Soutput}
-[1] 2
-\end{Soutput}
-\end{Schunk}
+<<>>=
+options("RProtoBuf.int64AsString" = FALSE)
+test$repeated_int64
+length(unique(test$repeated_int64))
+options("RProtoBuf.int64AsString" = TRUE)
+test$repeated_int64
+length(unique(test$repeated_int64))
+@
 
+<<echo=FALSE,print=FALSE>>=
+options("RProtoBuf.int64AsString" = FALSE)
+@
 
 \section{Evaluation: data.frame to Protocol Buffer Serialization}
+\label{sec:evaluation}
 
 Saptarshi Guha wrote the RHIPE package \citep{rhipe} which includes
 protocol buffer integration with R.  However, this implementation
@@ -1351,28 +1167,24 @@ be expressed in this way.  To illustrate how this method works, we
 attempt to convert all of the built-in datasets from R into this
 serialized protocol buffer representation.
 
-\begin{Schunk}
-\begin{Sinput}
-R> datasets <- subset(as.data.frame(data()$results), Package=="datasets")
-R> datasets$load.name <- sub("\\s+.*$", "", datasets$Item)
-R> n <- nrow(datasets)
-\end{Sinput}
-\end{Schunk}
+<<echo=TRUE>>=
+datasets <- subset(as.data.frame(data()$results), Package=="datasets")
+datasets$load.name <- sub("\\s+.*$", "", datasets$Item)
+n <- nrow(datasets)
+@
 
-There are 103 standard data sets included in R.  We use the
+There are \Sexpr{n} standard data sets included in R.  We use the
 \texttt{can\_serialize\_pb} method to determine how many of those can
 be safely converted to a serialized protocol buffer representation.
 
-\begin{Schunk}
-\begin{Sinput}
-R> #datasets$valid.proto <- sapply(datasets$load.name, function(x) can_serialize_pb(eval(as.name(x))))
-R> #datasets <- subset(datasets, valid.proto==TRUE)
-R> m <- nrow(datasets)
-\end{Sinput}
-\end{Schunk}
+<<echo=TRUE>>=
+#datasets$valid.proto <- sapply(datasets$load.name, function(x) can_serialize_pb(eval(as.name(x))))
+#datasets <- subset(datasets, valid.proto==TRUE)
+m <- nrow(datasets)
+@
 
-103 data sets could be converted to Protocol Buffers
-(100\%).  The next section illustrates how
+\Sexpr{m} data sets could be converted to Protocol Buffers
+(\Sexpr{format(100*m/n,digits=1)}\%).  The next section illustrates how
 many bytes were usued to store the data sets under four different
 situations (1) normal R serialization, (2) R serialization followed by
 gzip, (3) normal protocol buffer serialization, (4) protocol buffer
@@ -1381,6 +1193,27 @@ serialization followed by gzip.
 \subsection{Compression Performance}
 \label{sec:compression}
 
+<<echo=FALSE,print=FALSE>>=
+datasets$object.size <- unname(sapply(datasets$load.name, function(x) object.size(eval(as.name(x)))))
+
+datasets$R.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize(eval(as.name(x)), NULL))))
+
+datasets$R.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize(eval(as.name(x)), NULL))))
+
+datasets$R.serialize.size.gz <- unname(sapply(datasets$load.name, function(x) length(memCompress(serialize(eval(as.name(x)), NULL), "gzip"))))
+
+datasets$RProtoBuf.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize_pb(eval(as.name(x)), NULL))))
+
+datasets$RProtoBuf.serialize.size.gz <- unname(sapply(datasets$load.name, function(x) length(memCompress(serialize_pb(eval(as.name(x)), NULL), "gzip"))))
+
+clean.df <- data.frame(dataset=datasets$load.name,
+                       object.size=datasets$object.size,
+                       "serialized"=datasets$R.serialize.size,
+                       "gzipped serialized"=datasets$R.serialize.size.gz,
+                       "RProtoBuf"=datasets$RProtoBuf.serialize.size,
+                       "gzipped RProtoBuf"=datasets$RProtoBuf.serialize.size.gz,
+                       check.names=FALSE)
+@
 
 Table~\ref{tab:compression} shows the sizes of 50 sample R datasets as
 returned by object.size() compared to the serialized sizes.
@@ -1508,6 +1341,7 @@ method of the \texttt{protobuf} C++ library.
 %\section{Basic usage example - tutorial.Person}
 
 \section{Application: Data Interchange in Web Services}
+\label{sec:opencpu}
 
 % TODO(jeroen): I think maybe some of this should go earlier in the
 % paper, so this part can focus only on introducing the application,
@@ -1575,18 +1409,18 @@ In this example we
 download a dataset which is part of the base R distribution, so we can
 verify that the object was transferred without loss of information.
 
-\begin{Schunk}
-\begin{Sinput}
-R> # Load packages
-R> library(RProtoBuf)
-R> library(httr)
-R> # Retrieve and parse message
-R> req <- GET ('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
-R> output <- unserialize_pb(req$content)
-R> # Check that no information was lost
-R> identical(output, MASS::Animals)
-\end{Sinput}
-\end{Schunk}
+<<eval=FALSE>>=
+# Load packages
+library(RProtoBuf)
+library(httr)
+
+# Retrieve and parse message
+req <- GET ('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
+output <- unserialize_pb(req$content)
+
+# Check that no information was lost
+identical(output, MASS::Animals)
+@
 This code suggests a method for exchanging objects between R servers, however this can 
 also be done without protocol buffers. The main advantage of using an inter-operable format 
 is that we can actually access R objects from within another
@@ -1646,42 +1480,33 @@ with 42 random numbers) are transferred using a protobuf message. RPC in
 OpenCPU works like the \texttt{do.call} function in R, hence all arguments
 are contained within a list.
 
-\begin{Schunk}
-\begin{Sinput}
-R> #requires httr >= 0.2.99
-R> library(httr)
-R> library(RProtoBuf)
-R> args <- list(n=42, mean=100)
-R> payload <- serialize_pb(args, NULL)
-R> req <- POST (
-+   url = "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb",
-+   body = payload,
-+   add_headers (
-+     "Content-Type" = "application/x-protobuf"
-+   )
-+ )
-R> #This is the output of stats::rnorm(n=42, mean=100)
-R> output <- unserialize_pb(req$content)
-R> print(output)
-\end{Sinput}
-\begin{Soutput}
- [1] 100.02 100.75  99.91  98.92  97.19  98.07 102.34  98.48
- [9] 100.31 100.58 100.65 100.64  98.02  97.91 100.57 100.41
-[17] 100.11 103.32 100.88 100.48 101.06 100.52 101.58 101.23
-[25] 100.73 100.40  98.49 101.50  99.32  99.12  99.57  98.80
-[33]  98.60  99.83  99.62 100.43 100.24 100.30  99.13  99.56
-[41]  99.78 101.01
-\end{Soutput}
-\end{Schunk}
+<<>>=
+#requires httr >= 0.2.99
+library(httr)
+library(RProtoBuf)
+
+args <- list(n=42, mean=100)
+payload <- serialize_pb(args, NULL)
+
+req <- POST (
+  url = "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb",
+  body = payload,
+  add_headers (
+    "Content-Type" = "application/x-protobuf"
+  )
+)
+
+#This is the output of stats::rnorm(n=42, mean=100)
+output <- unserialize_pb(req$content)
+print(output)
+@
 The OpenCPU server basically performs the following steps to process the above RPC request:  
 
-\begin{Schunk}
-\begin{Sinput}
-R> fnargs <- unserialize_pb(inputmsg)
-R> val <- do.call(stats::rnorm, fnargs)
-R> outputmsg <- serialize_pb(val)
-\end{Sinput}
-\end{Schunk}
+<<eval=FALSE>>=
+fnargs <- unserialize_pb(inputmsg)
+val <- do.call(stats::rnorm, fnargs)
+outputmsg <- serialize_pb(val)
+@
 In reality the OpenCPU provides a lot of meta functionality such as handling
 of sessions, exceptions, security, and much more. OpenCPU also makes it possible to store
 output of a function call on the server, instead of directly retrieving it. Thereby 
@@ -1727,6 +1552,7 @@ print(msg.realValue);
 \end{verbatim}
 
 \section{Application: Distributed Data Collection with MapReduce}
+\label{sec:mapreduce}
 
 The MapReduce programming model \citep{dean2008mapreduce} has emerged
 in the last decade as a popular framework for processing large data
