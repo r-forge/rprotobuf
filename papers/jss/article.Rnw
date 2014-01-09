@@ -137,18 +137,23 @@ from being too slow to parse and also does not provide strong typing
 between integers and floating point.  Because the schema information
 is not kept separately, multiple JSON messages of the same type
 needlessly duplicate the field names with each message.
+Lastly, XML is a well-established and widely-supported protocol with the ability to define
+just about any arbitrarily complex schema. However, it pays for this
+complexity with comparatively large and verbose messages, and added
+complexities at the parsing side. 
 %
 %
 %
 A number of binary formats based on JSON have been proposed that
 reduce the parsing cost and improve the efficiency.  MessagePack
-\citep{msgpackR} and BSON \citep{rmongodb} both have R interfaces, but
+and BSON both have R interfaces \citep{msgpackR,rmongodb}, but
+% DE Why do we cite these packages, but not the numerous JSON packages?
 these formats lack a separate schema for the serialized data and thus
 still duplicate field names with each message sent over the network or
 stored in a file.  Such formats also lack support for versioning when
 data storage needs evolve over time, or when application logic and
 requirement changes dictate update to the message format.
-% DE: Need to talk about XML ?
+% DE: Need to talk about XML -- added a few lines at previous paragraph
 
 Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
@@ -1060,7 +1065,7 @@ distinct values.
 a <- new(protobuf_unittest.TestAllTypes)
 a$optional_bool <- TRUE
 a$optional_bool <- FALSE
-<<eval=F>>=
+<<eval=FALSE>>=
 a$optional_bool <- NA
 <<echo=FALSE,eval=TRUE,print=TRUE>>=
 try(a$optional_bool <- NA,silent=TRUE)
@@ -1074,7 +1079,7 @@ stored as doubles in R.
 
 <<>>=
 as.integer(2^31-1)
-<<eval=F>>=
+<<eval=FALSE>>=
 as.integer(2^31 - 1) + as.integer(1)
 <<echo=FALSE,eval=TRUE,print=TRUE>>=
 try(as.integer(2^31 - 1) + as.integer(1))
@@ -1421,6 +1426,7 @@ output <- unserialize_pb(req$content)
 # Check that no information was lost
 identical(output, MASS::Animals)
 @
+
 This code suggests a method for exchanging objects between R servers, however this can 
 also be done without protocol buffers. The main advantage of using an inter-operable format 
 is that we can actually access R objects from within another
@@ -1480,7 +1486,7 @@ with 42 random numbers) are transferred using a protobuf message. RPC in
 OpenCPU works like the \texttt{do.call} function in R, hence all arguments
 are contained within a list.
 
-<<>>=
+<<eval=FALSE>>=
 #requires httr >= 0.2.99
 library(httr)
 library(RProtoBuf)
