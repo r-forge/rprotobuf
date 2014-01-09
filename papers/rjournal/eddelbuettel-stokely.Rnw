@@ -1252,29 +1252,22 @@ method of the \texttt{protobuf} C++ library.
 
 %\section{Basic usage example - tutorial.Person}
 
-\include{app-mapreduce}
+\section{Application: Data Interchange in Web Services}
 
-%\section{Application: Sending/receiving Interaction With Servers}
-%
-%Combined
-%with an RPC system this means that one can interactively craft request
-%messages, send the serialized message to a remote server, read back a
-%response, and then parse the response protocol buffer interactively.
+% TODO(jeroen): I think maybe some of this should go earlier in the
+% paper, so this part can focus only on introducing the application,
+% Can you integrate some of this text earlier, maybe into the the
+% introduction?
 
-%TODO(mstokely): Talk about Jeroen Ooms OpenCPU, or talk about Andy
-%Chu's Poly.
-
-\section{Application: Protocol Buffers for Data Interchange in Web Services}
-
-As the name implies, the primary application of protocol buffers is
+As described earlier, the primary application of protocol buffers is
 data interchange in the context of inter-system communications. 
-Network protocols such as HTTP describe procedures on client-server
-communication, i.e. how to iniate requests, authenticate, send messages, 
-etc. However, network 
+Network protocols such as HTTP provide mechanisms for client-server
+communication, i.e. how to initiate requests, authenticate, send messages, 
+etc.  However, many network 
 protocols generally do not regulate \emph{content} of messages: they allow
 transfer of any media type, such as web pages, files or video.
 When designing systems where various components require exchange of specific data
-structures, we need something on top of the protocol that prescribes 
+structures, we need something on top of the network protocol that prescribes 
 how these structures are to be respresented in messages (buffers) on the
 network. Protocol buffers solve exactly this problem by providing
 a cross platform method for serializing arbitrary structures into well defined
@@ -1284,12 +1277,11 @@ remote API or network application. Libraries to parse and generate protobuf
 messages are available for many programming languages, making it 
 relatively straight forward to implement clients and servers.
 
-
 \subsection{Interacting with R through HTTPS and Protocol Buffers}
 
 One example of a system that supports protocol buffers to interact
 with R is OpenCPU \citep{opencpu}. OpenCPU is a framework for embedded statistical 
-computation and reproducible research based on R and Latex. It exposes a 
+computation and reproducible research based on R and \LaTeX. It exposes a 
 HTTP(S) API to access and manipulate R objects and allows for performing 
 remote R function calls. Clients do not need to understand 
 or generate any R code: HTTP requests are automatically mapped to 
@@ -1319,11 +1311,13 @@ interpret the response as a protobuf message.
 
 Because both HTTP and Protocol Buffers have libraries available for many 
 languages, clients can be implemented in just a few lines of code. Below
-example code for both R and Python that retrieve a dataset from R with 
+is example code for both R and Python that retrieves a dataset from R with 
 OpenCPU using a protobuf message. In R, we use the HTTP client from 
-the \texttt{httr} package \citep{httr}, and the protobuf
-parser from the \texttt{RProtoBuf} package. In this illustrative example we
-download a dataset which is part of the base R distribution, so we can actually
+the \texttt{httr} package \citep{httr}.
+% superfluous?
+%, and the protobuf parser from the \texttt{RProtoBuf} package.
+In this example we
+download a dataset which is part of the base R distribution, so we can
 verify that the object was transferred without loss of information.
 
 <<eval=FALSE>>=
@@ -1341,7 +1335,7 @@ identical(output, MASS::Animals)
 This code suggests a method for exchanging objects between R servers, however this can 
 also be done without protocol buffers. The main advantage of using an inter-operable format 
 is that we can actually access R objects from within another
-programming language. For example, in a very similar fasion we can retrieve the same
+programming language. For example, in a very similar fashion we can retrieve the same
 dataset in a Python client. To parse messages in Python, we first compile the 
 \texttt{rexp.proto} descriptor into a python module using the \texttt{protoc} compiler:
 
@@ -1469,6 +1463,58 @@ print(msg.realValue);
 \end{verbatim}
 
 
+\section{Application: Distributed Data Collection with MapReduce}
+
+TODO(mstokely): Make this better.
+
+Many large data sets in fields such as particle physics and
+information processing are stored in binned or histogram form in order
+to reduce the data storage requirements
+\citep{scott2009multivariate}. Protocol Buffers make a particularly
+good data transport format in distributed MapReduces environments
+where large numbers of computers process a large data set for analysis.
+
+There are two common patterns for generating histograms of large data
+sets with MapReduce.  In the first method, each mapper task can
+generate a histogram over a subset of the data that is has been
+assigned, and then the histograms of each mapper are sent to one or
+more reducer tasks to merge.
+
+In the second method, each mapper rounds a data point to a bucket
+width and outputs that bucket as a key and '1' as a value.  Reducers
+then sum up all of the values with the same key and output to a data store.
+
+In both methods, the mapper tasks must choose identical
+bucket boundaries even though they are analyzing disjoint parts of the
+input set that may cover different ranges, or we must implement
+multiple phases.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\textwidth]{histogram-mapreduce-diag1.pdf}
+\end{center}
+\caption{Diagram of MapReduce Histogram Generation Pattern}
+\label{fig:mr-histogram-pattern1}
+\end{figure}
+
+Figure~\ref{fig:mr-histogram-pattern1} illustrates the second method
+described above for histogram generation of large data sets with
+MapReduce.
+
+This package is designed to be helpful if some of the Map or Reduce
+tasks are written in R, or if those components are written in other
+languages and only the resulting output histograms need to be
+manipulated in R.
+
+%\section{Application: Sending/receiving Interaction With Servers}
+%
+%Combined
+%with an RPC system this means that one can interactively craft request
+%messages, send the serialized message to a remote server, read back a
+%response, and then parse the response protocol buffer interactively.
+
+%TODO(mstokely): Talk about Jeroen Ooms OpenCPU, or talk about Andy
+%Chu's Poly.
 
 
 \section{Summary}
