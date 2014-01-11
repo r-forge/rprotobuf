@@ -20,7 +20,7 @@
 \title{\pkg{RProtoBuf}: Efficient Cross-Language Data Serialization in R}
 
 %% for pretty printing and a nice hypersummary also set:
-\Plainauthor{Dirk Eddelbuettel, Murray Stokely} %% comma-separated
+\Plainauthor{Dirk Eddelbuettel, Murray Stokely, Jeroen Ooms} %% comma-separated
 \Plaintitle{RProtoBuf: Efficient Cross-Language Data Serialization in R}
 \Shorttitle{\pkg{RProtoBuf}: Protocol Buffers in R} %% a short title (if necessary)
 
@@ -121,13 +121,12 @@ Data analysis patterns such as Split-Apply-Combine
 \citep{wickham2011split} explicitly break up large problems into
 manageable pieces.  These patterns are frequently employed with
 different programming languages used for the different phases of data
-analysis -- collection, cleaning, analysis, post-processing, and
+analysis -- collection, cleaning, modeling, analysis, post-processing, and
 presentation in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
-different environments.  Each stage of the data
+different environments and languages.  Each stage of such a data
 analysis pipeline may involve storing intermediate results in a
 file or sending them over the network.
-% DE: Nice!
 
 Given these requirements, how do we safely share intermediate results
 between different applications, possibly written in different
@@ -137,34 +136,35 @@ languages such as R, Julia, Java, and Python include built-in
 serialization support, but these formats are tied to the specific
 % DE: need to define serialization?
 programming language in use and thus lock the user into a single
-environment.  CSV files can be read and written by many applications
-and so are often used for exporting tabular data.  However, CSV files
-have a number of disadvantages, such as a limitation of exporting only
-tabular datasets, lack of type-safety, inefficient text representation
-and parsing, and ambiguities in the format involving special
-characters.  JSON is another widely-supported format used mostly on
-the web that removes many of these disadvantages, but it too suffers
-from being too slow to parse and also does not provide strong typing
-between integers and floating point.  Because the schema information
-is not kept separately, multiple JSON messages of the same type
-needlessly duplicate the field names with each message.
-Lastly, XML is a well-established and widely-supported protocol with the ability to define
-just about any arbitrarily complex schema. However, it pays for this
-complexity with comparatively large and verbose messages, and added
-complexities at the parsing side. 
-%
-%
-%
+environment.  
+
+\emph{Comma-separated values} (CSV) files can be read and written by many
+applications and so are often used for exporting tabular data.  However, CSV
+files have a number of disadvantages, such as a limitation of exporting only
+tabular datasets, lack of type-safety, inefficient text representation and
+parsing, possibly limited precision and ambiguities in the format involving
+special characters.  \emph{JavaScript Object Notation} (JSON) is another
+widely-supported format used mostly on the web that removes many of these
+disadvantages, but it too suffers from being too slow to parse and also does
+not provide strong typing between integers and floating point.  Because the
+schema information is not kept separately, multiple JSON messages of the same
+type needlessly duplicate the field names with each message.  Lastly,
+\emph{Extensible Markup Language} (XML) is a well-established and widely-supported
+protocol with the ability to define just about any arbitrarily complex
+schema. However, it pays for this complexity with comparatively large and
+verbose messages, and added complexities at the parsing side (which are
+somewhat metigated by the availability of mature libraries and
+parsers).
+
 A number of binary formats based on JSON have been proposed that
 reduce the parsing cost and improve the efficiency.  MessagePack
-and BSON both have R interfaces \citep{msgpackR,rmongodb}, but
+and BSON both have R interfaces, but % \citep{msgpackR,rmongodb}, but
 % DE Why do we cite these packages, but not the numerous JSON packages?
 these formats lack a separate schema for the serialized data and thus
 still duplicate field names with each message sent over the network or
 stored in a file.  Such formats also lack support for versioning when
 data storage needs evolve over time, or when application logic and
 requirement changes dictate update to the message format.
-% DE: Need to talk about XML -- added a few lines at previous paragraph
 
 Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
@@ -188,19 +188,19 @@ storage costs of the stored data when compared with simple
 % in the middle (full class/method details) and interesting
 % applications at the end.
 
-Section~\ref{sec:protobuf} provides a general overview of Protocol
-Buffers.  Section~\ref{sec:rprotobuf-basic} describes the interactive
-R interface provided by \CRANpkg{RProtoBuf} and introduces the two
-main abstractions: \emph{Messages} and \emph{Descriptors}.
-Section~\ref{sec:rprotobuf-classes} describes the implementation
-details of the main S4 classes making up this package.
-Section~\ref{sec:types} describes the challenges of type coercion
-between R and other languages.  Section~\ref{sec:evaluation}
-introduces a general R language schema for serializing arbitrary R
-objects and evaluates it against R's built-in serialization.
-Sections~\label{sec:opencpu} and \label{sec:mapreduce} provide
-real-world use cases of \CRANpkg{RProtoBuf} in web service and
-MapReduce environments, respectively.
+The rest of the paper is organized as follows. Section~\ref{sec:protobuf}
+provides a general overview of Protocol Buffers.
+Section~\ref{sec:rprotobuf-basic} describes the interactive R interface
+provided by \CRANpkg{RProtoBuf} and introduces the two main abstractions:
+\emph{Messages} and \emph{Descriptors}.  Section~\ref{sec:rprotobuf-classes}
+describes the implementation details of the main S4 classes making up this
+package.  Section~\ref{sec:types} describes the challenges of type coercion
+between R and other languages.  Section~\ref{sec:evaluation} introduces a
+general R language schema for serializing arbitrary R objects and evaluates
+it against R's built-in serialization.  Sections~\ref{sec:opencpu}
+and \ref{sec:mapreduce} provide real-world use cases of \CRANpkg{RProtoBuf}
+in web service and MapReduce environments, respectively, before
+Section~\ref{sec:summary} concludes.
 
 %This article describes the basics of Google's Protocol Buffers through
 %an easy to use R package, \CRANpkg{RProtoBuf}.  After describing the
@@ -221,10 +221,10 @@ MapReduce environments, respectively.
 Protocol Buffers can be described as a modern, language-neutral, platform-neutral,
 extensible mechanism for sharing and storing structured data.  Since their
 introduction, Protocol Buffers have been widely adopted in industry with
-applications as varied as database-internal messaging (Drizzle), % DE: citation?
-Sony Playstations, Twitter, Google Search, Hadoop, and Open Street Map.  While
+applications as varied as %database-internal messaging (Drizzle), % DE: citation?
+Sony Playstations, Twitter, Google Search, Hadoop, and Open Street Map.  
 % TODO(DE): This either needs a citation, or remove the name drop
-traditional IDLs have at time been criticized for code bloat and
+While traditional IDLs have at time been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
 model that is compartively flexible and simple to use.
 
@@ -232,22 +232,22 @@ Some of the key features provided by Protocol Buffers for data analysis
 include:
 
 \begin{itemize}
-\item \emph{Portable}:  Allows users to send and receive data between
-  applications or different computers.
+\item \emph{Portable}:  Enable users to send and receive data between
+  applications as well as different computers or operating systems.
 \item \emph{Efficient}:  Data is serialized into a compact binary
   representation for transmission or storage.
 \item \emph{Extensible}:  New fields can be added to Protocol Buffer Schemas
-  in a forward-compatible way that do not break older applications.
+  in a forward-compatible way that does not break older applications.
 \item \emph{Stable}:  Protocol Buffers have been in wide use for over a
   decade.
 \end{itemize}
 
 Figure~\ref{fig:protobuf-distributed-usecase} illustrates an example
-communication workflow with protocol buffers and an interactive R
-session.  Common use cases include populating a request RPC protocol
-buffer in R that is then serialized and sent over the network to a
-remote server.  The server would then deserialize the message, act on
-the request, and respond with a new protocol buffer over the network. The key
+communication workflow with Protocol Buffers and an interactive R session.
+Common use cases include populating a request remote-procedure call (RPC)
+Protocol Buffer in R that is then serialized and sent over the network to a
+remote server.  The server would then deserialize the message, act on the
+request, and respond with a new Protocol Buffer over the network. The key
 difference to, say, a request to an Rserve instance is that the remote server
 may not even know the R language.
 
@@ -267,9 +267,9 @@ may not even know the R language.
 %between three to ten times \textsl{smaller}, between twenty and one hundred
 %times \textsl{faster}, as well as less ambiguous and easier to program.
 
-Many sources compare data serialization formats and show protocol
-buffers very favorably to the alternatives, such
-as \citet{Sumaray:2012:CDS:2184751.2184810}
+Many sources compare data serialization formats and show Protocol
+Buffers very favorably to the alternatives; see
+\citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
 
 %The flexibility of the reflection-based API is particularly well
 %suited for interactive data analysis.
@@ -277,11 +277,11 @@ as \citet{Sumaray:2012:CDS:2184751.2184810}
 % XXX Design tradeoffs: reflection vs proto compiler
 
 For added speed and efficiency, the C++, Java, and Python bindings to
-Protocol Buffers are used with a compiler that translates a protocol
-buffer schema description file (ending in \texttt{.proto}) into
+Protocol Buffers are used with a compiler that translates a Protocol
+Buffer schema description file (ending in \texttt{.proto}) into
 language-specific classes that can be used to create, read, write and
-manipulate protocol buffer messages.  The R interface, in contrast,
-uses a reflection-based API that is particularly well suited for
+manipulate Protocol Buffer messages.  The R interface, in contrast,
+uses a reflection-based API that is particularly well-suited for
 interactive data analysis.  All messages in R have a single class
 structure, but different accessor methods are created at runtime based
 on the name fields of the specified message type.
@@ -324,8 +324,8 @@ protocol buffer messages in R, and how to read and write the
 binary \emph{payload} of the messages to files and arbitrary binary
 R connections.
 
-The two fundamental building blocks of Protocol Buffers are Messages
-and Descriptors.  Messages provide a common abstract encapsulation of
+The two fundamental building blocks of Protocol Buffers are \emph{Messages}
+and \emph{Descriptors}.  Messages provide a common abstract encapsulation of
 structured data fields of the type specified in a Message Descriptor.
 Message Descriptors are defined in \texttt{.proto} files and define a
 schema for a particular named class of messages.
@@ -353,11 +353,11 @@ populating its fields.
 %% TODO(de) Can we make this not break the width of the page?
 \noindent
 \begin{table}
-\begin{tabular}{@{\hskip .01\textwidth}p{.40\textwidth}@{\hskip .02\textwidth}@{\hskip .02\textwidth}p{0.55\textwidth}@{\hskip .01\textwidth}}
+\begin{tabular}{p{.40\textwidth}p{0.55\textwidth}}
 \toprule
 Schema : \texttt{addressbook.proto} & Example R Session\\
 \cmidrule{1-2}
-\begin{minipage}{.35\textwidth}
+\begin{minipage}{.40\textwidth}
 \vspace{2mm}
 \begin{example}
 package tutorial;
@@ -377,10 +377,10 @@ message Person {
 }
 \end{example}
 \vspace{2mm}
-\end{minipage} & \begin{minipage}{.5\textwidth}
+\end{minipage} & \begin{minipage}{.55\textwidth}
 <<echo=TRUE>>=
 library(RProtoBuf)
-p <- new(tutorial.Person, id=1, name="Dirk")
+p <- new(tutorial.Person,id=1,name="Dirk")
 class(p)
 p$name
 p$name <- "Murray"
@@ -421,8 +421,8 @@ function, which can import a single file, all files in a directory, or
 all \texttt{.proto} files provided by another R package.
 
 The \texttt{.proto} file syntax for defining the structure of protocol
-buffer data is described comprehensively on Google Code:
-\url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.
+buffer data is described comprehensively on Google Code\footnote{See 
+\url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
 
 Once the proto files are imported, all message descriptors are
 are available in the R search path in the \texttt{RProtoBuf:DescriptorPool}
@@ -473,7 +473,6 @@ p$email <- "murray@stokely.org"
 
 However, as opposed to R lists, no partial matching is performed
 and the name must be given entirely.
-
 The \verb|[[| operator can also be used to query and set fields
 of a messages, supplying either their name or their tag number :
 
@@ -483,7 +482,7 @@ p[[ 2 ]] <- 3
 p[[ "email" ]]
 @
 
-Protocol buffers include a 64-bit integer type, but R lacks native
+Protocol Buffers include a 64-bit integer type, but R lacks native
 64-bit integer support.  A workaround is available and described in
 Section~\ref{sec:int64} for working with large integer values.
 
@@ -492,7 +491,7 @@ Section~\ref{sec:int64} for working with large integer values.
 
 \subsection{Display messages}
 
-Protocol buffer messages and descriptors implement \texttt{show}
+Protocol Buffer messages and descriptors implement \texttt{show}
 methods that provide basic information about the message :
 
 <<>>=
@@ -509,10 +508,10 @@ writeLines(as.character(p))
 
 \subsection{Serializing messages}
 
-However, the main focus of protocol buffer messages is
+However, the main focus of Protocol Buffer messages is
 efficiency. Therefore, messages are transported as a sequence
 of bytes. The \texttt{serialize} method is implemented for
-protocol buffer messages to serialize a message into a sequence of
+Protocol Buffer messages to serialize a message into a sequence of
 bytes that represents the message.
 %(raw vector in R speech) that represents the message.
 
@@ -589,7 +588,7 @@ message <- read(tutorial.Person, payload)
 @
 
 
-\texttt{read} can also be used as a pseudo method of the descriptor
+\texttt{read} can also be used as a pseudo-method of the descriptor
 object :
 
 <<>>=
@@ -614,8 +613,9 @@ generic in the S3 sense, such as \texttt{new} and
 \texttt{serialize}.
 
 Each R object stores an external pointer to an object managed by
-the \texttt{protobuf} C++ library.
-The \CRANpkg{Rcpp} package \citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to
+the \texttt{protobuf} C++ library which implements the core Protocol Buffer
+functionality.  The \CRANpkg{Rcpp} package
+\citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
 facilitate the integration of the R and C++ code for these objects.
 
 % Message, Descriptor, FieldDescriptor, EnumDescriptor,
@@ -636,12 +636,12 @@ the development of Rcpp Modules \citep{eddelbuettel2013exposing},
 which provide a more concise way of wrapping C++ functions and classes
 in a single entity.
 
-The \texttt{RProtoBuf} package combines the \emph{R typical} dispatch
-of the form \verb|method(object, arguments)| and the more traditional
-object oriented notation \verb|object$method(arguments)|.
+The \texttt{RProtoBuf} package combines a dispatch mechanism 
+of the form \verb|method(object, arguments)| (common to R) and the more
+traditional object oriented notation \verb|object$method(arguments)|.
 Additionally, \texttt{RProtoBuf} implements the \texttt{.DollarNames} S3 generic function
 (defined in the \texttt{utils} package) for all classes to enable tab
-completion.  Completion possibilities include pseudo method names for all
+completion.  Completion possibilities include pseudo-method names for all
 classes, plus dynamic dispatch on names or types specific to a given object.
 
 % TODO(ms): Add column check box for doing dynamic dispatch based on type.
@@ -683,9 +683,9 @@ is available in Table~\ref{Message-methods-table}.
 \toprule
 \textbf{Slot} & \textbf{Description} \\
 \cmidrule(r){2-2}
-\texttt{pointer} & External pointer to the \texttt{Message} object of the C++ proto library. Documentation for the
-\texttt{Message} class is available from the protocol buffer project page:
-\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message} \\
+\texttt{pointer} & External pointer to the \texttt{Message} object of the C++ protobuf library. Documentation for the
+\texttt{Message} class is available from the Protocol Buffer project page. \\
+%(\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message}) \\
 \texttt{type} & Fully qualified name of the message. For example a \texttt{Person} message
 has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
 \textbf{Method} & \textbf{Description} \\
@@ -758,8 +758,8 @@ slots and available methods for Descriptors.
 \textbf{Slot} & \textbf{Description} \\
 \cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{Descriptor} object of the C++ proto library. Documentation for the
-\texttt{Descriptor} class is available from the protocol buffer project page:
-\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
+\texttt{Descriptor} class is available from the Protocol Buffer project page.\\
+%\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
 \texttt{type} & Fully qualified path of the message type. \\[.3cm]
 %
 \textbf{Method} & \textbf{Description} \\
@@ -781,7 +781,7 @@ descriptor.\\
 \texttt{field\_count} & Return the number of fields in this descriptor.\\
 \texttt{field} & Return the descriptor for the specified field in this descriptor.\\
 \texttt{nested\_type\_count} & The number of nested types in this descriptor.\\
-\texttt{nested\_type} & Return the descriptor for the specified nested
+\texttt{nested\_type} & Return the descriptor for the specified nested 
 type in this descriptor.\\
 \texttt{enum\_type\_count} & The number of enum types in this descriptor.\\
 \texttt{enum\_type} & Return the descriptor for the specified enum
@@ -984,8 +984,9 @@ tutorial.Person$PhoneType$value(number=1)
 
 One of the benefits of using an Interface Definition Language (IDL)
 like Protocol Buffers is that it provides a highly portable basic type
-system that different language and hardware implementations can map to
+system. This permits different language and hardware implementations to map to
 the most appropriate type in different environments.
+
 Table~\ref{table-get-types} details the correspondence between the
 field type and the type of data that is retrieved by \verb|$| and \verb|[[|
 extractors.
@@ -1005,11 +1006,11 @@ int32	  & \texttt{integer} vector & \texttt{integer} vector \\
 sint32	  & \texttt{integer} vector & \texttt{integer} vector \\
 sfixed32  & \texttt{integer} vector & \texttt{integer} vector \\[3mm]
 int64	  & \texttt{integer} or \texttt{character}
-vector \footnotemark & \texttt{integer} or \texttt{character} vector \\
+vector    & \texttt{integer} or \texttt{character} vector \\
 uint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
 sint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
 fixed64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
-sfixed64  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\\hline
+sfixed64  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\[3mm]
 bool	& \texttt{logical} vector & \texttt{logical} vector \\[3mm]
 string	& \texttt{character} vector & \texttt{character} vector \\
 bytes	& \texttt{character} vector & \texttt{character} vector \\[3mm]
@@ -1019,17 +1020,17 @@ message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \textt
 \end{tabular}
 \end{small}
 \caption{\label{table-get-types}Correspondence between field type and
-  R type retrieved by the extractors. \footnotesize{1. R lacks native
+  R type retrieved by the extractors. Note that R lacks native
   64-bit integers, so the \texttt{RProtoBuf.int64AsString} option is
   available to return large integers as characters to avoid losing
-  precision.  This option is described in Section~\ref{sec:int64}}.}
+  precision.  This option is described in Section~\ref{sec:int64}.}
 \end{table}
 
 \subsection{Booleans}
 
 R booleans can accept three values: \texttt{TRUE}, \texttt{FALSE}, and
-\texttt{NA}.  However, most other languages, including the protocol
-buffer schema, only accept \texttt{TRUE} or \texttt{FALSE}.  This means
+\texttt{NA}.  However, most other languages, including the Protocol
+Buffer schema, only accept \texttt{TRUE} or \texttt{FALSE}.  This means
 that we simply can not store R logical vectors that include all three
 possible values as booleans.  The library will refuse to store
 \texttt{NA}s in protocol buffer boolean fields, and users must instead
@@ -1059,7 +1060,7 @@ try(a$optional_bool <- NA,silent=TRUE)
 \subsection{Unsigned Integers}
 
 R lacks a native unsigned integer type.  Values between $2^{31}$ and
-$2^{32} - 1$ read from unsigned int protocol buffer fields must be
+$2^{32} - 1$ read from unsigned into Protocol Buffer fields must be
 stored as doubles in R.
 
 <<>>=
@@ -1140,22 +1141,21 @@ options("RProtoBuf.int64AsString" = FALSE)
 \section{Evaluation: data.frame to Protocol Buffer Serialization}
 \label{sec:evaluation}
 
-Saptarshi Guha wrote the RHIPE package \citep{rhipe} which includes
-protocol buffer integration with R.  However, this implementation
-takes a different approach: any R object is serialized into a message
-based on a single catch-all \texttt{proto} schema.  Jeroen Ooms took a
-similar approach influenced by Saptarshi in the \pkg{RProtoBufUtils}
-package (which has now been integrated in \pkg{RProtoBuf}).  Unlike
-Saptarshi's package, however, RProtoBufUtils depends 
-on, and extends, RProtoBuf for underlying message operations.  
+The \pkg{RHIPE} package \citep{rhipe} also includes a Protocol integration with R.
+However, its implementation takes a different approach: any R object is
+serialized into a message based on a single catch-all \texttt{proto} schema.
+A similar approach was taken by \pkg{RProtoBufUtils} package (which has now been integrated in
+\pkg{RProtoBuf}). Unlike \pkg{RHIPE}, however, \pkg{RProtoBufUtils}
+depended upon on, and extended, \pkg{RProtoBuf} for underlying message operations.
+%DE Shall this go away now that we sucket RPBUtils into RBP?
 
 One key extension of \pkg{RProtoBufUtils} is the 
 \texttt{serialize\_pb} method to convert R objects into serialized
-protocol buffers in the catch-all schema. The \texttt{can\_serialize\_pb}
-method can be used to determine whether the given R object can safely
+Protocol Buffers in the catch-all schema. The \texttt{can\_serialize\_pb}
+method can then be used to determine whether the given R object can safely
 be expressed in this way.  To illustrate how this method works, we
 attempt to convert all of the built-in datasets from R into this
-serialized protocol buffer representation.
+serialized Protocol Buffer representation.
 
 <<echo=TRUE>>=
 datasets <- subset(as.data.frame(data()$results), Package=="datasets")
@@ -1165,7 +1165,7 @@ n <- nrow(datasets)
 
 There are \Sexpr{n} standard data sets included in R.  We use the
 \texttt{can\_serialize\_pb} method to determine how many of those can
-be safely converted to a serialized protocol buffer representation.
+be safely converted to a serialized Protocol Buffer representation.
 
 <<echo=TRUE>>=
 #datasets$valid.proto <- sapply(datasets$load.name, function(x) can_serialize_pb(eval(as.name(x))))
@@ -1177,7 +1177,7 @@ m <- nrow(datasets)
 (\Sexpr{format(100*m/n,digits=1)}\%).  The next section illustrates how
 many bytes were used to store the data sets under four different
 situations (1) normal R serialization, (2) R serialization followed by
-gzip, (3) normal protocol buffer serialization, (4) protocol buffer
+gzip, (3) normal Protocol Buffer serialization, (4) Protocol Buffer
 serialization followed by gzip.
 
 \subsection{Compression Performance}
@@ -1601,6 +1601,7 @@ the resulting output histograms need to be manipulated in R.
 
 
 \section{Summary}
+\label{sec:summary}
 
 % RProtoBuf has been used.
 
