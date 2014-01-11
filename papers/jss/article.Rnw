@@ -225,7 +225,7 @@ include:
   applications or different computers.
 \item \emph{Efficient}:  Data is serialized into a compact binary
   representation for transmission or storage.
-\item \emph{Exentsible}:  New fields can be added to Protocol Buffer Schemas
+\item \emph{Extensible}:  New fields can be added to Protocol Buffer Schemas
   in a forward-compatible way that do not break older applications.
 \item \emph{Stable}:  Protocol Buffers have been in wide use for over a
   decade.
