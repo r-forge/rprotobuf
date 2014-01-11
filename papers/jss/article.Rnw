@@ -1149,7 +1149,7 @@ A similar approach was taken by \pkg{RProtoBufUtils} package (which has now been
 depended upon on, and extended, \pkg{RProtoBuf} for underlying message operations.
 %DE Shall this go away now that we sucket RPBUtils into RBP?
 
-One key extension of \pkg{RProtoBufUtils} is the 
+One key extension which \pkg{RProtoBufUtils} brought to \pkg{RProtoBuf} is the 
 \texttt{serialize\_pb} method to convert R objects into serialized
 Protocol Buffers in the catch-all schema. The \texttt{can\_serialize\_pb}
 method can then be used to determine whether the given R object can safely
@@ -1168,17 +1168,22 @@ There are \Sexpr{n} standard data sets included in R.  We use the
 be safely converted to a serialized Protocol Buffer representation.
 
 <<echo=TRUE>>=
-#datasets$valid.proto <- sapply(datasets$load.name, function(x) can_serialize_pb(eval(as.name(x))))
-#datasets <- subset(datasets, valid.proto==TRUE)
+datasets$valid.proto <- sapply(datasets$load.name,
+                        function(x) can_serialize_pb(eval(as.name(x))))
+datasets <- subset(datasets, valid.proto==TRUE)
 m <- nrow(datasets)
 @
 
 \Sexpr{m} data sets could be converted to Protocol Buffers
 (\Sexpr{format(100*m/n,digits=1)}\%).  The next section illustrates how
 many bytes were used to store the data sets under four different
-situations (1) normal R serialization, (2) R serialization followed by
-gzip, (3) normal Protocol Buffer serialization, (4) Protocol Buffer
-serialization followed by gzip.
+situations:
+\begin{itemize}
+\item normal R serialization,
+\item R serialization followed by gzip,
+\item normal Protocol Buffer serialization, and
+\item Protocol Buffer serialization followed by gzip.
+\end{itemize}
 
 \subsection{Compression Performance}
 \label{sec:compression}
@@ -1207,17 +1212,21 @@ clean.df <- data.frame(dataset=datasets$load.name,
 
 Table~\ref{tab:compression} shows the sizes of 50 sample R datasets as
 returned by object.size() compared to the serialized sizes.
-The summary compression sizes are listed below, and a full table for a
-sample of 50 datasets is included on the next page.  Sizes are comparable
-but protocol buffers provide simple getters and setters in multiple
-languages instead of requiring other programs to parse the R
-serialization format \citep{serialization}.  One takeaway from this
-table is that RProtoBuf does not in general provide any significant
-space-savings over R's normal serialization mechanism.  The benefit
-from RProtoBuf comes from its interoperability with other
-environments, safe versioning,
+%The summary compression sizes are listed below, and a full table for a
+%sample of 50 datasets is included on the next page.  
+Sizes are comparable but Protocol Buffers provide simple getters and setters
+in multiple languages instead of requiring other programs to parse the R
+serialization format.% \citep{serialization}.
+One takeaway from this table is that RProtoBuf does not in general provide
+any significant saving in file size compared to the normal serialization
+mechanism in R which is seen as equally compact.  The benefit from RProtoBuf
+comes from its interoperability with other environments, as well as its safe
+versioning,
 
-TODO comparison of protobuf serialization sizes/times for various vectors.  Compared to R's native serialization.  Discussion of the RHIPE approach of serializing any/all R objects, vs more specific protocol buffers for specific R objects.
+TODO comparison of protobuf serialization sizes/times for various vectors.
+Compared to R's native serialization.  Discussion of the RHIPE approach of
+serializing any/all R objects, vs more specific Protocol Buffers for specific
+R objects.
 
 % N.B. see table.Rnw for how this table is created.
 %
@@ -1296,8 +1305,8 @@ TODO comparison of protobuf serialization sizes/times for various vectors.  Comp
 
 TODO RProtoBuf is quite flexible and easy to use for interactive
 analysis, but it is not designed for certain classes of operations one
-might like to do with protocol buffers.  For example, taking a list of
-10,000 protocol buffers, extracting a named field from each one, and
+might like to do with Protocol Buffers.  For example, taking a list of
+10,000 Protocol Buffers, extracting a named field from each one, and
 computing a aggregate statistics on those values would be extremely
 slow with RProtoBuf, and while this is a useful class of operations,
 it is outside of the scope of RProtoBuf.  We should be very clear
@@ -1339,27 +1348,26 @@ method of the \texttt{protobuf} C++ library.
 % Can you integrate some of this text earlier, maybe into the the
 % introduction?
 
-As described earlier, the primary application of protocol buffers is
-data interchange in the context of inter-system communications. 
-Network protocols such as HTTP provide mechanisms for client-server
-communication, i.e. how to initiate requests, authenticate, send messages, 
-etc.  However, many network 
-protocols generally do not regulate \emph{content} of messages: they allow
-transfer of any media type, such as web pages, files or video.
-When designing systems where various components require exchange of specific data
-structures, we need something on top of the network protocol that prescribes 
-how these structures are to be represented in messages (buffers) on the
-network. Protocol buffers solve exactly this problem by providing
-a cross platform method for serializing arbitrary structures into well defined
-messages, that can be exchanged using any protocol. The descriptors
-(\texttt{.proto} files) are used to formally define the interface of a
-remote API or network application. Libraries to parse and generate protobuf
-messages are available for many programming languages, making it 
-relatively straight forward to implement clients and servers.
+As described earlier, the primary application of Protocol Buffers is data
+interchange in the context of inter-system communications.  Network protocols
+such as HTTP provide mechanisms for client-server communication, i.e. how to
+initiate requests, authenticate, send messages, etc.  However, many network
+protocols generally do not regulate the \emph{content} of messages: they
+allow transfer of any media type, such as web pages, static files or
+multimedia content.  When designing systems where various components require
+exchange of specific data structures, we need something on top of the network
+protocol that prescribes how these structures are to be represented in
+messages (buffers) on the network. Protocol Buffers solve exactly this
+problem by providing a cross-platform method for serializing arbitrary
+structures into well defined messages, which can then be exchanged using any
+protocol. The descriptors (\texttt{.proto} files) are used to formally define
+the interface of a remote API or network application. Libraries to parse and
+generate protobuf messages are available for many programming languages,
+making it relatively straightforward to implement clients and servers.
 
 \subsection{Interacting with R through HTTPS and Protocol Buffers}
 
-One example of a system that supports protocol buffers to interact
+One example of a system that supports Protocol Buffers to interact
 with R is OpenCPU \citep{opencpu}. OpenCPU is a framework for embedded statistical 
 computation and reproducible research based on R and \LaTeX. It exposes a 
 HTTP(S) API to access and manipulate R objects and allows for performing 
@@ -1406,7 +1414,7 @@ library(RProtoBuf)
 library(httr)
 
 # Retrieve and parse message
-req <- GET ('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
+req <- GET('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
 output <- unserialize_pb(req$content)
 
 # Check that no information was lost
@@ -1414,7 +1422,7 @@ identical(output, MASS::Animals)
 @
 
 This code suggests a method for exchanging objects between R servers, however this can 
-also be done without protocol buffers. The main advantage of using an inter-operable format 
+also be done without Protocol Buffers. The main advantage of using an inter-operable format 
 is that we can actually access R objects from within another
 programming language. For example, in a very similar fashion we can retrieve the same
 dataset in a Python client. To parse messages in Python, we first compile the 
@@ -1423,7 +1431,7 @@ dataset in a Python client. To parse messages in Python, we first compile the
 \begin{verbatim}
   protoc rexp.proto --python_out=.
 \end{verbatim}
-This generates python module called \texttt{rexp\_pb2.py}, containing both the 
+This generates Python module called \texttt{rexp\_pb2.py}, containing both the 
 descriptor information as well as methods to read and manipulate the R object 
 message. In the example below we use the HTTP client from the \texttt{urllib2}
 module. 
@@ -1457,7 +1465,7 @@ case the function return value. However, OpenCPU allows us to supply the
 arguments of the function call in the form of protobuf messages as well.
 This is a bit more work, because clients needs to both generate messages 
 containing R objects to post to the server, as well as retrieve and parse
-protobuf messages returned by the server. Using protocol buffers to post
+protobuf messages returned by the server. Using Protocol Buffers to post
 function arguments is not required, and for simple (scalar) arguments 
 the standard \texttt{application/x-www-form-urlencoded} format might be sufficient.
 However, with protocol buffers the client can perform function calls with
@@ -1499,8 +1507,9 @@ fnargs <- unserialize_pb(inputmsg)
 val <- do.call(stats::rnorm, fnargs)
 outputmsg <- serialize_pb(val)
 @
-In reality the OpenCPU provides a lot of meta functionality such as handling
-of sessions, exceptions, security, and much more. OpenCPU also makes it possible to store
+
+OpenCPU also provides a lot of meta-functionality such as handling
+of sessions, exceptions, security, and more. OpenCPU also makes it possible to store
 output of a function call on the server, instead of directly retrieving it. Thereby 
 objects can be shared with other users or used as arguments in a subsequent
 function call. But in its essence, the HTTP API provides a simple way to perform remote 
@@ -1612,17 +1621,18 @@ the resulting output histograms need to be manipulated in R.
 
 \section{Acknowledgement}
 
-The first versions of \CRANpkg{RProtoBuf} were written during 2009-2010,
-with very significant contributions, both in code and design, made by
-Romain Fran\c{c}ois. His continued influence on design and code is
-appreciated. Several features of the package are influenced
+The first versions of \CRANpkg{RProtoBuf} were written during 2009-2010.
+Very significant contributions, both in code and design, were made by
+Romain Fran\c{c}ois whose continued influence on design and code is
+greatly appreciated. Several features of the package are influenced
 by the design of the \CRANpkg{rJava} package by Simon Urbanek
 The user-defined table mechanism, implemented by Duncan Temple Lang for the
-purpose of the \pkg{RObjectTables} package allowed the dynamic symbol lookup.
+purpose of the \pkg{RObjectTables} package, allows for the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
-obscure protocol buffer semantics.  Karl Millar and Jeroen Ooms were
-helpful in reviewing code or offering suggestions.  The contemporaneous
-work by Saptarshi Guha on \pkg{RHIPE} was a strong initial motivator.
+obscure protocol buffer semantics.  Karl Millar was very
+helpful in reviewing code and offering suggestions.  
+%The contemporaneous work by Saptarshi Guha on \pkg{RHIPE} was a strong
+%initial motivator.
 
 \bibliography{article}
 
@@ -1630,3 +1640,4 @@ work by Saptarshi Guha on \pkg{RHIPE} was a strong initial motivator.
 %% Note: If there is markup in \(sub)section, then it has to be escape as above.
 
 \end{document}
+
