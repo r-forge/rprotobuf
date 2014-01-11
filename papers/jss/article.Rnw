@@ -14,8 +14,9 @@
 \DefineVerbatimEnvironment{example}{Verbatim}{}
 
 %% almost as usual
-\author{Dirk Eddelbuettel\\Debian and R Projects \And 
-        Murray Stokely\\Google, Inc}
+\author{Dirk Eddelbuettel\\Debian Project \And 
+        Murray Stokely\\Google, Inc \And
+        Jeroen Ooms\\UCLA}
 \title{\pkg{RProtoBuf}: Efficient Cross-Language Data Serialization in R}
 
 %% for pretty printing and a nice hypersummary also set:
@@ -50,7 +51,11 @@ library and the R environment for statistical computing.
 %% The address of (at least) one author should be given
 %% in the following format:
 \Address{
-  Dirk Eddelbuettel\\
+  Dirk Eddelbuettel \\
+  Debian Project \\
+  River Forest, IL, USA\\
+  E-mail: \email{edd@debian.org}\\
+  URL: \url{http://dirk.eddelbuettel.com}\\
   \\
   Murray Stokely\\
   Google, Inc.\\
@@ -58,7 +63,13 @@ library and the R environment for statistical computing.
   Mountain View, CA 94040\\
   USA\\
   E-mail: \email{mstokely@google.com}\\
-  URL: \url{http://www.stokely.org/}
+  URL: \url{http://www.stokely.org/}\\
+  \\
+  Jeroen Ooms\\
+  UCLA Department of Statistics\\
+  University of California\\
+  E-mail: \email{jeroen.ooms@stat.ucla.edu}\\
+  URL: \url{http://jeroenooms.github.io}
 }
 %% It is also possible to add a telephone and fax number
 %% before the e-mail in the following format:
@@ -636,24 +647,23 @@ classes, plus dynamic dispatch on names or types specific to a given object.
 % TODO(ms): Add column check box for doing dynamic dispatch based on type.
 \begin{table}[h]
 \centering
-\begin{tabular}{|l|c|c|l|}
-\hline
-\textbf{Class} & \textbf{Slots} & \textbf{Methods} & \textbf{Dynamic Dispatch}\\
-\hline
-\hline
-Message & 2 & 20 & yes (field names)\\
-\hline
-Descriptor & 2 & 16 & yes (field names, enum types, nested types)\\
-\hline
-FieldDescriptor & 4 & 18 & no\\
-\hline
-EnumDescriptor & 4 & 11 & yes (enum constant names)\\
-\hline
-FileDescriptor & 3 & 6 & yes (message/field definitions)\\
-\hline
-EnumValueDescriptor & 3 & 6 & no\\
-\hline
+\begin{tabular}{lccl}
+\toprule
+\textbf{Class}      & 
+     \textbf{Slots} & 
+     \textbf{Methods} & 
+     \textbf{Dynamic Dispatch}\\
+\cmidrule{1-4}
+Message             & 2 & 20 & yes (field names)\\
+Descriptor          & 2 & 16 & yes (field names, enum types, nested types)\\
+FieldDescriptor     & 4 & 18 & no\\
+EnumDescriptor      & 4 & 11 & yes (enum constant names)\\
+FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
+EnumValueDescriptor & 3 & \phantom{1}6 & no\\
+\bottomrule
 \end{tabular}
+\caption{\label{Message-methods-table}Overview of Class, Slot, Method and
+  Dispatch Relationships}
 \end{table}
 
 \subsection{Messages}
@@ -669,34 +679,32 @@ is available in Table~\ref{Message-methods-table}.
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{l|p{10cm}}
-\hline
+\begin{tabular}{lp{10cm}}
+\toprule
 \textbf{Slot} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{Message} object of the C++ proto library. Documentation for the
 \texttt{Message} class is available from the protocol buffer project page:
 \url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message} \\
-\hline
 \texttt{type} & Fully qualified name of the message. For example a \texttt{Person} message
 has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
-\hline
 \textbf{Method} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{has} & Indicates if a message has a given field.   \\
 \texttt{clone} & Creates a clone of the message \\
 \texttt{isInitialized} & Indicates if a message has all its required fields set\\
 \texttt{serialize} & serialize a message to a file, binary connection, or raw vector\\
 \texttt{clear} & Clear one or several fields of a message, or the entire message\\
 \texttt{size} & The number of elements in a message field\\
-\texttt{bytesize} & The number of bytes the message would take once serialized\\
-\hline
+\texttt{bytesize} & The number of bytes the message would take once serialized\\[3mm]
+%
 \texttt{swap} & swap elements of a repeated field of a message\\
 \texttt{set} & set elements of a repeated field\\
 \texttt{fetch} & fetch elements of a repeated field\\
 \texttt{setExtension} & set an extension of a message\\
 \texttt{getExtension} & get the value of an extension of a message\\
-\texttt{add} & add elements to a repeated field \\
-\hline
+\texttt{add} & add elements to a repeated field \\[3mm]
+%
 \texttt{str} & the R structure of the message\\
 \texttt{as.character} & character representation of a message\\
 \texttt{toString} & character representation of a message (same as \texttt{as.character}) \\
@@ -745,23 +753,21 @@ slots and available methods for Descriptors.
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{l|p{10cm}}
-\hline
+\begin{tabular}{lp{10cm}}
+\toprule
 \textbf{Slot} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{Descriptor} object of the C++ proto library. Documentation for the
 \texttt{Descriptor} class is available from the protocol buffer project page:
 \url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
-\hline
 \texttt{type} & Fully qualified path of the message type. \\[.3cm]
-\hline
+%
 \textbf{Method} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{new} & Creates a prototype of a message described by this descriptor.\\
 \texttt{read} & Reads a message from a file or binary connection.\\
 \texttt{readASCII} & Read a message in ASCII format from a file or
 text connection.\\
-\hline
 \texttt{name} & Retrieve the name of the message type associated with
 this descriptor.\\
 \texttt{as.character} & character representation of a descriptor\\
@@ -769,7 +775,6 @@ this descriptor.\\
 \texttt{as.list} & return a named
 list of the field, enum, and nested descriptors included in this descriptor.\\
 \texttt{asMessage} & return DescriptorProto message. \\
-\hline
 \texttt{fileDescriptor} & Retrieve the file descriptor of this
 descriptor.\\
 \texttt{containing\_type} & Retrieve the descriptor describing the message type containing this descriptor.\\
@@ -781,7 +786,7 @@ type in this descriptor.\\
 \texttt{enum\_type\_count} & The number of enum types in this descriptor.\\
 \texttt{enum\_type} & Return the descriptor for the specified enum
 type in this descriptor.\\
-\hline
+\bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{Descriptor-methods-table}Description of slots and methods for the \texttt{Descriptor} S4 class}
@@ -799,23 +804,19 @@ defined for the \texttt{FieldDescriptor} class.
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{l|p{10cm}}
-\hline
+\begin{tabular}{lp{10cm}}
+\toprule
 \textbf{Slot} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{FieldDescriptor} C++ variable \\
-\hline
 \texttt{name} & Simple name of the field \\
-\hline
 \texttt{full\_name} & Fully qualified name of the field \\
-\hline
 \texttt{type} & Name of the message type where the field is declared \\[.3cm]
-\hline
+%
 \textbf{Method} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{as.character} & Character representation of a descriptor\\
-\texttt{toString} & Character
-representation of a descriptor (same as \texttt{as.character}) \\
+\texttt{toString} & Character representation of a descriptor (same as \texttt{as.character}) \\
 \texttt{asMessage} & Return FieldDescriptorProto message. \\
 \texttt{name} & Return the name of the field descriptor.\\
 \texttt{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
@@ -832,7 +833,7 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \texttt{default\_value} & Return the default value.\\
 \texttt{message\_type} & Return the message type if this is a message type field.\\
 \texttt{enum\_type} & Return the enum type if this is an enum type field.\\
-\hline
+\bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{fielddescriptor-methods-table}Description of slots and
@@ -863,20 +864,17 @@ tutorial.Person$PhoneType$WORK
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{l|p{10cm}}
-\hline
+\begin{tabular}{lp{10cm}}
+\toprule
 \textbf{Slot} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{EnumDescriptor} C++ variable \\
-\hline
 \texttt{name} & Simple name of the enum \\
-\hline
 \texttt{full\_name} & Fully qualified name of the enum \\
-\hline
 \texttt{type} & Name of the message type where the enum is declared \\[.3cm]
-\hline
+%
 \textbf{Method} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{as.list} & return a named
 integer vector with the values of the enum and their names.\\
 \texttt{as.character} & character representation of a descriptor\\
@@ -890,7 +888,7 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \texttt{has} & Return TRUE if this enum contains the specified named constant string.\\
 \texttt{value\_count} & Return the number of constants in this enum (same as \texttt{length}).\\
 \texttt{value} & Return the EnumValueDescriptor of an enum value of specified index, name, or number.\\
-\hline
+\bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{enumdescriptor-methods-table}Description of slots and methods for the \texttt{EnumDescriptor} S4 class}
@@ -916,27 +914,24 @@ f$Person
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{l|p{10cm}}
-\hline
-\textbf{slot} & \textbf{description} \\
-\hline
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{Slot} & \textbf{Description} \\
+\cmidrule(r){2-2}
 \texttt{pointer} & external pointer to the \texttt{FileDescriptor} object of the C++ proto library. Documentation for the
 \texttt{FileDescriptor} class is available from the protocol buffer project page:
 \url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
-\hline
 \texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
-\hline
 \texttt{package} & package name defined in this \texttt{.proto} file.\\[.3cm]
-\hline
 \textbf{Method} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{name} & Return the filename for this FileDescriptorProto.\\
 \texttt{package} & Return the file-level package name specified in this FileDescriptorProto.\\
 \texttt{as.character} & character representation of a descriptor. \\
 \texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
 \texttt{asMessage} & return FileDescriptorProto message. \\
 \texttt{as.list} & return named list of descriptors defined in this file descriptor.\\
-\hline
+\bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class}
@@ -961,25 +956,23 @@ tutorial.Person$PhoneType$value(number=1)
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{l|p{10cm}}
-\hline
-\textbf{slot} & \textbf{description} \\
-\hline
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{Slot} & \textbf{Description} \\
+\cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{EnumValueDescriptor} C++ variable \\
-\hline
 \texttt{name} & simple name of the enum value \\
-\hline
 \texttt{full\_name} & fully qualified name of the enum value \\[.3cm]
-\hline
+%
 \textbf{Method} & \textbf{Description} \\
-\hline
+\cmidrule(r){2-2}
 \texttt{number} & return the number of this EnumValueDescriptor. \\
 \texttt{name} & Return the name of the enum value descriptor.\\
 \texttt{enum\_type} & return the EnumDescriptor type of this EnumValueDescriptor. \\
 \texttt{as.character} & character representation of a descriptor. \\
 \texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
 \texttt{asMessage} & return EnumValueDescriptorProto message. \\
-\hline
+\bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{EnumValueDescriptor-methods-table}Description of slots
@@ -1000,37 +993,29 @@ extractors.
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{|c|p{5cm}p{5cm}|}
-\hline
-field type & R type (non repeated) & R type (repeated) \\
-\hline
-\hline
+\begin{tabular}{lp{5cm}p{5cm}}
+\toprule
+Field type & R type (non repeated) & R type (repeated) \\
+\cmidrule(r){2-3}
 double	& \texttt{double} vector & \texttt{double} vector \\
-float	& \texttt{double} vector & \texttt{double} vector \\
-\hline
+float	& \texttt{double} vector & \texttt{double} vector \\[3mm]
 uint32	  & \texttt{double} vector & \texttt{double} vector \\
-fixed32	  & \texttt{double} vector & \texttt{double} vector \\
-\hline
+fixed32	  & \texttt{double} vector & \texttt{double} vector \\[3mm]
 int32	  & \texttt{integer} vector & \texttt{integer} vector \\
 sint32	  & \texttt{integer} vector & \texttt{integer} vector \\
-sfixed32  & \texttt{integer} vector & \texttt{integer} vector \\
-\hline
+sfixed32  & \texttt{integer} vector & \texttt{integer} vector \\[3mm]
 int64	  & \texttt{integer} or \texttt{character}
 vector \footnotemark & \texttt{integer} or \texttt{character} vector \\
 uint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
 sint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
 fixed64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
-sfixed64  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
-\hline
-bool	& \texttt{logical} vector & \texttt{logical} vector \\
-\hline
+sfixed64  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\\hline
+bool	& \texttt{logical} vector & \texttt{logical} vector \\[3mm]
 string	& \texttt{character} vector & \texttt{character} vector \\
-bytes	& \texttt{character} vector & \texttt{character} vector \\
-\hline
-enum & \texttt{integer} vector & \texttt{integer} vector \\
-\hline
+bytes	& \texttt{character} vector & \texttt{character} vector \\[3mm]
+enum & \texttt{integer} vector & \texttt{integer} vector \\[3mm]
 message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \texttt{S4} objects of class \texttt{Message} \\
-\hline
+\bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{table-get-types}Correspondence between field type and
@@ -1240,68 +1225,69 @@ TODO comparison of protobuf serialization sizes/times for various vectors.  Comp
 % Fri Dec 27 17:00:03 2013
 \begin{table}[h!]
 \begin{center}
+  \small
 \scalebox{0.9}{
-\begin{tabular}{l|r|r|r|r|r}
-  \hline
-Data Set & object.size & \multicolumn{2}{c|}{R Serialization} &
-\multicolumn{2}{c}{RProtoBuf Serialization} \\
- & & Default & gzipped & Default & gzipped \\
-  \hline
-uspop & 584.00 & 268 & 172 & 211 & 148 \\
-  Titanic & 1960.00 & 633 & 257 & 481 & 249 \\
-  volcano & 42656.00 & 42517 & 5226 & 42476 & 4232 \\
-  euro.cross & 2728.00 & 1319 & 910 & 1207 & 891 \\
-  attenu & 14568.00 & 8234 & 2165 & 7771 & 2336 \\
-  ToothGrowth & 2568.00 & 1486 & 349 & 1239 & 391 \\
-  lynx & 1344.00 & 1028 & 429 & 971 & 404 \\
-  nottem & 2352.00 & 2036 & 627 & 1979 & 641 \\
-  sleep & 2752.00 & 746 & 282 & 483 & 260 \\
-  co2 & 4176.00 & 3860 & 1473 & 3803 & 1453 \\
-  austres & 1144.00 & 828 & 439 & 771 & 410 \\
-  ability.cov & 1944.00 & 716 & 357 & 589 & 341 \\
-  EuStockMarkets & 60664.00 & 59785 & 21232 & 59674 & 19882 \\
-  treering & 64272.00 & 63956 & 17647 & 63900 & 17758 \\
-  freeny.x & 1944.00 & 1445 & 1311 & 1372 & 1289 \\
-  Puromycin & 2088.00 & 813 & 306 & 620 & 320 \\
-  warpbreaks & 2768.00 & 1231 & 310 & 811 & 343 \\
-  BOD & 1088.00 & 334 & 182 & 226 & 168 \\
-  sunspots & 22992.00 & 22676 & 6482 & 22620 & 6742 \\
-  beaver2 & 4184.00 & 3423 & 751 & 3468 & 840 \\
-  anscombe & 2424.00 & 991 & 375 & 884 & 352 \\
-  esoph & 5624.00 & 3111 & 548 & 2240 & 665 \\
-  PlantGrowth & 1680.00 & 646 & 303 & 459 & 314 \\
-  infert & 15848.00 & 14328 & 1172 & 13197 & 1404 \\
-  BJsales & 1632.00 & 1316 & 496 & 1259 & 465 \\
-  stackloss & 1688.00 & 917 & 293 & 844 & 283 \\
-  crimtab & 7936.00 & 4641 & 713 & 1655 & 576 \\
-  LifeCycleSavings & 6048.00 & 3014 & 1420 & 2825 & 1407 \\
-  Harman74.cor & 9144.00 & 6056 & 2045 & 5861 & 2070 \\
-  nhtemp & 912.00 & 596 & 240 & 539 & 223 \\
-  faithful & 5136.00 & 4543 & 1339 & 4936 & 1776 \\
-  freeny & 5296.00 & 2465 & 1518 & 2271 & 1507 \\
-  discoveries & 1232.00 & 916 & 199 & 859 & 180 \\
-  state.x77 & 7168.00 & 4251 & 1754 & 4068 & 1756 \\
-  pressure & 1096.00 & 498 & 277 & 427 & 273 \\
-  fdeaths & 1008.00 & 692 & 291 & 635 & 272 \\
-  euro & 976.00 & 264 & 186 & 202 & 161 \\
-  LakeHuron & 1216.00 & 900 & 420 & 843 & 404 \\
-  mtcars & 6736.00 & 3798 & 1204 & 3633 & 1206 \\
-  precip & 4992.00 & 1793 & 813 & 1615 & 815 \\
-  state.area & 440.00 & 422 & 246 & 405 & 235 \\
-  attitude & 3024.00 & 1990 & 544 & 1920 & 561 \\
-  randu & 10496.00 & 9794 & 8859 & 10441 & 9558 \\
-  state.name & 3088.00 & 844 & 408 & 724 & 415 \\
-  airquality & 5496.00 & 4551 & 1241 & 2874 & 1294 \\
-  airmiles & 624.00 & 308 & 170 & 251 & 148 \\
-  quakes & 33112.00 & 32246 & 9898 & 29063 & 11595 \\
-  islands & 3496.00 & 1232 & 563 & 1098 & 561 \\
-  OrchardSprays & 3600.00 & 2164 & 445 & 1897 & 483 \\
-  WWWusage & 1232.00 & 916 & 274 & 859 & 251 \\
-   \hline
+\begin{tabular}{lrrrrr}
+  \toprule
+  Data Set & object.size & \multicolumn{2}{c}{R Serialization} &
+  \multicolumn{2}{c}{RProtoBuf Serial.} \\
+  & & default & gzipped & default & gzipped \\
+  \cmidrule(r){2-6}
+  uspop & 584 & 268 & 172 & 211 & 148 \\
+  Titanic & 1960 & 633 & 257 & 481 & 249 \\
+  volcano & 42656 & 42517 & 5226 & 42476 & 4232 \\
+  euro.cross & 2728 & 1319 & 910 & 1207 & 891 \\
+  attenu & 14568 & 8234 & 2165 & 7771 & 2336 \\
+  ToothGrowth & 2568 & 1486 & 349 & 1239 & 391 \\
+  lynx & 1344 & 1028 & 429 & 971 & 404 \\
+  nottem & 2352 & 2036 & 627 & 1979 & 641 \\
+  sleep & 2752 & 746 & 282 & 483 & 260 \\
+  co2 & 4176 & 3860 & 1473 & 3803 & 1453 \\
+  austres & 1144 & 828 & 439 & 771 & 410 \\
+  ability.cov & 1944 & 716 & 357 & 589 & 341 \\
+  EuStockMarkets & 60664 & 59785 & 21232 & 59674 & 19882 \\
+  treering & 64272 & 63956 & 17647 & 63900 & 17758 \\
+  freeny.x & 1944 & 1445 & 1311 & 1372 & 1289 \\
+  Puromycin & 2088 & 813 & 306 & 620 & 320 \\
+  warpbreaks & 2768 & 1231 & 310 & 811 & 343 \\
+  BOD & 1088 & 334 & 182 & 226 & 168 \\
+  sunspots & 22992 & 22676 & 6482 & 22620 & 6742 \\
+  beaver2 & 4184 & 3423 & 751 & 3468 & 840 \\
+  anscombe & 2424 & 991 & 375 & 884 & 352 \\
+  esoph & 5624 & 3111 & 548 & 2240 & 665 \\
+  PlantGrowth & 1680 & 646 & 303 & 459 & 314 \\
+  infert & 15848 & 14328 & 1172 & 13197 & 1404 \\
+  BJsales & 1632 & 1316 & 496 & 1259 & 465 \\
+  stackloss & 1688 & 917 & 293 & 844 & 283 \\
+  crimtab & 7936 & 4641 & 713 & 1655 & 576 \\
+  LifeCycleSavings & 6048 & 3014 & 1420 & 2825 & 1407 \\
+  Harman74.cor & 9144 & 6056 & 2045 & 5861 & 2070 \\
+  nhtemp & 912 & 596 & 240 & 539 & 223 \\
+  faithful & 5136 & 4543 & 1339 & 4936 & 1776 \\
+  freeny & 5296 & 2465 & 1518 & 2271 & 1507 \\
+  discoveries & 1232 & 916 & 199 & 859 & 180 \\
+  state.x77 & 7168 & 4251 & 1754 & 4068 & 1756 \\
+  pressure & 1096 & 498 & 277 & 427 & 273 \\
+  fdeaths & 1008 & 692 & 291 & 635 & 272 \\
+  euro & 976 & 264 & 186 & 202 & 161 \\
+  LakeHuron & 1216 & 900 & 420 & 843 & 404 \\
+  mtcars & 6736 & 3798 & 1204 & 3633 & 1206 \\
+  precip & 4992 & 1793 & 813 & 1615 & 815 \\
+  state.area & 440 & 422 & 246 & 405 & 235 \\
+  attitude & 3024 & 1990 & 544 & 1920 & 561 \\
+  randu & 10496 & 9794 & 8859 & 10441 & 9558 \\
+  state.name & 3088 & 844 & 408 & 724 & 415 \\
+  airquality & 5496 & 4551 & 1241 & 2874 & 1294 \\
+  airmiles & 624 & 308 & 170 & 251 & 148 \\
+  quakes & 33112 & 32246 & 9898 & 29063 & 11595 \\
+  islands & 3496 & 1232 & 563 & 1098 & 561 \\
+  OrchardSprays & 3600 & 2164 & 445 & 1897 & 483 \\
+  WWWusage & 1232 & 916 & 274 & 859 & 251 \\
+  \bottomrule
 \end{tabular}
 }
-\caption{Serialization sizes with R's built-in serialization and
-  RProtoBuf for 50 sample R datasets.}
+\caption{Serialization sizes for default serialization in R and
+  RProtoBuf for 50 R datasets.}
 \label{tab:compression}
 \end{center}
 \end{table}
@@ -1637,7 +1623,7 @@ obscure protocol buffer semantics.  Karl Millar and Jeroen Ooms were
 helpful in reviewing code or offering suggestions.  The contemporaneous
 work by Saptarshi Guha on \pkg{RHIPE} was a strong initial motivator.
 
-\bibliography{eddelbuettel-stokely}
+\bibliography{article}
 
 %\section[About Java]{About \proglang{Java}}
 %% Note: If there is markup in \(sub)section, then it has to be escape as above.
