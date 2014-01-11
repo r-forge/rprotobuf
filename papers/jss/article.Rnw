@@ -464,7 +464,7 @@ However, as opposed to R lists, no partial matching is performed
 and the name must be given entirely.
 
 The \verb|[[| operator can also be used to query and set fields
-of a mesages, supplying either their name or their tag number :
+of a messages, supplying either their name or their tag number :
 
 <<>>=
 p[["name"]] <- "Murray Stokely"
@@ -740,7 +740,7 @@ tutorial.Person.PhoneNumber
 @
 
 Table~\ref{Descriptor-methods-table} provides a complete list of the
-slots and avalailable methods for Descriptors.
+slots and available methods for Descriptors.
 
 \begin{table}[h]
 \centering
@@ -993,7 +993,7 @@ One of the benefits of using an Interface Definition Language (IDL)
 like Protocol Buffers is that it provides a highly portable basic type
 system that different language and hardware implementations can map to
 the most appropriate type in different environments.
-Table~\ref{table-get-types} details the correspondance between the
+Table~\ref{table-get-types} details the correspondence between the
 field type and the type of data that is retrieved by \verb|$| and \verb|[[|
 extractors.
 
@@ -1033,7 +1033,7 @@ message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \textt
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{table-get-types}Correspondance between field type and
+\caption{\label{table-get-types}Correspondence between field type and
   R type retrieved by the extractors. \footnotesize{1. R lacks native
   64-bit integers, so the \texttt{RProtoBuf.int64AsString} option is
   available to return large integers as characters to avoid losing
@@ -1190,7 +1190,7 @@ m <- nrow(datasets)
 
 \Sexpr{m} data sets could be converted to Protocol Buffers
 (\Sexpr{format(100*m/n,digits=1)}\%).  The next section illustrates how
-many bytes were usued to store the data sets under four different
+many bytes were used to store the data sets under four different
 situations (1) normal R serialization, (2) R serialization followed by
 gzip, (3) normal protocol buffer serialization, (4) protocol buffer
 serialization followed by gzip.
@@ -1362,7 +1362,7 @@ protocols generally do not regulate \emph{content} of messages: they allow
 transfer of any media type, such as web pages, files or video.
 When designing systems where various components require exchange of specific data
 structures, we need something on top of the network protocol that prescribes 
-how these structures are to be respresented in messages (buffers) on the
+how these structures are to be represented in messages (buffers) on the
 network. Protocol buffers solve exactly this problem by providing
 a cross platform method for serializing arbitrary structures into well defined
 messages, that can be exchanged using any protocol. The descriptors
@@ -1473,7 +1473,7 @@ This is a bit more work, because clients needs to both generate messages
 containing R objects to post to the server, as well as retrieve and parse
 protobuf messages returned by the server. Using protocol buffers to post
 function arguments is not required, and for simple (scalar) arguments 
-the standard \texttt{appliation/www-url-encoded} format might be sufficient.
+the standard \texttt{application/www-url-encoded} format might be sufficient.
 However, with protocol buffers the client can perform function calls with
 more complex arguments such as R vectors or lists. The result is a complete
 RPC system to do arbitrary R function calls from within 
