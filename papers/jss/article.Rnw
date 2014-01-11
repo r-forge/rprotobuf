@@ -1473,7 +1473,7 @@ This is a bit more work, because clients needs to both generate messages
 containing R objects to post to the server, as well as retrieve and parse
 protobuf messages returned by the server. Using protocol buffers to post
 function arguments is not required, and for simple (scalar) arguments 
-the standard \texttt{application/www-url-encoded} format might be sufficient.
+the standard \texttt{application/x-www-form-urlencoded} format might be sufficient.
 However, with protocol buffers the client can perform function calls with
 more complex arguments such as R vectors or lists. The result is a complete
 RPC system to do arbitrary R function calls from within 
