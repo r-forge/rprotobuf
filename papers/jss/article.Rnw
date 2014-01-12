@@ -179,6 +179,9 @@ programming languages.  Since the schema is provided separately from
 the encoded data, the data can be efficiently encoded to minimize
 storage costs of the stored data when compared with simple
 ``schema-less'' binary interchange formats.
+Many sources compare data serialization formats and show Protocol
+Buffers very favorably to the alternatives; see
+\citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
 
 % TODO(mstokely): Take a more conversational tone here asking
 % questions and motivating protocol buffers?
@@ -267,10 +270,6 @@ may not even know the R language.
 %comparison to XML, protocol buffers are at the same time \textsl{simpler},
 %between three to ten times \textsl{smaller}, between twenty and one hundred
 %times \textsl{faster}, as well as less ambiguous and easier to program.
-
-Many sources compare data serialization formats and show Protocol
-Buffers very favorably to the alternatives; see
-\citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
 
 %The flexibility of the reflection-based API is particularly well
 %suited for interactive data analysis.
