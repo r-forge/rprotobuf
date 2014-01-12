@@ -412,22 +412,21 @@ serialize(p, NULL)
 %schema used by one or more messages, and DescriptorPools, which
 %provide access to descriptors.
 
-Before one can create a new Protocol Buffer Message or parse a
-serialized stream of bytes as a Message, one must first read in the message
-type specification from a \texttt{.proto} file.
-
-New \texttt{.proto} files are imported with the \code{readProtoFiles}
-function, which can import a single file, all files in a directory, or
-all \texttt{.proto} files provided by another R package.
-
+To create or parse a Protocol Buffer Message, one must first read in 
+the message type specification from a \texttt{.proto} file. The 
+\texttt{.proto} files are imported using the \code{readProtoFiles}
+function, which can either import a single file, all files in a directory,
+or every \texttt{.proto} file provided by a particular R package.
 The \texttt{.proto} file syntax for defining the structure of protocol
 buffer data is described comprehensively on Google Code\footnote{See 
 \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
 
-Once the proto files are imported, all message descriptors are
-are available in the R search path in the \texttt{RProtoBuf:DescriptorPool}
-special environment. The underlying mechanism used here is
+After importing proto files, the corresponding message descriptors are
+available from the \texttt{RProtoBuf:DescriptorPool} environment in 
+the R search path. The underlying mechanism used here is
 described in more detail in Section~\ref{sec-lookup}.
+
+%JO: can we just move the section 7 to here? It's only one paragraph%
 
 <<>>=
 ls("RProtoBuf:DescriptorPool")
