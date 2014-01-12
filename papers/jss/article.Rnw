@@ -100,7 +100,7 @@ library and the R environment for statistical computing.
 \renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
 
 \title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
-\author{by Dirk Eddelbuettel and Murray Stokely}
+\author{by Dirk Eddelbuettel, Murray Stokely and Jeroen Ooms}
 
 %% DE: I tend to have wider option(width=...) so this
 %%     guarantees better line breaks
@@ -154,7 +154,7 @@ type needlessly duplicate the field names with each message.  Lastly,
 protocol with the ability to define just about any arbitrarily complex
 schema. However, it pays for this complexity with comparatively large and
 verbose messages, and added complexities at the parsing side (which are
-somewhat metigated by the availability of mature libraries and
+somewhat mitigated by the availability of mature libraries and
 parsers).
 
 A number of binary formats based on JSON have been proposed that
@@ -171,7 +171,7 @@ Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
 \emph{interface description language}, or \emph{IDL}.  IDLs like
 Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro provide a compact
-well-documented schema for cross-langauge data structures and
+well-documented schema for cross-language data structures and
 efficient binary interchange formats.  The schema can be used to
 generate model classes for statically-typed programming languages such
 as C++ and Java, or can be used with reflection for dynamically-typed
@@ -1111,7 +1111,7 @@ length(unique(test$repeated_int64))
 @
 
 But when the values are specified as character strings, RProtoBuf
-will automatically coerse them into a true 64-bit integer types 
+will automatically coerce them into a true 64-bit integer types 
 before storing them in the Protocol Buffer message:
 
 <<>>=
@@ -1165,7 +1165,7 @@ n <- nrow(datasets)
 @
 
 There are \Sexpr{n} standard data sets included in the base-r \pkg{datasets}
-package. These datasets include data frames, matices, timeseries, tables lists,
+package. These datasets include data frames, matrices, time series, tables lists,
 and some more exotic data classes. The \texttt{can\_serialize\_pb} method can be 
 used to determine which of those can fully be converted to the \textt{rexp.proto}
 Protocol Buffer representation:
