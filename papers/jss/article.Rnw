@@ -635,7 +635,7 @@ the development of Rcpp Modules \citep{eddelbuettel2013exposing},
 which provide a more concise way of wrapping C++ functions and classes
 in a single entity.
 
-The \texttt{RProtoBuf} package combines a dispatch mechanism 
+The \texttt{RProtoBuf} package combines a functional dispatch mechanism 
 of the form \verb|method(object, arguments)| (common to R) and the more
 traditional object oriented notation \verb|object$method(arguments)|.
 Additionally, \texttt{RProtoBuf} implements the \texttt{.DollarNames} S3 generic function
@@ -1033,7 +1033,7 @@ Buffer schema, only accept \texttt{TRUE} or \texttt{FALSE}.  This means
 that we simply can not store R logical vectors that include all three
 possible values as booleans.  The library will refuse to store
 \texttt{NA}s in protocol buffer boolean fields, and users must instead
-choose another type (such as integers) capable of storing three
+choose another type (such as enum or integer) capable of storing three
 distinct values.
 
 <<echo=FALSE,print=FALSE>>=
