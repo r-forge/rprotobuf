@@ -83,6 +83,7 @@ library and the R environment for statistical computing.
 
 
 \begin{document}
+\SweaveOpts{concordance=FALSE}
 
 
 %% include your article here, just as usual
