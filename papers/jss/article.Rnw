@@ -518,7 +518,7 @@ bytes that represents the message.
 serialize(p, NULL)
 @
 
-The same method can also be used to serialize messages to files :
+The same method can be used to serialize messages to files :
 
 <<>>=
 tf1 <- tempfile()
@@ -536,8 +536,8 @@ close(con)
 readBin(tf2, raw(0), 500)
 @
 
-\texttt{serialize} can also be used in a more traditional
-object oriented fashion using the dollar operator :
+\texttt{serialize} can also be called in a more traditional
+object oriented fashion using the dollar operator:
 
 <<>>=
 # serialize to a file
