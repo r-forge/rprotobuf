@@ -1159,18 +1159,19 @@ attempt to convert all of the built-in datasets from R into this
 serialized Protocol Buffer representation.
 
 <<echo=TRUE>>=
-datasets <- subset(as.data.frame(data()$results), Package=="datasets")
-datasets$load.name <- sub("\\s+.*$", "", datasets$Item)
+datasets <- as.data.frame(data(package="datasets")$results)
+datasets$name <- sub("\\s+.*$", "", datasets$Item)
 n <- nrow(datasets)
 @
 
-There are \Sexpr{n} standard data sets included in R.  We use the
-\texttt{can\_serialize\_pb} method to determine how many of those can
-be safely converted to a serialized Protocol Buffer representation.
+There are \Sexpr{n} standard data sets included in the base-r \pkg{datasets}
+package. These datasets include data frames, matices, timeseries, tables lists,
+and some more exotic data classes. The \texttt{can\_serialize\_pb} method can be 
+used to determine which of those can fully be converted to the \textt{rexp.proto}
+Protocol Buffer representation:
 
 <<echo=TRUE>>=
-datasets$valid.proto <- sapply(datasets$load.name,
-                        function(x) can_serialize_pb(eval(as.name(x))))
+datasets$valid.proto <- sapply(datasets$name, function(x) can_serialize_pb(get(x)))
 datasets <- subset(datasets, valid.proto==TRUE)
 m <- nrow(datasets)
 @
@@ -1190,19 +1191,19 @@ situations:
 \label{sec:compression}
 
 <<echo=FALSE,print=FALSE>>=
-datasets$object.size <- unname(sapply(datasets$load.name, function(x) object.size(eval(as.name(x)))))
+datasets$object.size <- unname(sapply(datasets$name, function(x) object.size(eval(as.name(x)))))
 
-datasets$R.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize(eval(as.name(x)), NULL))))
+datasets$R.serialize.size <- unname(sapply(datasets$name, function(x) length(serialize(eval(as.name(x)), NULL))))
 
-datasets$R.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize(eval(as.name(x)), NULL))))
+datasets$R.serialize.size <- unname(sapply(datasets$name, function(x) length(serialize(eval(as.name(x)), NULL))))
 
-datasets$R.serialize.size.gz <- unname(sapply(datasets$load.name, function(x) length(memCompress(serialize(eval(as.name(x)), NULL), "gzip"))))
+datasets$R.serialize.size.gz <- unname(sapply(datasets$name, function(x) length(memCompress(serialize(eval(as.name(x)), NULL), "gzip"))))
 
-datasets$RProtoBuf.serialize.size <- unname(sapply(datasets$load.name, function(x) length(serialize_pb(eval(as.name(x)), NULL))))
+datasets$RProtoBuf.serialize.size <- unname(sapply(datasets$name, function(x) length(serialize_pb(eval(as.name(x)), NULL))))
 
-datasets$RProtoBuf.serialize.size.gz <- unname(sapply(datasets$load.name, function(x) length(memCompress(serialize_pb(eval(as.name(x)), NULL), "gzip"))))
+datasets$RProtoBuf.serialize.size.gz <- unname(sapply(datasets$name, function(x) length(memCompress(serialize_pb(eval(as.name(x)), NULL), "gzip"))))
 
-clean.df <- data.frame(dataset=datasets$load.name,
+clean.df <- data.frame(dataset=datasets$name,
                        object.size=datasets$object.size,
                        "serialized"=datasets$R.serialize.size,
                        "gzipped serialized"=datasets$R.serialize.size.gz,
