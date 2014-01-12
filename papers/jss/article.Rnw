@@ -1076,18 +1076,20 @@ class(2^31)
 \subsection{64-bit integers}
 \label{sec:int64}
 
-R does not have native 64-bit integer support.  Instead, R treats
-large integers as doubles which have limited precision.  For example,
-it loses the ability to distinguish some distinct integers:
+R also does not support the native 64-bit integer type. Numeric vectors
+with values $\geq 2^{31}$ can only be stored as doubles, which have
+limited precision. Thereby R loses the ability to distinguish some
+distinct integers:
 
 <<>>=
 2^53 == (2^53 + 1)
 @
 
-Protocol Buffers are frequently used to pass data between different
-systems, however, and most other modern systems do have support for
-64-bit integers.  To work around this, RProtoBuf allows users to get
-and set 64-bit integer types by treating them as characters.
+However, most modern languages do have support for 64-bit integers, 
+which becomes problematic when \pkg{RProtoBuf} is used to exchange data 
+with a system that requires this integer type. To work around this, 
+RProtoBuf allows users to get and set 64-bit integer values by specifying 
+them as character strings.
 
 <<echo=FALSE,print=FALSE>>=
 if (!exists("protobuf_unittest.TestAllTypes",
@@ -1108,9 +1110,9 @@ test$repeated_int64 <- c(2^53, 2^53+1)
 length(unique(test$repeated_int64))
 @
 
-However, we can specify the values as character strings so that the
-C++ library on which RProtoBuf is based can store a true 64-bit
-integer representation of the data.
+But when the values are specified as character strings, RProtoBuf
+will automatically coerse them into a true 64-bit integer types 
+before storing them in the Protocol Buffer message:
 
 <<>>=
 test$repeated_int64 <- c("9007199254740992", "9007199254740993")
