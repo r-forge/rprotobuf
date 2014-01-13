@@ -1,5 +1,6 @@
 \documentclass[article]{jss}
 \usepackage{booktabs}
+\usepackage[toc,page]{appendix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1139,24 +1140,34 @@ length(unique(test$repeated_int64))
 options("RProtoBuf.int64AsString" = FALSE)
 @
 
-\section{Evaluation: data.frame to Protocol Buffer Serialization}
+\section{Converting R Data Structures into Protocol Buffers}
 \label{sec:evaluation}
 
-The \pkg{RHIPE} package \citep{rhipe} also includes a Protocol integration with R.
-However, its implementation takes a different approach: any R object is
-serialized into a message based on a single catch-all \texttt{proto} schema.
-A similar approach was taken by \pkg{RProtoBufUtils} package (which has now been integrated in
-\pkg{RProtoBuf}). Unlike \pkg{RHIPE}, however, \pkg{RProtoBufUtils}
-depended upon on, and extended, \pkg{RProtoBuf} for underlying message operations.
-%DE Shall this go away now that we sucket RPBUtils into RBP?
+The previous sections discussed functionality in the \pkg{RProtoBuf} package
+for creating, manipulating, parsing and serializing Protocol Buffer messages.
+In addition to these low-level methods, the package also has some high level
+functionality for automatically converting R data structures into protocol
+buffers and vice versa. The \texttt{serialize\_pb} and \texttt{unserialize\_pb}
+functions convert arbitrary R objects into a universal Protocol Buffer structure:
 
-One key extension which \pkg{RProtoBufUtils} brought to \pkg{RProtoBuf} is the 
-\texttt{serialize\_pb} method to convert R objects into serialized
-Protocol Buffers in the catch-all schema. The \texttt{can\_serialize\_pb}
-method can then be used to determine whether the given R object can safely
-be expressed in this way.  To illustrate how this method works, we
-attempt to convert all of the built-in datasets from R into this
-serialized Protocol Buffer representation.
+<<>>=
+msg <- serialize_pb(iris, NULL)
+identical(iris, unserialize_pb(msg))
+@
+
+In order to accomplish this, \pkg{RProtoBuf} uses the same catch-all \texttt{proto}
+schema that \pkg{RHIPE} uses for exchanging R data with Hadoop \citep{rhipe}. This 
+schema, which we will refer to as \texttt{rexp.proto} is printed in appendix 
+\ref{rex.proto}. Even though the \texttt{RHIPE} implementation is written in Java and
+\texttt{RProtoBuf} is writting in R and \texttt{C++}, the Protocol Buffer messages
+are naturally compatible between the two systems because they use the same schema. 
+This shows the power of using a schema based cross-platform format such as Protocol 
+Buffers: interoperability is archieved without tight coordination or collaboration.
+
+\subsection{Evaluation: Converting R Data Sets}
+
+To illustrate how this method works, we attempt to convert all of the built-in 
+datasets from R into this serialized Protocol Buffer representation.
 
 <<echo=TRUE>>=
 datasets <- as.data.frame(data(package="datasets")$results)
@@ -1167,7 +1178,7 @@ n <- nrow(datasets)
 There are \Sexpr{n} standard data sets included in the base-r \pkg{datasets}
 package. These datasets include data frames, matrices, time series, tables lists,
 and some more exotic data classes. The \texttt{can\_serialize\_pb} method can be 
-used to determine which of those can fully be converted to the \textt{rexp.proto}
+used to determine which of those can fully be converted to the \texttt{rexp.proto}
 Protocol Buffer representation:
 
 <<echo=TRUE>>=
@@ -1645,6 +1656,59 @@ obscure protocol buffer semantics.  Karl Millar was very
 helpful in reviewing code and offering suggestions.  
 %The contemporaneous work by Saptarshi Guha on \pkg{RHIPE} was a strong
 %initial motivator.
+
+\newpage
+\begin{appendices}
+
+\section{The rexp.proto schema descriptor}
+\label{rexp.proto}
+
+Below a print of the \texttt{rexp.proto} schema (originally designed by \cite{rhipe})
+that is included with the \pkg{RProtoBuf} package and used by \texttt{serialize\_pb} and
+\texttt{unserialize\_pb}.
+
+\begin{verbatim}
+package rexp;
+
+message REXP {
+  enum RClass {
+    STRING = 0;
+    RAW = 1;
+    REAL = 2;
+    COMPLEX = 3;
+    INTEGER = 4;
+    LIST = 5;
+    LOGICAL = 6;
+    NULLTYPE = 7;
+  }
+  enum RBOOLEAN {
+    F=0;
+    T=1;
+    NA=2;
+  }
+
+  required RClass rclass = 1 ; 
+  repeated double realValue = 2 [packed=true];
+  repeated sint32 intValue = 3 [packed=true];
+  repeated RBOOLEAN booleanValue = 4;
+  repeated STRING stringValue = 5;
+  optional bytes rawValue = 6;
+  repeated CMPLX complexValue = 7;
+  repeated REXP rexpValue = 8;
+  repeated string attrName = 11;
+  repeated REXP attrValue = 12;
+}
+message STRING {
+  optional string strval = 1;
+  optional bool isNA = 2 [default=false];
+}
+message CMPLX {
+  optional double real = 1 [default=0];
+  required double imag = 2;
+}
+\end{verbatim}
+\end{appendices}
+
 
 \bibliography{article}
 
