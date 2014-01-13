@@ -424,14 +424,34 @@ buffer data is described comprehensively on Google Code\footnote{See
 
 After importing proto files, the corresponding message descriptors are
 available from the \texttt{RProtoBuf:DescriptorPool} environment in 
-the R search path. The underlying mechanism used here is
-described in more detail in Section~\ref{sec-lookup}.
+the R search path.  This environment is implemented with the user
+defined tables framework from the \pkg{RObjectTables} package
+available from the OmegaHat project \citep{RObjectTables}.  Instead of
+being associated with a static hash table, this environment
+dynamically queries the in-memory database of loaded descriptors
+during normal variable lookup.
 
 %JO: can we just move the section 7 to here? It's only one paragraph%
+%MS: I replaced section 7 with 2 sentences above.
 
 <<>>=
 ls("RProtoBuf:DescriptorPool")
 @
+
+% The old section 7 in entirety:
+%The \texttt{RProtoBuf} package uses the user defined tables framework
+%that is defined as part of the \texttt{RObjectTables} package available
+%from the OmegaHat project \citep{RObjectTables}.
+%
+%The feature allows \texttt{RProtoBuf} to install the
+%special environment \emph{RProtoBuf:DescriptorPool} in the R search path.
+%The environment is special in that, instead of being associated with a
+%static hash table, it is dynamically queried by R as part of R's usual
+%variable lookup. In other words, it means that when the R interpreter
+%looks for a binding to a symbol (foo) in its search path,
+%it asks to our package if it knows the binding "foo", this is then
+%implemented by the \texttt{RProtoBuf} package by calling an internal
+%method of the \texttt{protobuf} C++ library.
 
 %\subsection{Importing proto files}
 %In contrast to the other languages (Java, C++, Python) that are officially
@@ -1352,25 +1372,6 @@ it is outside of the scope of RProtoBuf.  We should be very clear
 about this to clarify the goals and strengths of RProtoBuf and its
 reflection and object mapping.
 
-
-\section{Descriptor lookup}
-\label{sec-lookup}
-
-%JO: is this section really relevant? Maybe just a citation will do instead?
-
-The \texttt{RProtoBuf} package uses the user defined tables framework
-that is defined as part of the \texttt{RObjectTables} package available
-from the OmegaHat project \citep{RObjectTables}.
-
-The feature allows \texttt{RProtoBuf} to install the
-special environment \emph{RProtoBuf:DescriptorPool} in the R search path.
-The environment is special in that, instead of being associated with a
-static hash table, it is dynamically queried by R as part of R's usual
-variable lookup. In other words, it means that when the R interpreter
-looks for a binding to a symbol (foo) in its search path,
-it asks to our package if it knows the binding "foo", this is then
-implemented by the \texttt{RProtoBuf} package by calling an internal
-method of the \texttt{protobuf} C++ library.
 
 %\section{Other approaches}
 
