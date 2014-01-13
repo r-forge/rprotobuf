@@ -1183,7 +1183,7 @@ This class represents a special type of data frame that has some additional
 attributes used by the \pkg{nlme} package, among which a \emph{formula} object.
 Because formulas are R \emph{language} objects, they have little meaning to
 other systems, and are not supported by the \texttt{rexp.proto} descriptor.
-When \texttt{serialize_pb} is used on objects of this class (or other objects
+When \texttt{serialize\_pb} is used on objects of this class (or other objects
 containing unsupported data types), it will serialize all other values and 
 attributes of the object, but skip over the unsupported types with a warning.
 
