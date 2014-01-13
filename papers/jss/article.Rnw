@@ -1176,19 +1176,29 @@ datasets <- subset(datasets, valid.proto==TRUE)
 m <- nrow(datasets)
 @
 
-\Sexpr{m} data sets could be converted to Protocol Buffers
-(\Sexpr{format(100*m/n,digits=1)}\%).  The next section illustrates how
-many bytes were used to store the data sets under four different
-situations:
+\Sexpr{m} data sets can be converted to Protocol Buffers
+(\Sexpr{format(100*m/n,digits=1)}\%) without loss of information. Upon closer
+inspection, all other datasets are objects of class \texttt{nfnGroupedData}.
+This class represents a special type of data frame that has some additional 
+attributes used by the \pkg{nlme} package, among which a \emph{formula} object.
+Because formulas are R \emph{language} objects, they have little meaning to
+other systems, and are not supported by the \texttt{rexp.proto} descriptor.
+When \texttt{serialize_pb} is used on objects of this class (or other objects
+containing unsupported data types), it will serialize all other values and 
+attributes of the object, but skip over the unsupported types with a warning.
+
+\subsection{Compression Performance}
+\label{sec:compression}
+
+This section compares how many bytes are used to store data sets
+using four different methods:
+
 \begin{itemize}
 \item normal R serialization,
 \item R serialization followed by gzip,
 \item normal Protocol Buffer serialization, and
 \item Protocol Buffer serialization followed by gzip.
 \end{itemize}
-
-\subsection{Compression Performance}
-\label{sec:compression}
 
 <<echo=FALSE,print=FALSE>>=
 datasets$object.size <- unname(sapply(datasets$name, function(x) object.size(eval(as.name(x)))))
