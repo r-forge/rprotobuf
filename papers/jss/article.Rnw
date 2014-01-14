@@ -241,7 +241,11 @@ introduction, Protocol Buffers have been widely adopted in industry with
 applications as varied as %database-internal messaging (Drizzle), % DE: citation?
 Sony Playstations, Twitter, Google Search, Hadoop, and Open Street Map.  
 % TODO(DE): This either needs a citation, or remove the name drop
-While traditional IDLs have at time been criticized for code bloat and
+% MS: These are mostly from blog posts, I can't find a good reference
+% that has a long list, and the name and year citation style seems
+% less conducive to long lists of marginal citations like blog posts
+% compared to say concise CS/math style citations [3,4,5,6]. Thoughts?
+While traditional IDLs have at times been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
 model that is compartively flexible and simple to use.
 
@@ -264,9 +268,10 @@ communication workflow with Protocol Buffers and an interactive R session.
 Common use cases include populating a request remote-procedure call (RPC)
 Protocol Buffer in R that is then serialized and sent over the network to a
 remote server.  The server would then deserialize the message, act on the
-request, and respond with a new Protocol Buffer over the network. The key
-difference to, say, a request to an Rserve instance is that the remote server
-may not even know the R language.
+request, and respond with a new Protocol Buffer over the network. 
+The key difference to, say, a request to an Rserve instance is that
+the remote server may be implemented in any language, with no
+dependence on R.
 
 %Protocol buffers are a language-neutral, platform-neutral, extensible
 %way of serializing structured data for use in communications
@@ -295,9 +300,10 @@ Buffer schema description file (ending in \texttt{.proto}) into
 language-specific classes that can be used to create, read, write and
 manipulate Protocol Buffer messages.  The R interface, in contrast,
 uses a reflection-based API that is particularly well-suited for
-interactive data analysis.  All messages in R have a single class
+interactive data analysis.  
+All messages in R have a single class
 structure, but different accessor methods are created at runtime based
-on the name fields of the specified message type.
+on the named fields of the specified message type.
 
 % In other words, given the 'proto'
 %description file, code is automatically generated for the chosen
@@ -346,7 +352,15 @@ schema for a particular named class of messages.
 Table~\ref{tab:proto} shows an example \texttt{.proto} file which
 defines the \texttt{tutorial.Person} type.  The R code in the right
 column shows an example of creating a new message of this type and
-populating its fields.
+populating its fields.  A \texttt{.proto} file may contain one or more
+message types, and each message type has one or more fields.  A field
+is specified with a unique number, a name, a value type, and a field
+rule specifying whether the field is optional, required, or repeated.
+The supported value types are numbers, enumerations, booleans,
+strings, raw bytes, or other nested message types.
+The \texttt{.proto} file syntax for defining the structure of protocol
+buffer data is described comprehensively on Google Code\footnote{See 
+\url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
 
 % Commented out because we said this earlier.
 %This separation
@@ -430,9 +444,6 @@ the message type specification from a \texttt{.proto} file. The
 \texttt{.proto} files are imported using the \code{readProtoFiles}
 function, which can either import a single file, all files in a directory,
 or every \texttt{.proto} file provided by a particular R package.
-The \texttt{.proto} file syntax for defining the structure of protocol
-buffer data is described comprehensively on Google Code\footnote{See 
-\url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
 
 After importing proto files, the corresponding message descriptors are
 available from the \texttt{RProtoBuf:DescriptorPool} environment in 
