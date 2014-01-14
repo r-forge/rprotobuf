@@ -119,9 +119,10 @@ Modern data collection and analysis pipelines are increasingly being
 built using collections of components to better manage software
 complexity through reusability, modularity, and fault
 isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
-Data analysis patterns such as Split-Apply-Combine
-\citep{wickham2011split} explicitly break up large problems into
-manageable pieces.  These patterns are frequently employed with
+% This is really a different pattern not connected well here.
+%Data analysis patterns such as Split-Apply-Combine
+%\citep{wickham2011split} explicitly break up large problems into manageable pieces.  
+These pipelines are frequently built with
 different programming languages used for the different phases of data
 analysis -- collection, cleaning, modeling, analysis, post-processing, and
 presentation in order to take advantage of the unique combination of
@@ -130,7 +131,7 @@ different environments and languages.  Each stage of such a data
 analysis pipeline may involve storing intermediate results in a
 file or sending them over the network.
 
-Given these requirements, how do we safely share intermediate results
+Given these requirements, how do we safely and efficiently share intermediate results
 between different applications, possibly written in different
 languages, and possibly running on different computer system, possibly
 spanning different operating systems?  Programming
@@ -173,16 +174,26 @@ enough, developers typically benefit from the use of an
 \emph{interface description language}, or \emph{IDL}.  IDLs like
 Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro provide a compact
 well-documented schema for cross-language data structures and
-efficient binary interchange formats.  The schema can be used to
-generate model classes for statically-typed programming languages such
-as C++ and Java, or can be used with reflection for dynamically-typed
-programming languages.  Since the schema is provided separately from
-the encoded data, the data can be efficiently encoded to minimize
-storage costs of the stored data when compared with simple
-``schema-less'' binary interchange formats.
-Many sources compare data serialization formats and show Protocol
-Buffers very favorably to the alternatives; see
+efficient binary interchange formats.
+Since the schema is provided separately from the encoded data, the data can be
+efficiently encoded to minimize storage costs of the stored data when compared with simple
+``schema-less'' binary interchange formats. Many sources compare data serialization formats
+and show Protocol Buffers compare very favorably to the alternatives; see
 \citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
+The schema can be used to generate classes for statically-typed programming languages
+such as C++ and Java, or can be used with reflection for dynamically-typed programming
+languages
+
+%  The schema can be used to
+%generate model classes for statically-typed programming languages such
+%as C++ and Java, or can be used with reflection for dynamically-typed
+%programming languages.  Since the schema is provided separately from
+%the encoded data, the data can be efficiently encoded to minimize
+%storage costs of the stored data when compared with simple
+%``schema-less'' binary interchange formats.
+%Many sources compare data serialization formats and show Protocol
+%Buffers very 
+
 
 % TODO(mstokely): Take a more conversational tone here asking
 % questions and motivating protocol buffers?
@@ -193,6 +204,7 @@ Buffers very favorably to the alternatives; see
 % in the middle (full class/method details) and interesting
 % applications at the end.
 
+This paper describes an R interface to protocol buffers.
 The rest of the paper is organized as follows. Section~\ref{sec:protobuf}
 provides a general overview of Protocol Buffers.
 Section~\ref{sec:rprotobuf-basic} describes the interactive R interface
