@@ -115,60 +115,62 @@ options(width=65, prompt="R> ", digits=4)
 
 \section{Introduction: Friends don't let friends use CSV}
 
-Modern data collection and analysis pipelines are increasingly being
-built using collections of components to better manage software
-complexity through reusability, modularity, and fault
-isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
+Modern data collection and analysis pipelines involve collections
+of components to enhance conrol of complex systems through
+reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
 % This is really a different pattern not connected well here.
 %Data analysis patterns such as Split-Apply-Combine
 %\citep{wickham2011split} explicitly break up large problems into manageable pieces.  
-These pipelines are frequently built with
-different programming languages used for the different phases of data
-analysis -- collection, cleaning, modeling, analysis, post-processing, and
+These pipelines are frequently built using different programming 
+languages for various phases of data analysis -- collection, 
+cleaning, modeling, analysis, post-processing, and
 presentation in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
-different environments and languages.  Each stage of such a data
-analysis pipeline may involve storing intermediate results in a
-file or sending them over the network.
+each environment or language. Every stage of such a data
+analysis pipeline may produce intermediate results that need to be
+stored or sent over the network for further processing. 
+% JO Perhaps also mention that serialization is needed for distributed
+% systems to make systems scale up?
 
-Given these requirements, how do we safely and efficiently share intermediate results
-between different applications, possibly written in different
-languages, and possibly running on different computer system, possibly
-spanning different operating systems?  Programming
-languages such as R, Julia, Java, and Python include built-in
-serialization support, but these formats are tied to the specific
-% DE: need to define serialization?
-programming language in use and thus lock the user into a single
+Such systems require reliable and efficient exchange of intermediate
+results between the individual components, using formats that are
+independent of platform, language, operating system or architecture.
+Most technical computing languages such as R, Julia, Java, and Python
+include built-in support for serialization, but the default formats 
+are usually language specific and thereby lock the user into a single
 environment.  
 
-\emph{Comma-separated values} (CSV) files can be read and written by many
-applications and so are often used for exporting tabular data.  However, CSV
-files have a number of disadvantages, such as a limitation of exporting only
-tabular datasets, lack of type-safety, inefficient text representation and
-parsing, possibly limited precision and ambiguities in the format involving
-special characters.  \emph{JavaScript Object Notation} (JSON) is another
-widely-supported format used mostly on the web that removes many of these
-disadvantages, but it too suffers from being too slow to parse and also does
-not provide strong typing between integers and floating point.  Because the
-schema information is not kept separately, multiple JSON messages of the same
-type needlessly duplicate the field names with each message.  Lastly,
-\emph{Extensible Markup Language} (XML) is a well-established and widely-supported
-protocol with the ability to define just about any arbitrarily complex
-schema. However, it pays for this complexity with comparatively large and
-verbose messages, and added complexities at the parsing side (which are
-somewhat mitigated by the availability of mature libraries and
-parsers).
+Traditionally, scientists and statisticians often use character seperated
+text formats such as \texttt{CSV} \citep{shafranovich2005common} to 
+export and import data. However, anyone who has ever used this will have
+noticed that this method has many limitations: it is restricted to tabular 
+datasets, lacks type-safety, and has limited precision for numeric values.
+Moreover, ambiguities in the format itself frequently cause problems. 
+For example the default characters used as seperator and decimal point 
+are different in various parts of the world.
+\emph{Extensible Markup Language} (\texttt{XML}) is another text-based 
+well-established and widely-supported format with the ability to define
+just about any arbitrarily complex schema \citep{nolan2013xml}. However,
+it pays for this complexity with comparatively large and verbose messages,
+and added complexities at the parsing side (which are somewhat mitigated
+by the availability of mature libraries and parsers).
+A more modern, widely used format is \emph{JavaScript Object Notation}
+(\texttt{JSON}), which is derived from the object literals of
+\proglang{JavaScript}. This format is text-based as well and used mostly
+on the web. Several R packages implement functions to parse and generate
+\texttt{JSON} data from R objects. A number of \texttt{JSON} dialects has
+been proposed, such as \texttt{BSON} and \texttt{MessagePack} which both
+add binary support. However, these derivatives are not compatible with 
+existing JSON software, and have not been widely adopted.
+ 
+\subsection{Why Protocol Buffers}
 
-A number of binary formats based on JSON have been proposed that
-reduce the parsing cost and improve the efficiency.  MessagePack
-and BSON both have R interfaces, but % \citep{msgpackR,rmongodb}, but
-% DE Why do we cite these packages, but not the numerous JSON packages?
-these formats lack a separate schema for the serialized data and thus
-still duplicate field names with each message sent over the network or
-stored in a file.  Such formats also lack support for versioning when
-data storage needs evolve over time, or when application logic and
-requirement changes dictate update to the message format.
+- This paper introduces another format: protocol buffers
+- unique combination of features that make it very suitable for numerical computing:
+- binary, schema, versioned, mature, high quality cross language implementations
+- we argue that (complex) statistical applications will benefit from using this format 
 
+%we should probably explain what a schema is%
 Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
 \emph{interface description language}, or \emph{IDL}.  IDLs like
