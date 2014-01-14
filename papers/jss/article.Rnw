@@ -1404,7 +1404,126 @@ reflection and object mapping.
 % large number of protocol buffers, but is less user friendly for the
 % basic cases documented here.
 
-%\section{Basic usage example - tutorial.Person}
+\section{Application: Distributed Data Collection with MapReduce}
+\label{sec:mapreduce}
+
+Many large data sets in fields such as particle physics and information
+processing are stored in binned or histogram form in order to reduce
+the data storage requirements \citep{scott2009multivariate}.  In the
+last decade, the MapReduce programming model \citep{dean2008mapreduce}
+has emerged as a popular design pattern that enables the processing of
+very large data sets on large compute clusters.
+
+Many types of data analysis over large data sets may involve very rare
+phenomenon or be dealing with highly skewed data sets or inflexible
+raw data storage systems from which unbiased sampling is not feasible.
+In such situations, MapReduce and binning may be combined as a
+pre-processing step for a wide range of statistical and scientific
+analyses \citep{blocker2013}.
+
+There are two common patterns for generating histograms of large data
+sets in a single pass with MapReduce.  In the first method, each
+mapper task generates a histogram over a subset of the data that it
+has been assigned, serializes this histogram and sends it to one or
+more reducer tasks which merge the intermediate histograms from the
+mappers.
+
+In the second method, illustrated in
+Figure~\ref{fig:mr-histogram-pattern1}, each mapper rounds a data
+point to a bucket width and outputs that bucket as a key and '1' as a
+value.  Reducers then sum up all of the values with the same key and
+output to a data store.
+
+\begin{figure}[h!]
+\begin{center}
+\includegraphics[width=\textwidth]{histogram-mapreduce-diag1.pdf}
+\end{center}
+\caption{Diagram of MapReduce Histogram Generation Pattern}
+\label{fig:mr-histogram-pattern1}
+\end{figure}
+
+In both methods, the mapper tasks must choose identical bucket
+boundaries in advance if we are to construct the histogram in a single
+pass, even though they are analyzing disjoint parts of the input set
+that may cover different ranges.  All distributed tasks involved in
+the pre-processing as well as any downstream data analysis tasks must
+share a schema of the histogram representation to coordinate
+effectively.
+
+The \pkg{HistogramTools} package \citep{histogramtools} enhances
+\pkg{RProtoBuf} by providing a concise schema for R histogram objects:
+
+\begin{example}
+package HistogramTools;
+
+message HistogramState {
+  repeated double breaks = 1;
+  repeated int32 counts = 2;
+  optional string name = 3;
+}
+\end{example}
+
+This HistogramState message type is designed to be helpful if some of
+the Map or Reduce tasks are written in R, or if those components are
+written in other languages and only the resulting output histograms
+need to be manipulated in R.  For example, to create HistogramState
+messages in Python for later consumption by R, we first compile the 
+\texttt{histogram.proto} descriptor into a python module using the
+\texttt{protoc} compiler:
+
+\begin{verbatim}
+  protoc histogram.proto --python_out=.
+\end{verbatim}
+This generates Python module called \texttt{histogram\_pb2.py}, containing both the 
+descriptor information as well as methods to read and manipulate the R object 
+message.
+
+\begin{verbatim}
+# Import modules
+from histogram_pb2 import HistogramState;
+
+# Create empty Histogram message
+hist = HistogramState()
+
+# Add breakpoints and binned data set.
+hist.counts.extend([2, 6, 2, 4, 6])
+hist.breaks.extend(range(6))
+hist.name="Example Histogram Created in Python"
+
+# Output the histogram
+outfile = open("/tmp/hist.pb", "wb")
+outfile.write(hist.SerializeToString())
+outfile.close()
+\end{verbatim}
+
+We can then read in the histogram into R and plot it with :
+
+\begin{verbatim}
+library(RProtoBuf)
+library(HistogramTools)
+
+# Read the Histogram schema
+readProtoFiles(package="HistogramTools")
+
+# Read the serialized histogram file.
+hist <- HistogramTools.HistogramState$read("/tmp/hist.pb")
+hist
+[1] "message of type 'HistogramTools.HistogramState' with 3 fields set"
+
+# Convert to native R histogram object and plot
+plot(as.histogram(hist))
+\end{verbatim}
+
+<<echo=FALSE,fig=TRUE>>=
+require(RProtoBuf)
+require(HistogramTools)
+readProtoFiles(package="HistogramTools")
+hist <- HistogramTools.HistogramState$read("/tmp/hist.pb")
+plot(as.histogram(hist))
+@
+
+One of the authors has used this design pattern for several large
+scale studies of distributed filesystems \citep{janus}.
 
 \section{Application: Data Interchange in Web Services}
 \label{sec:opencpu}
@@ -1618,51 +1737,6 @@ msg.ParseFromString(res.read());
 print(msg.realValue);
 \end{verbatim}
 
-\section{Application: Distributed Data Collection with MapReduce}
-\label{sec:mapreduce}
-
-Over the past years, the MapReduce programming model \citep{dean2008mapreduce}
-has emerged as a poweful design pattern for processing large data
-sets in parallel on large compute clusters.  Protocol Buffers
-provide a convenient mechanism to send structured data between tasks
-in a MapReduce cluster.  In particular, the large data sets in fields
-such as particle physics and information processing are frequently
-stored in binned or histogram form in order to reduce the data storage
-requirements for later data analysis \citep{scott2009multivariate}.
-
-In such environments, analysts may be interested in very rare
-phenomenon or be dealing with highly skewed data sets or inflexible
-raw data storage systems from which unbiased sampling is not feasible.
-There are two common patterns for generating histograms of large data
-sets in a single pass with MapReduce.  In the first method, each
-mapper task generates a histogram over a subset of the data that it
-has been assigned, serializes this histogram and sends it to one or
-more reducer tasks which merge the intermediate histograms from the
-mappers.
-
-In the second method, illustrated in
-Figure~\ref{fig:mr-histogram-pattern1}, each mapper rounds a data
-point to a bucket width and outputs that bucket as a key and '1' as a
-value.  Reducers then sum up all of the values with the same key and
-output to a data store.
-
-In both methods, the mapper tasks must choose identical bucket
-boundaries in advance if we are to construct the histogram in a single
-pass, even though they are analyzing disjoint parts of the input set
-that may cover different ranges.  The \pkg{HistogramTools} package
-\citep{histogramtools} enhances \pkg{RProtoBuf} by providing a concise
-schema for R histogram objects.  The histogram message type is
-designed to be helpful if some of the Map or Reduce tasks are written
-in R, or if those components are written in other languages and only
-the resulting output histograms need to be manipulated in R.
-
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[width=\textwidth]{histogram-mapreduce-diag1.pdf}
-\end{center}
-\caption{Diagram of MapReduce Histogram Generation Pattern}
-\label{fig:mr-histogram-pattern1}
-\end{figure}
 
 %\section{Application: Sending/receiving Interaction With Servers}
 %
@@ -1759,4 +1833,3 @@ message CMPLX {
 %% Note: If there is markup in \(sub)section, then it has to be escape as above.
 
 \end{document}
-
