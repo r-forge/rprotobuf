@@ -113,7 +113,7 @@ options(width=65, prompt="R> ", digits=4)
 
 %TODO(de) 'protocol buffers' or 'Protocol Buffers' ?
 
-\section{Introduction}
+\section{Introduction: Friends don't let friends use CSV}
 
 Modern data collection and analysis pipelines are increasingly being
 built using collections of components to better manage software
@@ -1518,7 +1518,7 @@ plot(as.histogram(hist))
 require(RProtoBuf)
 require(HistogramTools)
 readProtoFiles(package="HistogramTools")
-hist <- HistogramTools.HistogramState$read("/tmp/hist.pb")
+hist <- HistogramTools.HistogramState$read("hist.pb")
 plot(as.histogram(hist))
 @
 
