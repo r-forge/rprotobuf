@@ -115,8 +115,8 @@ options(width=65, prompt="R> ", digits=4)
 
 \section{Introduction} % TODO(DE) More sober: Friends don't let friends use CSV}
 
-Modern data collection and analysis pipelines involve collections
-of decoupled components in order to manage and control complexity 
+Modern data collection and analysis pipelines increasingly involve collections
+of decoupled components in order to better manage software complexity 
 through reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
 % This is really a different pattern not connected well here.
 %Data analysis patterns such as Split-Apply-Combine
