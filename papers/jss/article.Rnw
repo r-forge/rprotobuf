@@ -122,7 +122,7 @@ through reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932
 %Data analysis patterns such as Split-Apply-Combine
 %\citep{wickham2011split} explicitly break up large problems into manageable pieces.  
 These pipelines are frequently built using different programming 
-languages for various phases of data analysis -- collection, 
+languages for the different phases of data analysis -- collection,
 cleaning, modeling, analysis, post-processing, and
 presentation in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
