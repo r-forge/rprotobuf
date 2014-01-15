@@ -126,9 +126,9 @@ languages for the different phases of data analysis -- collection,
 cleaning, modeling, analysis, post-processing, and
 presentation in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
-each environment or language. Every stage of such a data
+different environments and languages.  Each stage of such a data
 analysis pipeline may produce intermediate results that need to be
-stored or sent over the network for further processing. 
+stored in a file or sent over the network for further processing. 
 % JO Perhaps also mention that serialization is needed for distributed
 % systems to make systems scale up?
 
