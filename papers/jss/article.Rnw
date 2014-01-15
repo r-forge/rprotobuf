@@ -116,8 +116,8 @@ options(width=65, prompt="R> ", digits=4)
 \section{Introduction: Friends don't let friends use CSV}
 
 Modern data collection and analysis pipelines involve collections
-of components to enhance conrol of complex systems through
-reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
+of decoupled components in order to manage and control complexity 
+through reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
 % This is really a different pattern not connected well here.
 %Data analysis patterns such as Split-Apply-Combine
 %\citep{wickham2011split} explicitly break up large problems into manageable pieces.  
@@ -142,49 +142,56 @@ environment.
 
 Traditionally, scientists and statisticians often use character seperated
 text formats such as \texttt{CSV} \citep{shafranovich2005common} to 
-export and import data. However, anyone who has ever used this will have
+export and import data. However, anyone who has ever used \texttt{CSV} will have
 noticed that this method has many limitations: it is restricted to tabular 
-datasets, lacks type-safety, and has limited precision for numeric values.
+data, lacks type-safety, and has limited precision for numeric values.
 Moreover, ambiguities in the format itself frequently cause problems. 
-For example the default characters used as seperator and decimal point 
-are different in various parts of the world.
-\emph{Extensible Markup Language} (\texttt{XML}) is another text-based 
+For example, conventions on which characters used as seperator and decimal
+point vary by country.
+\emph{Extensible Markup Language} (\texttt{XML}) is another
 well-established and widely-supported format with the ability to define
 just about any arbitrarily complex schema \citep{nolan2013xml}. However,
 it pays for this complexity with comparatively large and verbose messages,
-and added complexities at the parsing side (which are somewhat mitigated
-by the availability of mature libraries and parsers).
+and added complexitiy at the parsing side (which are somewhat mitigated
+by the availability of mature libraries and parsers). Because \texttt{XML}
+is text based and has no native notion of numeric types or arrays, it 
+usually not a very practical format to store numeric datasets as they appear
+in statistical applications.
 A more modern, widely used format is \emph{JavaScript Object Notation}
 (\texttt{JSON}), which is derived from the object literals of
-\proglang{JavaScript}. This format is text-based as well and used mostly
-on the web. Several R packages implement functions to parse and generate
-\texttt{JSON} data from R objects. A number of \texttt{JSON} dialects has
-been proposed, such as \texttt{BSON} and \texttt{MessagePack} which both
-add binary support. However, these derivatives are not compatible with 
-existing JSON software, and have not been widely adopted.
+\proglang{JavaScript}, and used mostly on the web. \texttt{JSON} natively
+supports arrays and distinguishes 4 primitive types: numbers, strings, 
+booleans and null. However, because it is a text-based format, numbers are
+stored as human-readable decimal notation which is somewhat inefficient and
+leads to loss of type (double vs integer) and precision. Several R packages
+implement functions to parse and generate \texttt{JSON} data from R objects. 
+A number of \texttt{JSON} dialects has been proposed, such as \texttt{BSON} and 
+\texttt{MessagePack} which both add binary support. However, these derivatives
+are not compatible with existing JSON software, and have not been widely adopted.
  
 \subsection{Why Protocol Buffers}
 
-- This paper introduces another format: protocol buffers
-- unique combination of features that make it very suitable for numerical computing:
-- binary, schema, versioned, mature, high quality cross language implementations
-- we argue that (complex) statistical applications will benefit from using this format 
+In 2008, Google released an open source version of Protocol Buffers: the data 
+interchange format that was designed and used for their internal infrastructure.
+Google officially provides high quality parsing libraries for \texttt{Java}, 
+\texttt{C++} and \texttt{Python}, and community developed open source implementations
+are available for many other languages. 
+Protocol Buffers take a quite different approach from many other popular formats.
+They offer a unique combination of features, performance, and maturity that seems
+particulary well suited for data-driven applications and numerical computing.
+Protocol Buffers are a binary format that natively supports all common primitive types
+found in modern programming languages. The advantage of this is that numeric values
+are serialized exactly the same way as they are stored in memory. Therefore there is
+no loss of precision, no overhead, and parsing messages is very efficient: the system can 
+simply copy bytes to memory without any further processing. 
+But the most powerful feature of protocol buffers is that it decouples the content
+from the structure using a schema, very similar to a database. This further increases
+performance by eliminating redundancy, while at the same time providing foundations
+for defining an \emph{Interface Description Language}, or \emph{IDL}.
+Many sources compare data serialization formats and show Protocol Buffers compare 
+very favorably to the alternatives; see \citet{Sumaray:2012:CDS:2184751.2184810} 
+for one such comparison.
 
-%we should probably explain what a schema is%
-Once the data serialization needs of an application become complex
-enough, developers typically benefit from the use of an
-\emph{interface description language}, or \emph{IDL}.  IDLs like
-Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro provide a compact
-well-documented schema for cross-language data structures and
-efficient binary interchange formats.
-Since the schema is provided separately from the encoded data, the data can be
-efficiently encoded to minimize storage costs of the stored data when compared with simple
-``schema-less'' binary interchange formats. Many sources compare data serialization formats
-and show Protocol Buffers compare very favorably to the alternatives; see
-\citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
-The schema can be used to generate classes for statically-typed programming languages
-such as C++ and Java, or can be used with reflection for dynamically-typed programming
-languages
 
 %  The schema can be used to
 %generate model classes for statically-typed programming languages such
@@ -229,6 +236,23 @@ Section~\ref{sec:summary} concludes.
 \section{Protocol Buffers}
 \label{sec:protobuf}
 
+
+% JO: I'm not sure where to put this paragraph. I think it is too technical
+% for the introduction section. Maybe start this section with some explanation
+% of what a schema is and then continue with showing how PB implement this?
+Once the data serialization needs of an application become complex
+enough, developers typically benefit from the use of an
+\emph{interface description language}, or \emph{IDL}.  IDLs like
+Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro provide a compact
+well-documented schema for cross-language data structures and
+efficient binary interchange formats.
+Since the schema is provided separately from the encoded data, the data can be
+efficiently encoded to minimize storage costs of the stored data when compared with simple
+``schema-less'' binary interchange formats. 
+The schema can be used to generate classes for statically-typed programming languages
+such as C++ and Java, or can be used with reflection for dynamically-typed programming
+languages.
+
 %FIXME Introductory section which may include references in parentheses
 %\citep{R}, or cite a reference such as \citet{R} in the text.
 
@@ -247,6 +271,9 @@ Sony Playstations, Twitter, Google Search, Hadoop, and Open Street Map.
 % that has a long list, and the name and year citation style seems
 % less conducive to long lists of marginal citations like blog posts
 % compared to say concise CS/math style citations [3,4,5,6]. Thoughts?
+
+
+
 While traditional IDLs have at times been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
 model that is compartively flexible and simple to use.
