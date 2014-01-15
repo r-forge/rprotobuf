@@ -131,12 +131,20 @@ analysis pipeline may produce intermediate results that need to be
 stored in a file or sent over the network for further processing. 
 % JO Perhaps also mention that serialization is needed for distributed
 % systems to make systems scale up?
+% MS: yes perhaps somewhere near here we could define serialization
+% and describe this.
 
-Such systems require reliable and efficient exchange of intermediate
-results between the individual components, using formats that are
-independent of platform, language, operating system or architecture.
-Most technical computing languages such as R, Julia, Java, and Python
-include built-in support for serialization, but the default formats 
+Given these requirements, how do we safely and efficiently share intermediate results
+between different applications, possibly written in different
+languages, and possibly running on different computer systems?
+% Reverted to my original above, because the replacement below puts me
+% to sleep:
+%Such systems require reliable and efficient exchange of intermediate
+%results between the individual components, using formats that are
+%independent of platform, language, operating system or architecture.
+Programming
+languages such as R, Julia, Java, and Python include built-in
+support for serialization, but the default formats 
 are usually language specific and thereby lock the user into a single
 environment.  
 
