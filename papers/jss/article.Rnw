@@ -112,9 +112,15 @@ options(width=65, prompt="R> ", digits=4)
 \maketitle
 
 %TODO(de) 'protocol buffers' or 'Protocol Buffers' ?
+% MS: Lets standardize on 'Protocol Buffers'?
 
 \section{Introduction} % TODO(DE) More sober: Friends don't let friends use CSV}
-
+% NOTE(MS): I really do think we can use add back:
+% \section{Introduction: Friends Don't Let Friends Use CSV}
+% I didn't use proper Title Caps the first time around but really I
+% think it makes the paper more readable to have a tl;dr intro title
+% that is fun and engaging since this paper is still on the dry/boring
+% side.
 Modern data collection and analysis pipelines increasingly involve collections
 of decoupled components in order to better manage software complexity 
 through reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
@@ -164,18 +170,30 @@ complexitiy at the parsing side (which are somewhat mitigated by the
 availability of mature libraries and parsers). Because \texttt{XML} is text
 based and has no native notion of numeric types or arrays, it usually not a
 very practical format to store numeric datasets as they appear in statistical
-applications.  A more modern, widely used format is \emph{JavaScript Object
+applications.
+%
+A more modern, widely used format is \emph{JavaScript Object
   Notation} (\texttt{JSON}), which is derived from the object literals of
 \proglang{JavaScript}, and used increasingly on the world wide web. \texttt{JSON} natively
 supports arrays and distinguishes 4 primitive types: numbers, strings,
 booleans and null. However, as it too is a text-based format, numbers are
-stored as human-readable decimal notation which is somewhat inefficient and
+stored as human-readable decimal notation which is inefficient and
 leads to loss of type (double versus integer) and precision. Several R packages
 implement functions to parse and generate \texttt{JSON} data from R objects.
-A number of \texttt{JSON} variants has been proposed, such as \texttt{BSON}
-and \texttt{MessagePack} which both add binary support. However, these
-derivatives are not compatible with existing JSON software, and have not seen
-wide adoption.
+
+A number of binary formats based on \texttt{JSON} have been proposed
+that reduce the parsing cost and improve efficiency.  \pkg{MessagePack}
+\citep{msgpackR} and \pkg{BSON} \citep{rmongodb} both have R
+interfaces, but these formats lack a separate schema for the seralized
+data and thus still duplicate field names with each message sent over
+the network or stored in a file.  Such formats also lack support for
+versioning when data storage needs evolve over time, or when
+application logic and requirement changes dictate updates to the
+message format.
+
+%and \texttt{MessagePack} which both add binary support. However, these
+%derivatives are not compatible with existing JSON software, and have not seen
+%wide adoption.
  
 %\paragraph*{Enter Protocol Buffers:}
 In 2008, and following several years of internal use, Google released an open
