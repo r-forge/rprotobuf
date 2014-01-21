@@ -1732,64 +1732,53 @@ val <- do.call(stats::rnorm, fnargs)
 outputmsg <- serialize_pb(val)
 @
 
-OpenCPU also provides a lot of meta-functionality such as handling
-of sessions, exceptions, security, and more. OpenCPU also makes it possible to store
-output of a function call on the server, instead of directly retrieving it. Thereby 
-objects can be shared with other users or used as arguments in a subsequent
-function call. But in its essence, the HTTP API provides a simple way to perform remote 
-R function calls over HTTPS. The same request can be performed in Python as demonstrated
-below. The code is a bit verbose because to show how the REXP message is created from 
-scratch. In practice would probably write a function or small module construct a Protocol
-Buffer message representing an R list from a Python dictionary object. 
-
-\begin{verbatim}
-import urllib2;
-from rexp_pb2 import *;
-
-#create the post payload, i.e. list(n=42, mean=100)
-payload = REXP(
-  rclass = 5,
-    rexpValue = [
-      REXP(rclass = 2, realValue = [42]), 
-      REXP(rclass = 2, realValue = [100])
-    ],
-    attrName = [
-      "names"
-    ],
-    attrValue = [
-      REXP(rclass = 0, stringValue = [STRING(strval="n"), STRING(strval="mean")])
-    ]
-);
-
-#HTTP POST
-req = urllib2.Request(
-  "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb", 
-  data = payload.SerializeToString(), 
-  headers = {
-    'Content-type': 'application/x-protobuf'
-  }
-)
-res = urllib2.urlopen(req);
-        
-#parse output pb
-msg = REXP();
-msg.ParseFromString(res.read());
-
-#the return value is a double vector in this case
-print(msg.realValue);
-\end{verbatim}
-
-
-%\section{Application: Sending/receiving Interaction With Servers}
+% OpenCPU also provides a lot of meta-functionality such as handling
+% of sessions, exceptions, security, and more. OpenCPU also makes it possible to store
+% output of a function call on the server, instead of directly retrieving it. Thereby 
+% objects can be shared with other users or used as arguments in a subsequent
+% function call.
+%  But in its essence, the HTTP API provides a simple way to perform remote 
+% R function calls over HTTPS. The same request can be performed in Python as demonstrated
+% below. The code is a bit verbose because to show how the REXP message is created from 
+% scratch. In practice would probably write a function or small module construct a Protocol
+% Buffer message representing an R list from a Python dictionary object. 
 %
-%Combined
-%with an RPC system this means that one can interactively craft request
-%messages, send the serialized message to a remote server, read back a
-%response, and then parse the response protocol buffer interactively.
-
-%TODO(mstokely): Talk about Jeroen Ooms OpenCPU, or talk about Andy
-%Chu's Poly.
-
+% \begin{verbatim}
+% import urllib2;
+% from rexp_pb2 import *;
+%
+% #create the post payload, i.e. list(n=42, mean=100)
+% payload = REXP(
+%  rclass = 5,
+%    rexpValue = [
+%      REXP(rclass = 2, realValue = [42]), 
+%      REXP(rclass = 2, realValue = [100])
+%    ],
+%    attrName = [
+%      "names"
+%    ],
+%    attrValue = [
+%      REXP(rclass = 0, stringValue = [STRING(strval="n"), STRING(strval="mean")])
+%    ]
+%);
+%
+%#HTTP POST
+%req = urllib2.Request(
+%  "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb", 
+%  data = payload.SerializeToString(), 
+%  headers = {
+%    'Content-type': 'application/x-protobuf'
+%  }
+%)
+%res = urllib2.urlopen(req);
+%        
+%#parse output pb
+%msg = REXP();
+%msg.ParseFromString(res.read());
+%
+%#the return value is a double vector in this case
+%print(msg.realValue);
+%\end{verbatim}
 
 \section{Summary}
 \label{sec:summary}
