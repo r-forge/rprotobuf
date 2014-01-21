@@ -273,9 +273,6 @@ Section~\ref{sec:summary} concludes.
 % of what a schema is and then continue with showing how PB implement this?
 % MS: Yes I agree, tried to address below.
 
-%FIXME Introductory section which may include references in parentheses
-%\citep{R}, or cite a reference such as \citet{R} in the text.
-
 % This content is good.  Maybe use and cite?
 % http://martin.kleppmann.com/2012/12/05/schema-evolution-in-avro-protocol-buffers-thrift.html
 
@@ -1245,7 +1242,7 @@ options("RProtoBuf.int64AsString" = FALSE)
 
 The previous sections discussed functionality in the \pkg{RProtoBuf} package
 for creating, manipulating, parsing and serializing Protocol Buffer
-messages of a pre-defined schema.  This is useful when there are
+messages of a defined schema.  This is useful when there are
 pre-existing systems with defined schemas or significant software
 components written in other languages that need to be accessed from
 within R.
@@ -1330,7 +1327,7 @@ This section compares how many bytes are used to store data sets
 using four different methods:
 
 \begin{itemize}
-\item normal R serialization,
+\item normal R serialization \citep{serialization},
 \item R serialization followed by gzip,
 \item normal Protocol Buffer serialization, and
 \item Protocol Buffer serialization followed by gzip.
@@ -1364,12 +1361,16 @@ returned by object.size() compared to the serialized sizes.
 %sample of 50 datasets is included on the next page.  
 Sizes are comparable but Protocol Buffers provide simple getters and setters
 in multiple languages instead of requiring other programs to parse the R
-serialization format.% \citep{serialization}.
-One takeaway from this table is that RProtoBuf does not in general provide
+serialization format. % \citep{serialization}.
+One takeaway from this table is that the universal R object schema
+included in RProtoBuf does not in general provide
 any significant saving in file size compared to the normal serialization
-mechanism in R which is seen as equally compact.  The benefit from RProtoBuf
-comes from its interoperability with other environments, as well as its safe
-versioning,
+mechanism in R.
+% redundant: which is seen as equally compact.
+The benefits of RProtoBuf accrue more naturally in applications where
+multiple programming languages are involved, or when a more concise
+application-specific schema has been defined.  The example in the next
+section provides both of these conditions.
 
 % N.B. see table.Rnw for how this table is created.
 %
@@ -1444,25 +1445,6 @@ versioning,
 \end{center}
 \end{table}
 
-\subsection{Performance considerations}
-
-TODO RProtoBuf is quite flexible and easy to use for interactive
-analysis, but it is not designed for certain classes of operations one
-might like to do with Protocol Buffers.  For example, taking a list of
-10,000 Protocol Buffers, extracting a named field from each one, and
-computing a aggregate statistics on those values would be extremely
-slow with RProtoBuf, and while this is a useful class of operations,
-it is outside of the scope of RProtoBuf.  We should be very clear
-about this to clarify the goals and strengths of RProtoBuf and its
-reflection and object mapping.
-
-
-%\section{Other approaches}
-
-% Phillip Yelland wrote another implementation, currently proprietary,
-% that has significant speed advantages when querying fields from a
-% large number of protocol buffers, but is less user friendly for the
-% basic cases documented here.
 
 \section{Application: Distributed Data Collection with MapReduce}
 \label{sec:mapreduce}
@@ -1811,6 +1793,25 @@ print(msg.realValue);
 
 \section{Summary}
 \label{sec:summary}
+
+
+TODO RProtoBuf is quite flexible and easy to use for interactive
+analysis, but it is not designed for certain classes of operations one
+might like to do with Protocol Buffers.  For example, taking a list of
+10,000 Protocol Buffers, extracting a named field from each one, and
+computing a aggregate statistics on those values would be extremely
+slow with RProtoBuf, and while this is a useful class of operations,
+it is outside of the scope of RProtoBuf.  We should be very clear
+about this to clarify the goals and strengths of RProtoBuf and its
+reflection and object mapping.
+
+
+%\section{Other approaches}
+
+% Phillip Yelland wrote another implementation, currently proprietary,
+% that has significant speed advantages when querying fields from a
+% large number of protocol buffers, but is less user friendly for the
+% basic cases documented here.
 
 % RProtoBuf has been used.
 
