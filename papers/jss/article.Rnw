@@ -231,9 +231,9 @@ describes the implementation details of the main S4 classes making up this
 package.  Section~\ref{sec:types} describes the challenges of type coercion
 between R and other languages.  Section~\ref{sec:evaluation} introduces a
 general R language schema for serializing arbitrary R objects and evaluates
-it against R's built-in serialization.  Sections~\ref{sec:opencpu}
-and \ref{sec:mapreduce} provide real-world use cases of \CRANpkg{RProtoBuf}
-in web service and MapReduce environments, respectively, before
+it against R's built-in serialization.  Sections~\ref{sec:mapreduce}
+and \ref{sec:opencpu} provide real-world use cases of \CRANpkg{RProtoBuf}
+in MapReduce and web service environments, respectively, before
 Section~\ref{sec:summary} concludes.
 
 %This article describes the basics of Google's Protocol Buffers through
@@ -1551,7 +1551,7 @@ hist
 plot(as.histogram(hist))
 \end{verbatim}
 
-<<echo=FALSE,fig=TRUE>>=
+<<echo=FALSE,fig=TRUE,width=8,height=4>>=
 require(RProtoBuf)
 require(HistogramTools)
 readProtoFiles(package="HistogramTools")
