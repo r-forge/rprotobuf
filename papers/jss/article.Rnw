@@ -190,8 +190,8 @@ objects \citep{rjson,RJSONIO}.
 
 A number of binary formats based on \texttt{JSON} have been proposed
 that reduce the parsing cost and improve efficiency.  \pkg{MessagePack}
-\citep{msgpackR} and \pkg{BSON} \citep{rmongodb} both have R
-interfaces, but these formats lack a separate schema for the seralized
+and \pkg{BSON} both have R
+interfaces \citep{msgpackR,rmongodb}, but these formats lack a separate schema for the serialized
 data and thus still duplicate field names with each message sent over
 the network or stored in a file.  Such formats also lack support for
 versioning when data storage needs evolve over time, or when
@@ -268,22 +268,10 @@ Section~\ref{sec:summary} concludes.
 \section{Protocol Buffers}
 \label{sec:protobuf}
 
-
 % JO: I'm not sure where to put this paragraph. I think it is too technical
 % for the introduction section. Maybe start this section with some explanation
 % of what a schema is and then continue with showing how PB implement this?
-Once the data serialization needs of an application become complex
-enough, developers typically benefit from the use of an
-\emph{interface description language}, or \emph{IDL}.  IDLs like
-Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro provide a compact
-well-documented schema for cross-language data structures and
-efficient binary interchange formats.
-Since the schema is provided separately from the encoded data, the data can be
-efficiently encoded to minimize storage costs of the stored data when compared with simple
-``schema-less'' binary interchange formats. 
-The schema can be used to generate classes for statically-typed programming languages
-such as C++ and Java, or can be used with reflection for dynamically-typed programming
-languages.
+% MS: Yes I agree, tried to address below.
 
 %FIXME Introductory section which may include references in parentheses
 %\citep{R}, or cite a reference such as \citet{R} in the text.
@@ -293,25 +281,9 @@ languages.
 
 %% TODO(de,ms)  What follows is oooooold and was lifted from the webpage
 %%              Rewrite?
-Protocol Buffers can be described as a modern, language-neutral, platform-neutral,
-extensible mechanism for sharing and storing structured data.  Since their
-introduction, Protocol Buffers have been widely adopted in industry with
-applications as varied as %database-internal messaging (Drizzle), % DE: citation?
-Sony Playstations, Twitter, Google Search, Hadoop, and Open Street Map.  
-% TODO(DE): This either needs a citation, or remove the name drop
-% MS: These are mostly from blog posts, I can't find a good reference
-% that has a long list, and the name and year citation style seems
-% less conducive to long lists of marginal citations like blog posts
-% compared to say concise CS/math style citations [3,4,5,6]. Thoughts?
-
-
-
-While traditional IDLs have at times been criticized for code bloat and
-complexity, Protocol Buffers are based on a simple list and records
-model that is compartively flexible and simple to use.
-
-Some of the key features provided by Protocol Buffers for data analysis
-include:
+Protocol Buffers are a modern, language-neutral, platform-neutral,
+extensible mechanism for sharing and storing structured data.  Some of
+the key features provided by Protocol Buffers for data analysis include:
 
 \begin{itemize}
 \item \emph{Portable}:  Enable users to send and receive data between
@@ -324,6 +296,16 @@ include:
   decade.
 \end{itemize}
 
+% Lets place this at the top of the page or the bottom, or on a float
+% page, but not just here in the middle of the page.
+\begin{figure}[tbp]
+\begin{center}
+\includegraphics[width=\textwidth]{protobuf-distributed-system-crop.pdf}
+\end{center}
+\caption{Example protobuf usage}
+\label{fig:protobuf-distributed-usecase}
+\end{figure}
+
 Figure~\ref{fig:protobuf-distributed-usecase} illustrates an example
 communication workflow with Protocol Buffers and an interactive R session.
 Common use cases include populating a request remote-procedure call (RPC)
@@ -334,109 +316,22 @@ The key difference to, say, a request to an Rserve instance is that
 the remote server may be implemented in any language, with no
 dependence on R.
 
-%Protocol buffers are a language-neutral, platform-neutral, extensible
-%way of serializing structured data for use in communications
-%protocols, data storage, and more.
-
-%Protocol Buffers offer key features such as an efficient data interchange
-%format that is both language- and operating system-agnostic yet uses a
-%lightweight and highly performant encoding, object serialization and
-%de-serialization as well data and configuration management. Protocol
-%buffers are also forward compatible: updates to the \texttt{proto}
-%files do not break programs built against the previous specification.
-
-%While benchmarks are not available, Google states on the project page that in
-%comparison to XML, protocol buffers are at the same time \textsl{simpler},
-%between three to ten times \textsl{smaller}, between twenty and one hundred
-%times \textsl{faster}, as well as less ambiguous and easier to program.
-
-%The flexibility of the reflection-based API is particularly well
-%suited for interactive data analysis.
-
-% XXX Design tradeoffs: reflection vs proto compiler
-
-For added speed and efficiency, the C++, Java, and Python bindings to
-Protocol Buffers are used with a compiler that translates a Protocol
-Buffer schema description file (ending in \texttt{.proto}) into
-language-specific classes that can be used to create, read, write and
-manipulate Protocol Buffer messages.  The R interface, in contrast,
-uses a reflection-based API that is particularly well-suited for
-interactive data analysis.  
-All messages in R have a single class
-structure, but different accessor methods are created at runtime based
-on the named fields of the specified message type.
-
-% In other words, given the 'proto'
-%description file, code is automatically generated for the chosen
-%target language(s). The project page contains a tutorial for each of
-%these officially supported languages:
-%\url{http://code.google.com/apis/protocolbuffers/docs/tutorials.html}
-
-%The protocol buffers code is released under an open-source (BSD) license. The
-%protocol buffer project (\url{http://code.google.com/p/protobuf/})
-%contains a C++ library and a set of runtime libraries and compilers for
-%C++, Java and Python.
-
-%With these languages, the workflow follows standard practice of so-called
-%Interface Description Languages (IDL)
-%(c.f. \href{http://en.wikipedia.org/wiki/Interface_description_language}{Wikipedia
-%  on IDL}).  This consists of compiling a protocol buffer description file
-%(ending in \texttt{.proto}) into language specific classes that can be used
-
-%Besides the officially supported C++, Java and Python implementations, several projects have been
-%created to support protocol buffers for many languages. The list of known
-%languages to support protocol buffers is compiled as part of the
-%project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
-
-\begin{figure}[t]
-\begin{center}
-\includegraphics[width=\textwidth]{protobuf-distributed-system-crop.pdf}
-\end{center}
-\caption{Example protobuf usage}
-\label{fig:protobuf-distributed-usecase}
-\end{figure}
-
-\section{Basic Usage: Messages and Descriptors}
-\label{sec:rprotobuf-basic}
-
-This section describes how to use the R API to create and manipulate
-protocol buffer messages in R, and how to read and write the
-binary \emph{payload} of the messages to files and arbitrary binary
-R connections.
-
-The two fundamental building blocks of Protocol Buffers are \emph{Messages}
-and \emph{Descriptors}.  Messages provide a common abstract encapsulation of
-structured data fields of the type specified in a Message Descriptor.
-Message Descriptors are defined in \texttt{.proto} files and define a
-schema for a particular named class of messages.
-
+While traditional IDLs have at times been criticized for code bloat and
+complexity, Protocol Buffers are based on a simple list and records
+model that is flexible and simple to use.  The schema for structured
+protocol buffer data is defined in \texttt{.proto} files which may
+contain one or more message types.  Each message type has one or more
+fields.  A field is specified with a unique number, a name, a value
+type, and a field rule specifying whether the field is optional,
+required, or repeated.  The supported value types are numbers,
+enumerations, booleans, strings, raw bytes, or other nested message
+types.  The \texttt{.proto} file syntax for defining the structure of protocol
+buffer data is described comprehensively on Google Code\footnote{See 
+\url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
 Table~\ref{tab:proto} shows an example \texttt{.proto} file which
 defines the \texttt{tutorial.Person} type.  The R code in the right
 column shows an example of creating a new message of this type and
-populating its fields.  A \texttt{.proto} file may contain one or more
-message types, and each message type has one or more fields.  A field
-is specified with a unique number, a name, a value type, and a field
-rule specifying whether the field is optional, required, or repeated.
-The supported value types are numbers, enumerations, booleans,
-strings, raw bytes, or other nested message types.
-The \texttt{.proto} file syntax for defining the structure of protocol
-buffer data is described comprehensively on Google Code\footnote{See 
-\url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
-
-% Commented out because we said this earlier.
-%This separation
-%between schema and the message objects is in contrast to
-%more verbose formats like JSON, and when combined with the efficient
-%binary representation of any Message object explains a large part of
-%the performance and storage-space advantage offered by Protocol
-%Buffers. TODO(ms): we already said some of this above.  clean up.
-
-% lifted from protobuf page:
-%With Protocol Buffers you define how you want your data to be
-%structured once, and then you can read or write structured data to and
-%from a variety of data streams using a variety of different
-%languages.  The definition
-
+populating its fields.
 
 %% TODO(de) Can we make this not break the width of the page?
 \noindent
@@ -483,6 +378,106 @@ serialize(p, NULL)
   an object of this class and accessing its fields (right).}
 \label{tab:proto}
 \end{table}
+
+
+% The schema can be used to generate model classes for statically-typed programming languages
+%such as C++ and Java, or can be used with reflection for dynamically-typed programming
+%languages.
+
+% TODO(mstokely): Maybe find a place to add this?  
+% Since their
+% introduction, Protocol Buffers have been widely adopted in industry with
+% applications as varied as %database-internal messaging (Drizzle), % DE: citation?
+% Sony Playstations, Twitter, Google Search, Hadoop, and Open Street
+% Map.  
+
+% TODO(DE): This either needs a citation, or remove the name drop
+% MS: These are mostly from blog posts, I can't find a good reference
+% that has a long list, and the name and year citation style seems
+% less conducive to long lists of marginal citations like blog posts
+% compared to say concise CS/math style citations [3,4,5,6]. Thoughts?
+
+
+% The schema can be used to generate classes for statically-typed programming languages
+% such as C++ and Java, or can be used with reflection for dynamically-typed programming
+% languages.
+
+
+
+%Protocol buffers are a language-neutral, platform-neutral, extensible
+%way of serializing structured data for use in communications
+%protocols, data storage, and more.
+
+%Protocol Buffers offer key features such as an efficient data interchange
+%format that is both language- and operating system-agnostic yet uses a
+%lightweight and highly performant encoding, object serialization and
+%de-serialization as well data and configuration management. Protocol
+%buffers are also forward compatible: updates to the \texttt{proto}
+%files do not break programs built against the previous specification.
+
+For added speed and efficiency, the C++, Java, and Python bindings to
+Protocol Buffers are used with a compiler that translates a Protocol
+Buffer schema description file (ending in \texttt{.proto}) into
+language-specific classes that can be used to create, read, write and
+manipulate Protocol Buffer messages.  The R interface, in contrast,
+uses a reflection-based API that is particularly well-suited for
+interactive data analysis.  
+All messages in R have a single class
+structure, but different accessor methods are created at runtime based
+on the named fields of the specified message type, as described in the
+next section.
+
+% In other words, given the 'proto'
+%description file, code is automatically generated for the chosen
+%target language(s). The project page contains a tutorial for each of
+%these officially supported languages:
+%\url{http://code.google.com/apis/protocolbuffers/docs/tutorials.html}
+
+%The protocol buffers code is released under an open-source (BSD) license. The
+%protocol buffer project (\url{http://code.google.com/p/protobuf/})
+%contains a C++ library and a set of runtime libraries and compilers for
+%C++, Java and Python.
+
+%With these languages, the workflow follows standard practice of so-called
+%Interface Description Languages (IDL)
+%(c.f. \href{http://en.wikipedia.org/wiki/Interface_description_language}{Wikipedia
+%  on IDL}).  This consists of compiling a protocol buffer description file
+%(ending in \texttt{.proto}) into language specific classes that can be used
+
+%Besides the officially supported C++, Java and Python implementations, several projects have been
+%created to support protocol buffers for many languages. The list of known
+%languages to support protocol buffers is compiled as part of the
+%project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
+
+\section{Basic Usage: Messages and Descriptors}
+\label{sec:rprotobuf-basic}
+
+This section describes how to use the R API to create and manipulate
+protocol buffer messages in R, and how to read and write the
+binary representation of the message (often called the \emph{payload}) to files and arbitrary binary
+R connections.
+The two fundamental building blocks of Protocol Buffers are \emph{Messages}
+and \emph{Descriptors}.  Messages provide a common abstract encapsulation of
+structured data fields of the type specified in a Message Descriptor.
+Message Descriptors are defined in \texttt{.proto} files and define a
+schema for a particular named class of messages.
+
+
+% Commented out because we said this earlier.
+%This separation
+%between schema and the message objects is in contrast to
+%more verbose formats like JSON, and when combined with the efficient
+%binary representation of any Message object explains a large part of
+%the performance and storage-space advantage offered by Protocol
+%Buffers. TODO(ms): we already said some of this above.  clean up.
+
+% lifted from protobuf page:
+%With Protocol Buffers you define how you want your data to be
+%structured once, and then you can read or write structured data to and
+%from a variety of data streams using a variety of different
+%languages.  The definition
+
+
 
 %This section may contain a figure such as Figure~\ref{figure:rlogo}.
 %
@@ -663,7 +658,7 @@ payload from binary files or connections and \texttt{readASCII} parses
 the human-readable ASCII output that is created with
 \code{as.character}.
 
-The binary representation of the message (often called the payload)
+The binary representation of the message
 does not contain information that can be used to dynamically
 infer the message type, so we have to provide this information
 to the \texttt{read} function in the form of a descriptor :
@@ -1250,8 +1245,12 @@ options("RProtoBuf.int64AsString" = FALSE)
 
 The previous sections discussed functionality in the \pkg{RProtoBuf} package
 for creating, manipulating, parsing and serializing Protocol Buffer
-messages of a specific pre-defined schema.  The package also provides
-methods for converting arbitrary R data structures into protocol
+messages of a pre-defined schema.  This is useful when there are
+pre-existing systems with defined schemas or significant software
+components written in other languages that need to be accessed from
+within R.
+
+The package also provides methods for converting arbitrary R data structures into protocol
 buffers and vice versa with a universal R object schema. The \texttt{serialize\_pb} and \texttt{unserialize\_pb}
 functions serialize arbitrary R objects into a universal Protocol Buffer 
 message:
