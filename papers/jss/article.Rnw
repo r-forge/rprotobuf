@@ -35,6 +35,10 @@ independent of programming languages or operating system.  The
 \CRANpkg{RProtoBuf} package provides a complete interface between this
 library and the R environment for statistical computing.
 %TODO(ms) keep it less than 150 words.
+% Maybe add Jeroen's sentence:
+% They offer a unique combination of features, performance, and maturity that seems
+% particulary well suited for data-driven applications and numerical
+% computing.
 }
 \Keywords{r, protocol buffers, serialization, cross-platform}
 \Plainkeywords{r, protocol buffers, serialization, cross-platform} %% without formatting
@@ -137,12 +141,14 @@ analysis pipeline may produce intermediate results that need to be
 stored in a file or sent over the network for further processing. 
 % JO Perhaps also mention that serialization is needed for distributed
 % systems to make systems scale up?
-% MS: yes perhaps somewhere near here we could define serialization
-% and describe this.
 
 Given these requirements, how do we safely and efficiently share intermediate results
 between different applications, possibly written in different
 languages, and possibly running on different computer systems?
+In computer programming, \emph{serialization} is the process of
+translating data structures, variables, and session state into a
+format that can be stored or transmitted and then reconstructed in the
+original form later \citep{clinec++}.
 % Reverted to my original above, because the replacement below puts me
 % to sleep:
 %Such systems require reliable and efficient exchange of intermediate
@@ -191,52 +197,55 @@ the network or stored in a file.  Such formats also lack support for
 versioning when data storage needs evolve over time, or when
 application logic and requirement changes dictate updates to the
 message format.
+
+Once the data serialization needs of an application become complex
+enough, developers typically benefit from the use of an
+\emph{interface description language}, or \emph{IDL}.  IDLs like
+Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro
+provide a compact well-documented schema for cross-language data
+structures and efficient binary interchange formats.  Since the schema
+is provided separately from the encoded data, the data can be
+efficiently encoded to minimize storage costs when
+compared with simple ``schema-less'' binary interchange formats.
+Many sources compare data serialization formats
+and show Protocol Buffers compare very favorably to the alternatives; see
+\citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
+
+% Too technical, move to section 2.
+% The schema can be used to generate model classes for statically-typed programming languages
+%such as C++ and Java, or can be used with reflection for dynamically-typed programming
+%languages.
+
+% TODO(mstokely): Will need to define reflection if we use it here.
+% Maybe in the next section since its not as key as 'serialization'
+% which we already defined.
  
 %\paragraph*{Enter Protocol Buffers:}
-In 2008, and following several years of internal use, Google released an open
-source version of Protocol Buffers. It provides data  
-interchange format that was designed and used for their internal infrastructure.
-Google officially provides high-quality parsing libraries for \texttt{Java}, 
-\texttt{C++} and \texttt{Python}, and community-developed open source implementations
-are available for many other languages. 
-Protocol Buffers take a quite different approach from many other popular formats.
-They offer a unique combination of features, performance, and maturity that seems
-particulary well suited for data-driven applications and numerical computing.
-Protocol Buffers are a binary format that natively supports all common primitive types
-found in modern programming languages. A key advantage is that numeric values
-are serialized exactly the same way as they are stored in memory. There is
-no loss of precision, no overhead, and parsing messages is very efficient: the system can 
-simply copy bytes to memory without any further processing. 
-But the most powerful feature of Protocol Buffers is that it decouples the content
-from the structure using a schema, very similar to a database. This further increases
-performance by eliminating redundancy, while at the same time providing foundations
-for defining an \emph{Interface Description Language}, or \emph{IDL}.
-Many sources compare data serialization formats and show Protocol Buffers compare 
-very favorably to the alternatives; see \citet{Sumaray:2012:CDS:2184751.2184810} 
-for one such comparison.
-% TODO(DE): Mention "future proof" forward compatibility of schemata
 
-%  The schema can be used to
-%generate model classes for statically-typed programming languages such
-%as C++ and Java, or can be used with reflection for dynamically-typed
-%programming languages.  Since the schema is provided separately from
-%the encoded data, the data can be efficiently encoded to minimize
-%storage costs of the stored data when compared with simple
-%``schema-less'' binary interchange formats.
-%Many sources compare data serialization formats and show Protocol
-%Buffers very 
+% In 2008, and following several years of internal use, Google released an open
+% source version of Protocol Buffers. It provides data  
+% interchange format that was designed and used for their internal infrastructure.
+% Google officially provides high-quality parsing libraries for \texttt{Java}, 
+% \texttt{C++} and \texttt{Python}, and community-developed open source implementations
+% are available for many other languages. 
+% Protocol Buffers take a quite different approach from many other popular formats.
+
+% TODO(mstokely): Good sentence from Jeroen, add it here or sec 2.
+% They offer a unique combination of features, performance, and maturity that seems
+% particulary well suited for data-driven applications and numerical
+% computing.
+
+% TODO(DE): Mention "future proof" forward compatibility of schemata
 
 
 % TODO(mstokely): Take a more conversational tone here asking
 % questions and motivating protocol buffers?
 
-% TODO(mstokely): If we go to JSS, include a larger paragraph here
-% referencing each numbered section.  I don't like these generally,
-% but its useful for this paper I think because we have a boring bit
-% in the middle (full class/method details) and interesting
-% applications at the end.
+% NOTE(mstokely): I don't like these roadmap paragraphs in general,
+% but it seems ueful here because we have a boring bit in the middle
+% (full class/method details) and interesting applications at the end.
 
-This paper describes an R interface to Protocol Buffer, 
+This paper describes an R interface to Protocol Buffers,
 and is organized as follows. Section~\ref{sec:protobuf}
 provides a general overview of Protocol Buffers.
 Section~\ref{sec:rprotobuf-basic} describes the interactive R interface
