@@ -1780,34 +1780,37 @@ outputmsg <- serialize_pb(val)
 %print(msg.realValue);
 %\end{verbatim}
 
-\section{Summary}
+\section{Conclusion and Commentary}
 \label{sec:summary}
+% TODO(mstokely): Get cibona approval for these two sentences before
+% publishing.
+Schema-less text formats such as CSV and JSON will continue to be
+widely used in many contexts, but we hope that the availability of
+\pkg{RProtoBuf} makes it easy for many mixed-language data analysis
+pipelines to embrace schemas such as Protocol Buffers for type-safe
+and performant data serialization between applications.
 
+\pkg{RProtoBuf} has been heavily used inside Google for the past three
+years by statisticians and software engineers.  At the time of this
+writing there are more than XXX 30-day active users of RProtoBuf using
+it to read data from and otherwise interact with other distributed
+systems written in C++, Java, Python, and other languages.
 
-TODO RProtoBuf is quite flexible and easy to use for interactive
-analysis, but it is not designed for certain classes of operations one
-might like to do with Protocol Buffers.  For example, taking a list of
-10,000 Protocol Buffers, extracting a named field from each one, and
-computing a aggregate statistics on those values would be extremely
-slow with RProtoBuf, and while this is a useful class of operations,
-it is outside of the scope of RProtoBuf.  We should be very clear
-about this to clarify the goals and strengths of RProtoBuf and its
-reflection and object mapping.
+\paragraph*{Other Approaches}
 
-
-%\section{Other approaches}
-
-% Phillip Yelland wrote another implementation, currently proprietary,
-% that has significant speed advantages when querying fields from a
-% large number of protocol buffers, but is less user friendly for the
-% basic cases documented here.
-
-% RProtoBuf has been used.
-
-%Its pretty useful.  Murray to see if he can get approval to talk a
-%tiny bit about how much its used at Google.
-
-%This file is only a basic article template. For full details of \emph{The R Journal} style and information on how to prepare your article for submission, see the \href{http://journal.r-project.org/latex/RJauthorguide.pdf}{Instructions for Authors}.
+\pkg{RProtoBuf} is quite flexible and easy to use for interactive use,
+but it is not designed for efficient high-speed manipulation of large
+numbers of protocol buffers once they have been read into R.  For
+example, taking a list of 100,000 Protocol Buffers, extracting a named
+field from each one, and computing an aggregate statistic on those
+values would be relatively slow with RProtoBuf.  Instead for such a
+use case, the current design of RProtoBuf relies on other database
+systems to provide query and aggregation semantics before the
+resulting protocol buffers are read into R.  Such queries could be
+supported in a future version of \pkg{RProtoBuf} by supporting a
+vector of messages type such that \emph{slicing} operations over a
+given field across a large number of messages could be done
+efficiently in C++.
 
 \section{Acknowledgement}
 
