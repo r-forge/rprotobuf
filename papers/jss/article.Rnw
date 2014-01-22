@@ -1527,8 +1527,8 @@ messages in Python for later consumption by R, we first compile the
   protoc histogram.proto --python_out=.
 \end{verbatim}
 This generates Python module called \texttt{histogram\_pb2.py}, containing both the 
-descriptor information as well as methods to read and manipulate the R object 
-message.
+descriptor information as well as methods to read and manipulate the histogram 
+message data.
 
 \begin{verbatim}
 # Import modules
