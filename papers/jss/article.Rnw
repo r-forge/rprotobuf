@@ -186,7 +186,7 @@ booleans and null. However, as it too is a text-based format, numbers are
 stored as human-readable decimal notation which is inefficient and
 leads to loss of type (double versus integer) and precision. Several R packages
 implement functions to parse and generate \texttt{JSON} data from R
-objects \citep{rjson,RJSONIO}.
+objects \citep{rjson,RJSONIO,jsonlite}.
 
 A number of binary formats based on \texttt{JSON} have been proposed
 that reduce the parsing cost and improve efficiency.  \pkg{MessagePack}
