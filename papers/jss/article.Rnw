@@ -362,11 +362,11 @@ message Person {
 <<echo=TRUE>>=
 library(RProtoBuf)
 p <- new(tutorial.Person,id=1,name="Dirk")
-class(p)
 p$name
 p$name <- "Murray"
 cat(as.character(p))
 serialize(p, NULL)
+class(p)
 @
 \end{minipage} \\
 \bottomrule
