@@ -41,8 +41,8 @@ library and the R environment for statistical computing.
 % particulary well suited for data-driven applications and numerical
 % computing.
 }
-\Keywords{r, protocol buffers, serialization, cross-platform}
-\Plainkeywords{r, protocol buffers, serialization, cross-platform} %% without formatting
+\Keywords{\proglang{R}, \pkg{Rcpp}, protocol buffers, serialization, cross-platform}
+\Plainkeywords{r, Rcpp, protocol buffers, serialization, cross-platform} %% without formatting
 %% at least one keyword must be supplied
 
 %% publication information
@@ -716,6 +716,29 @@ than 100 C++ functions that provide the
 glue code between the R language classes and the underlying C++
 classes.
 
+% MS: I think this looks better at the bottom of the page.
+% so it appears after the new section starts where it is referenced.
+\begin{table}[bp]
+\centering
+\begin{tabular}{lccl}
+\toprule
+\textbf{Class}      & 
+     \textbf{Slots} & 
+     \textbf{Methods} & 
+     \textbf{Dynamic Dispatch}\\
+\cmidrule{1-4}
+Message             & 2 & 20 & yes (field names)\\
+Descriptor          & 2 & 16 & yes (field names, enum types, nested types)\\
+FieldDescriptor     & 4 & 18 & no\\
+EnumDescriptor      & 4 & 11 & yes (enum constant names)\\
+FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
+EnumValueDescriptor & 3 & \phantom{1}6 & no\\
+\bottomrule
+\end{tabular}
+\caption{\label{class-summary-table}Overview of Class, Slot, Method and
+  Dispatch Relationships}
+\end{table}
+
 The \CRANpkg{Rcpp} package
 \citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
 facilitate this integration of the R and C++ code for these objects.
@@ -744,32 +767,12 @@ functions with these S4 classes:
   \verb|object$method(arguments)|.
 \end{itemize}
 
-Additionally, \texttt{RProtoBuf} implements the \texttt{.DollarNames} S3 generic function
-(defined in the \texttt{utils} package) for all classes to enable tab
-completion.  Completion possibilities include pseudo-method names for all
-classes, plus dynamic dispatch on names or types specific to a given object.
-
-% TODO(ms): Add column check box for doing dynamic dispatch based on type.
-\begin{table}[h]
-\centering
-\begin{tabular}{lccl}
-\toprule
-\textbf{Class}      & 
-     \textbf{Slots} & 
-     \textbf{Methods} & 
-     \textbf{Dynamic Dispatch}\\
-\cmidrule{1-4}
-Message             & 2 & 20 & yes (field names)\\
-Descriptor          & 2 & 16 & yes (field names, enum types, nested types)\\
-FieldDescriptor     & 4 & 18 & no\\
-EnumDescriptor      & 4 & 11 & yes (enum constant names)\\
-FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
-EnumValueDescriptor & 3 & \phantom{1}6 & no\\
-\bottomrule
-\end{tabular}
-\caption{\label{class-summary-table}Overview of Class, Slot, Method and
-  Dispatch Relationships}
-\end{table}
+Additionally, \pkg{RProtoBuf} supports tab completion for all
+classes.  Completion possibilities include pseudo-method names for all
+classes, plus dynamic dispatch on names or types specific to a given
+object.  This functionality is implemented with the
+\texttt{.DollarNames} S3 generic function defined in the \pkg{utils}
+package.
 
 \subsection{Messages}
 
@@ -840,14 +843,12 @@ and any other descriptors defined in loaded \texttt{.proto} files are
 then available on the search path.
 
 <<>>=
-# field descriptor
-tutorial.Person$email
+tutorial.Person$email # field descriptor
 
-# enum descriptor
-tutorial.Person$PhoneType
+tutorial.Person$PhoneType # enum descriptor
 
-# nested type descriptor
-tutorial.Person$PhoneNumber
+
+tutorial.Person$PhoneNumber # nested type descriptor
 # same as
 tutorial.Person.PhoneNumber
 @
@@ -855,7 +856,7 @@ tutorial.Person.PhoneNumber
 Table~\ref{Descriptor-methods-table} provides a complete list of the
 slots and available methods for Descriptors.
 
-\begin{table}[h]
+\begin{table}[tbp]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
@@ -901,12 +902,12 @@ type in this descriptor.\\
 \label{subsec-field-descriptor}
 
 The class \emph{FieldDescriptor} represents field
-descriptor in R. This is a wrapper S4 class around the
+descriptors in R. This is a wrapper S4 class around the
 \texttt{google::protobuf::FieldDescriptor} C++ class.
 Table~\ref{fielddescriptor-methods-table} describes the methods
 defined for the \texttt{FieldDescriptor} class.
 
-\begin{table}[h]
+\begin{table}[tbp]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
@@ -952,8 +953,9 @@ defined for the \texttt{FieldDescriptor} class.
 \subsection{Enum Descriptors}
 \label{subsec-enum-descriptor}
 
-The class \emph{EnumDescriptor} is an R wrapper
-class around the C++ class \texttt{google::protobuf::EnumDescriptor}.
+The class \emph{EnumDescriptor} represents enum descriptors in R.
+This is a wrapper S4 class around the
+\texttt{google::protobuf::EnumDescriptor} C++ class.
 Table~\ref{enumdescriptor-methods-table} describes the methods
 defined for the \texttt{EnumDescriptor} class.
 
@@ -966,7 +968,7 @@ tutorial.Person$PhoneType
 tutorial.Person$PhoneType$WORK
 @
 
-\begin{table}[h]
+\begin{table}[tbp]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
@@ -1002,8 +1004,9 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \subsection{File Descriptors}
 \label{subsec-file-descriptor}
 
-The class \emph{FileDescriptor} is an R wrapper
-class around the C++ class \texttt{google::protobuf::FileDescriptor}.
+The class \emph{FileDescriptor} represents file descriptors in R.
+This is a wrapper S4 class around the
+\texttt{google::protobuf::FileDescriptor} C++ class.
 Table~\ref{filedescriptor-methods-table} describes the methods
 defined for the \texttt{FileDescriptor} class.
 
@@ -1016,7 +1019,7 @@ f
 f$Person
 @
 
-\begin{table}[h]
+\begin{table}[tbp]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
@@ -1045,8 +1048,9 @@ f$Person
 \subsection{Enum Value Descriptors}
 \label{subsec-enumvalue-descriptor}
 
-The class \emph{EnumValueDescriptor} is an R wrapper
-class around the C++ class \texttt{google::protobuf::EnumValueDescriptor}.
+The class \emph{EnumValueDescriptor} represents enumeration value
+descriptors in R.  This is a wrapper S4 class around the
+\texttt{google::protobuf::EnumValueDescriptor} C++ class.
 Table~\ref{EnumValueDescriptor-methods-table} describes the methods
 defined for the \texttt{EnumValueDescriptor} class.
 
@@ -1058,7 +1062,7 @@ tutorial.Person$PhoneType$value(name="HOME")
 tutorial.Person$PhoneType$value(number=1)
 @
 
-\begin{table}[h]
+\begin{table}[tbp]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
@@ -1468,7 +1472,7 @@ has emerged as a popular design pattern that enables the processing of
 very large data sets on large compute clusters.
 
 Many types of data analysis over large data sets may involve very rare
-phenomenon or be dealing with highly skewed data sets or inflexible
+phenomenon or deal with highly skewed data sets or inflexible
 raw data storage systems from which unbiased sampling is not feasible.
 In such situations, MapReduce and binning may be combined as a
 pre-processing step for a wide range of statistical and scientific
@@ -1529,10 +1533,11 @@ messages in Python for later consumption by R, we first compile the
 \end{verbatim}
 This generates a Python module called \texttt{histogram\_pb2.py}, containing both the 
 descriptor information as well as methods to read and manipulate the histogram 
-message data.
+message data.  The following simple Python script uses this generated
+module to create a histogram and write out the protocol buffer
+representation to a file:
 
 \begin{Code}
-# Import modules
 from histogram_pb2 import HistogramState;
 
 # Create empty Histogram message
@@ -1549,9 +1554,10 @@ outfile.write(hist.SerializeToString())
 outfile.close()
 \end{Code}
 
-We can then read in the histogram into R and plot it with :
+The protocol buffer can then be read into R and converted to a native
+R histogram object for plotting:
 
-\begin{verbatim}
+\begin{Code}
 library(RProtoBuf)
 library(HistogramTools)
 
@@ -1565,7 +1571,7 @@ hist
 
 # Convert to native R histogram object and plot
 plot(as.histogram(hist))
-\end{verbatim}
+\end{Code}
 
 <<echo=FALSE,fig=TRUE,width=8,height=4>>=
 require(RProtoBuf)
