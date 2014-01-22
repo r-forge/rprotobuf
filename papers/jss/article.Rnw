@@ -13,7 +13,7 @@
 \RequirePackage{fancyvrb}
 \RequirePackage{alltt}
 \DefineVerbatimEnvironment{example}{Verbatim}{}
-\shortcites{janus}
+\shortcites{janus,dremel}
 %% almost as usual
 \author{Dirk Eddelbuettel\\Debian Project \And 
         Murray Stokely\\Google, Inc \And
@@ -1790,7 +1790,7 @@ outputmsg <- serialize_pb(val)
 %print(msg.realValue);
 %\end{verbatim}
 
-\section{Conclusion and Commentary}
+\section{Concluding remarks}
 \label{sec:summary}
 % TODO(mstokely): Get cibona approval for these two sentences before
 % publishing.
@@ -1805,22 +1805,29 @@ years by statisticians and software engineers.  At the time of this
 writing there are more than XXX 30-day active users of RProtoBuf using
 it to read data from and otherwise interact with other distributed
 systems written in C++, Java, Python, and other languages.
+\\
 
-\paragraph*{Other Approaches}
+\emph{Other Approaches}
+\\
 
 \pkg{RProtoBuf} is quite flexible and easy to use for interactive use,
 but it is not designed for efficient high-speed manipulation of large
 numbers of protocol buffers once they have been read into R.  For
 example, taking a list of 100,000 Protocol Buffers, extracting a named
 field from each one, and computing an aggregate statistic on those
-values would be relatively slow with RProtoBuf.  Instead for such a
-use case, the current design of RProtoBuf relies on other database
-systems to provide query and aggregation semantics before the
-resulting protocol buffers are read into R.  Such queries could be
-supported in a future version of \pkg{RProtoBuf} by supporting a
-vector of messages type such that \emph{slicing} operations over a
-given field across a large number of messages could be done
-efficiently in C++.
+values would be relatively slow with RProtoBuf.  Mechanisms to address
+such use cases are under investigation for possible incorporation into
+future releases of RProtoBuf, but currently, the package relies on
+other database systems to provide query and aggregation semantics
+before the resulting protocol buffers are read into R.  Inside Google,
+the Dremel query system \citep{dremel} is often employed in this role
+in conjunction with \pkg{RProtoBuf}.
+
+% Such queries could be
+%supported in a future version of \pkg{RProtoBuf} by supporting a
+%vector of messages type such that \emph{slicing} operations over a
+%given field across a large number of messages could be done
+%efficiently in C++.
 
 \section*{Acknowledgments}
 
