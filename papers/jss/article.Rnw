@@ -1812,7 +1812,7 @@ The \pkg{RProtoBuf} package builds on the Protocol Buffers library, and
 extends the R system with the ability to create, read and write Protocol
 Buffer message. \pkg{RProtoBuf} has been used extensively inside Google 
 for the past three years by statisticians, analysts and software engineers.
-At the time of this writing there are more than 300 30-day active
+At the time of this writing there are more than 300 active
 users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with other distributed systems written in C++, Java, Python, and 
 other languages.
