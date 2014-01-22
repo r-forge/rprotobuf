@@ -1791,51 +1791,58 @@ outputmsg <- serialize_pb(val)
 %print(msg.realValue);
 %\end{verbatim}
 
-\section{Concluding remarks}
+\section{Summary}  % DE Simpler title
 \label{sec:summary}
 % TODO(mstokely): Get cibona approval for these two sentences before
 % publishing
-Over the past decade, many formats have become available for interoperable
-data exchange, each with their unique features, strengths and weaknesses. 
-Text based formats such as CSV and JSON are easy to use and will likely 
+Over the past decade, many formats for interoperable
+data exchange have become available, each with their unique features,
+strengths and weaknesses.  
+Text based formats such as CSV and JSON are easy to use, and will likely 
 remain popular among statisticians for many years to come. However, in the 
-context of increasingly complex stacks and applications involving 
-distributed computing and mixed language analysis pipelines, choosing a more 
-sophisticated data interchange format will bring many benefits. 
-Protocol Buffers offer a unique combination of features, performance,
-and maturity that seems particulary well suited for data-driven 
+context of increasingly complex analysis stacks and applications involving 
+distributed computing as well as mixed language analysis pipelines, choosing a more 
+sophisticated data interchange format may reap considerable benefits. 
+The Protocol Buffers protocol and librart offers a unique combination of features, performance,
+maturity, and forward-compatibility that seems particulary well suited for data-driven 
 applications and numerical computing.
 
-The \pkg{RProtoBuf} package implements functionality to generate, 
-parse and manipulate Protocol Buffer messages in R. We hope that 
-this package will make Protocol Buffers more accessible to the R 
-community, and contributes towards better integration of R with
-other software. \pkg{RProtoBuf} has been heavily used inside Google
-for the past three years by statisticians and software engineers.
+%% DE Re-ordering so that we end on RProtoBuf
+The \pkg{RProtoBuf} package builds on the Protocol Buffers library, and
+extends the R system with the ability to create, read and write Protocol
+Buffer message. \pkg{RProtoBuf} has been used extensively inside Google 
+for the past three years by statisticians, analysts and software engineers.
 At the time of this writing there are more than XXX 30-day active
-users of RProtoBuf using it to read data from and otherwise interact
+users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with other distributed systems written in C++, Java, Python, and 
 other languages.
-\\
 
-\emph{Other Approaches}
+As the \pkg{RProtoBuf} package provides users with the ability to generate,
+parse and manipulate Protocol Buffer messages in R, it is our hope that this
+package will make Protocol Buffers more accessible to the R community, and
+thereby makes a small contribution towards better integration between R and
+other software systems and applications.
 
-== JO: I don't really like this section here, it gives the entire paper a bit of a 
-sour aftertaste. Perhaps we can mention performance caveats in the technical
-sections? I think it's nicer to leave it at the above paragraphs.==
+%\emph{Other Approaches}
+%
+%== JO: I don't really like this section here, it gives the entire paper a bit of a 
+%sour aftertaste. Perhaps we can mention performance caveats in the technical
+%sections? I think it's nicer to leave it at the above paragraphs.==
+%
+% DE: Agreed -- commenting out
 
-\pkg{RProtoBuf} is quite flexible and easy to use for interactive use,
-but it is not designed for efficient high-speed manipulation of large
-numbers of protocol buffers once they have been read into R.  For
-example, taking a list of 100,000 Protocol Buffers, extracting a named
-field from each one, and computing an aggregate statistic on those
-values would be relatively slow with RProtoBuf.  Mechanisms to address
-such use cases are under investigation for possible incorporation into
-future releases of RProtoBuf, but currently, the package relies on
-other database systems to provide query and aggregation semantics
-before the resulting protocol buffers are read into R.  Inside Google,
-the Dremel query system \citep{dremel} is often employed in this role
-in conjunction with \pkg{RProtoBuf}.
+%% \pkg{RProtoBuf} is quite flexible and easy to use for interactive use,
+%% but it is not designed for efficient high-speed manipulation of large
+%% numbers of protocol buffers once they have been read into R.  For
+%% example, taking a list of 100,000 Protocol Buffers, extracting a named
+%% field from each one, and computing an aggregate statistic on those
+%% values would be relatively slow with RProtoBuf.  Mechanisms to address
+%% such use cases are under investigation for possible incorporation into
+%% future releases of RProtoBuf, but currently, the package relies on
+%% other database systems to provide query and aggregation semantics
+%% before the resulting protocol buffers are read into R.  Inside Google,
+%% the Dremel query system \citep{dremel} is often employed in this role
+%% in conjunction with \pkg{RProtoBuf}.
 
 % Such queries could be
 %supported in a future version of \pkg{RProtoBuf} by supporting a
@@ -1843,13 +1850,15 @@ in conjunction with \pkg{RProtoBuf}.
 %given field across a large number of messages could be done
 %efficiently in C++.
 
+
+
 \section*{Acknowledgments}
 
 The first versions of \CRANpkg{RProtoBuf} were written during 2009-2010.
 Very significant contributions, both in code and design, were made by
 Romain Fran\c{c}ois whose continued influence on design and code is
-greatly appreciated. Several features of the package are influenced
-by the design of the \CRANpkg{rJava} package by Simon Urbanek
+greatly appreciated. Several features of the package reflect
+the design of the \CRANpkg{rJava} package by Simon Urbanek
 The user-defined table mechanism, implemented by Duncan Temple Lang for the
 purpose of the \pkg{RObjectTables} package, allows for the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
