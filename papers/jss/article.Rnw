@@ -704,15 +704,27 @@ message <- tutorial.Person$read(payload)
 
 The \CRANpkg{RProtoBuf} package uses the S4 system to store
 information about descriptors and messages.  Using the S4 system
-allows the \texttt{RProtoBuf} package to dispatch methods that are not
+allows the package to dispatch methods that are not
 generic in the S3 sense, such as \texttt{new} and
 \texttt{serialize}.
+Table~\ref{class-summary-table} lists the six
+primary Message and Descriptor classes in RProtoBuf.  Each R object
+contains an external pointer to an object managed by the
+\texttt{protobuf} C++ library, and the R objects make calls into more
+than 100 C++ functions that provide the
+glue code between the R language classes and the underlying C++
+classes.
 
-Each R object stores an external pointer to an object managed by
-the \texttt{protobuf} C++ library which implements the core Protocol Buffer
-functionality.  The \CRANpkg{Rcpp} package
+The \CRANpkg{Rcpp} package
 \citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
-facilitate the integration of the R and C++ code for these objects.
+facilitate this integration of the R and C++ code for these objects.
+Each method is wrapped individually which alllows us to add user
+friendly custom error handling, type coercion, and performance
+improvements at the cost of a more verbose implementation.
+The RProtoBuf package in many ways motivated
+the development of Rcpp Modules \citep{eddelbuettel2013exposing},
+which provide a more concise way of wrapping C++ functions and classes
+in a single entity.
 
 % Message, Descriptor, FieldDescriptor, EnumDescriptor,
 % FileDescriptor, EnumValueDescriptor
@@ -722,19 +734,15 @@ facilitate the integration of the R and C++ code for these objects.
 % grep RPB_ * | grep -v RPB_FUNCTION | grep METHOD|wc -l
 % 33
 
-There are over 100 C++ functions that provide the glue code between
-the member functions of the 6 primary Message and Descriptor classes
-in the protobuf library.  Wrapping each method individually allows us
-to add user friendly custom error handling, type coercion, and
-performance improvements at the cost of a more verbose
-implementation.  The RProtoBuf implementation in many ways motivated
-the development of Rcpp Modules \citep{eddelbuettel2013exposing},
-which provide a more concise way of wrapping C++ functions and classes
-in a single entity.
+The \texttt{RProtoBuf} package supports two forms for calling
+functions with these S4 classes:
+\begin{itemize}
+\item The functional dispatch mechanism of the the form
+  \verb|method(object, arguments)| (common to R), and
+\item The traditional object oriented notation
+  \verb|object$method(arguments)|.
+\end{itemize}
 
-The \texttt{RProtoBuf} package combines a functional dispatch mechanism 
-of the form \verb|method(object, arguments)| (common to R) and the more
-traditional object oriented notation \verb|object$method(arguments)|.
 Additionally, \texttt{RProtoBuf} implements the \texttt{.DollarNames} S3 generic function
 (defined in the \texttt{utils} package) for all classes to enable tab
 completion.  Completion possibilities include pseudo-method names for all
@@ -758,7 +766,7 @@ FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
 EnumValueDescriptor & 3 & \phantom{1}6 & no\\
 \bottomrule
 \end{tabular}
-\caption{\label{Message-methods-table}Overview of Class, Slot, Method and
+\caption{\label{class-summary-table}Overview of Class, Slot, Method and
   Dispatch Relationships}
 \end{table}
 
