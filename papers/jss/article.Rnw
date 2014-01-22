@@ -36,6 +36,7 @@ independent of programming languages or operating system.  The
 library and the R environment for statistical computing.
 %TODO(ms) keep it less than 150 words.
 % Maybe add Jeroen's sentence:
+% JO: added this sentence to the conclustion, but could use it in abstract as well.
 % They offer a unique combination of features, performance, and maturity that seems
 % particulary well suited for data-driven applications and numerical
 % computing.
@@ -1793,22 +1794,35 @@ outputmsg <- serialize_pb(val)
 \section{Concluding remarks}
 \label{sec:summary}
 % TODO(mstokely): Get cibona approval for these two sentences before
-% publishing.
-Schema-less text formats such as CSV and JSON will continue to be
-widely used in many contexts, but we hope that the availability of
-\pkg{RProtoBuf} makes it easy for many mixed-language data analysis
-pipelines to embrace schemas such as Protocol Buffers for type-safe
-and performant data serialization between applications.
+% publishing
+Over the past decade, many formats have become available for interoperable
+data exchange, each with their unique features, strengths and weaknesses. 
+Text based formats such as CSV and JSON are easy to use and will likely 
+remain popular among statisticians for many years to come. However, in the 
+context of increasingly complex stacks and applications involving 
+distributed computing and mixed language analysis pipelines, choosing a more 
+sophisticated data interchange format will bring many benefits. 
+Protocol Buffers offer a unique combination of features, performance,
+and maturity that seems particulary well suited for data-driven 
+applications and numerical computing.
 
-\pkg{RProtoBuf} has been heavily used inside Google for the past three
-years by statisticians and software engineers.  At the time of this
-writing there are more than XXX 30-day active users of RProtoBuf using
-it to read data from and otherwise interact with other distributed
-systems written in C++, Java, Python, and other languages.
+The \pkg{RProtoBuf} package implements functionality to generate, 
+parse and manipulate Protocol Buffer messages in R. We hope that 
+this package will make Protocol Buffers more accessible to the R 
+community, and contributes towards better integration of R with
+other software. \pkg{RProtoBuf} has been heavily used inside Google
+for the past three years by statisticians and software engineers.
+At the time of this writing there are more than XXX 30-day active
+users of RProtoBuf using it to read data from and otherwise interact
+with other distributed systems written in C++, Java, Python, and 
+other languages.
 \\
 
 \emph{Other Approaches}
-\\
+
+== JO: I don't really like this section here, it gives the entire paper a bit of a 
+sour aftertaste. Perhaps we can mention performance caveats in the technical
+sections? I think it's nicer to leave it at the above paragraphs.==
 
 \pkg{RProtoBuf} is quite flexible and easy to use for interactive use,
 but it is not designed for efficient high-speed manipulation of large
