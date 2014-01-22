@@ -13,7 +13,7 @@
 \RequirePackage{fancyvrb}
 \RequirePackage{alltt}
 \DefineVerbatimEnvironment{example}{Verbatim}{}
-
+\shortcites{janus}
 %% almost as usual
 \author{Dirk Eddelbuettel\\Debian Project \And 
         Murray Stokely\\Google, Inc \And
