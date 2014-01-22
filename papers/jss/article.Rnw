@@ -1527,11 +1527,11 @@ messages in Python for later consumption by R, we first compile the
 \begin{verbatim}
   protoc histogram.proto --python_out=.
 \end{verbatim}
-This generates Python module called \texttt{histogram\_pb2.py}, containing both the 
+This generates a Python module called \texttt{histogram\_pb2.py}, containing both the 
 descriptor information as well as methods to read and manipulate the histogram 
 message data.
 
-\begin{verbatim}
+\begin{Code}
 # Import modules
 from histogram_pb2 import HistogramState;
 
@@ -1547,7 +1547,7 @@ hist.name="Example Histogram Created in Python"
 outfile = open("/tmp/hist.pb", "wb")
 outfile.write(hist.SerializeToString())
 outfile.close()
-\end{verbatim}
+\end{Code}
 
 We can then read in the histogram into R and plot it with :
 
@@ -1814,11 +1814,11 @@ Buffer message. \pkg{RProtoBuf} has been used extensively inside Google
 for the past three years by statisticians, analysts and software engineers.
 At the time of this writing there are more than 300 active
 users of \pkg{RProtoBuf} using it to read data from and otherwise interact
-with other distributed systems written in C++, Java, Python, and 
+with distributed systems written in C++, Java, Python, and 
 other languages.
 
-As the \pkg{RProtoBuf} package provides users with the ability to generate,
-parse and manipulate Protocol Buffer messages in R, it is our hope that this
+The \pkg{RProtoBuf} package provides users with the ability to generate,
+parse and manipulate Protocol Buffer messages in R.  It is our hope that this
 package will make Protocol Buffers more accessible to the R community, and
 thereby makes a small contribution towards better integration between R and
 other software systems and applications.
