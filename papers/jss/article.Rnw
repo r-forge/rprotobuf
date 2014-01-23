@@ -1157,15 +1157,18 @@ distinct values.
     }
 @
 
-<<>>=
-a <- new(protobuf_unittest.TestAllTypes)
-a$optional_bool <- TRUE
-a$optional_bool <- FALSE
-<<eval=FALSE>>=
-a$optional_bool <- NA
-<<echo=FALSE,eval=TRUE,print=TRUE>>=
-try(a$optional_bool <- NA,silent=TRUE)
-@
+% We want a cleaner error message here.
+\begin{CodeChunk}
+\begin{CodeInput}
+R> a <- new(protobuf_unittest.TestAllTypes)
+R> a$optional_bool <- TRUE
+R> a$optional_bool <- FALSE
+R> a$optional_bool <- NA
+\end{CodeInput}
+\begin{CodeOutput}
+Error: NA boolean values can not be stored in bool protocol buffer fields
+\end{CodeOutput}
+\end{CodeChunk}
 
 \subsection{Unsigned Integers}
 
@@ -1175,11 +1178,7 @@ stored as doubles in R.
 
 <<>>=
 as.integer(2^31-1)
-<<eval=FALSE>>=
 as.integer(2^31 - 1) + as.integer(1)
-<<echo=FALSE,eval=TRUE,print=TRUE>>=
-try(as.integer(2^31 - 1) + as.integer(1))
-
 2^31
 class(2^31)
 @
@@ -1201,16 +1200,6 @@ which becomes problematic when \pkg{RProtoBuf} is used to exchange data
 with a system that requires this integer type. To work around this, 
 RProtoBuf allows users to get and set 64-bit integer values by specifying 
 them as character strings.
-
-<<echo=FALSE,print=FALSE>>=
-if (!exists("protobuf_unittest.TestAllTypes",
-            "RProtoBuf:DescriptorPool")) {
-    unittest.proto.file <- system.file("unitTests", "data",
-                                       "unittest.proto",
-                                       package="RProtoBuf")
-    readProtoFiles(file=unittest.proto.file)
-}
-@
 
 If we try to set an int64 field in R to double values, we lose
 precision:
