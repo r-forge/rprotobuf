@@ -5,6 +5,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
 % Spelling Standardization:
 % Protocol Buffers, not protocol buffers
+% large-scale, not large scale
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -156,7 +157,7 @@ original form later \citep{clinec++}.
 Programming
 languages such as \proglang{R}, \proglang{Julia}, \proglang{Java}, and \proglang{Python} include built-in
 support for serialization, but the default formats 
-are usually language specific and thereby lock the user into a single
+are usually language-specific and thereby lock the user into a single
 environment.  
 
 %\paragraph*{Friends don't let friends use CSV!}
@@ -177,6 +178,7 @@ based and has no native notion of numeric types or arrays, it usually not a
 very practical format to store numeric datasets as they appear in statistical
 applications.
 %
+
 A more modern, widely used format is \emph{JavaScript Object
   Notation} (\texttt{JSON}), which is derived from the object literals of
 \proglang{JavaScript}, and used increasingly on the world wide web. \texttt{JSON} natively
@@ -186,16 +188,21 @@ stored as human-readable decimal notation which is inefficient and
 leads to loss of type (double versus integer) and precision. Several \proglang{R} packages
 implement functions to parse and generate \texttt{JSON} data from \proglang{R}
 objects \citep{rjson,RJSONIO,jsonlite}.
-
 A number of binary formats based on \texttt{JSON} have been proposed
-that reduce the parsing cost and improve efficiency.  \pkg{MessagePack}
-and \pkg{BSON} both have \proglang{R}
-interfaces \citep{msgpackR,rmongodb}, but these formats lack a separate schema for the serialized
-data and thus still duplicate field names with each message sent over
-the network or stored in a file.  Such formats also lack support for
-versioning when data storage needs evolve over time, or when
-application logic and requirement changes dictate updates to the
-message format.
+that reduce the parsing cost and improve efficiency, but these formats
+are not widely supported.  Furthermore, such formats lack a separate
+schema for the serialized data and thus still duplicate field names
+with each message sent over the network or stored in a file.
+% and still must send duplicate field names
+% with each message since there is no separate schema.
+% \pkg{MessagePack}
+% and \pkg{BSON} both have \proglang{R}
+% interfaces \citep{msgpackR,rmongodb}, but these formats lack a separate schema for the serialized
+% data and thus still duplicate field names with each message sent over
+% the network or stored in a file.  Such formats also lack support for
+% versioning when data storage needs evolve over time, or when
+% application logic and requirement changes dictate updates to the
+%message format.
 
 Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
