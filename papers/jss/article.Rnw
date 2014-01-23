@@ -2,6 +2,10 @@
 \usepackage{booktabs}
 \usepackage[toc,page]{appendix}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+% Spelling Standardization:
+% Protocol Buffers, not protocol buffers
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -105,9 +109,6 @@ library and the \proglang{R} environment for statistical computing.
 \fvset{listparameters={\setlength{\topsep}{0pt}}}
 \renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
 
-%\title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
-%\author{by Dirk Eddelbuettel, Murray Stokely and Jeroen Ooms}
-
 %% DE: I tend to have wider option(width=...) so this
 %%     guarantees better line breaks
 <<echo=FALSE,print=FALSE>>=
@@ -115,9 +116,6 @@ options(width=65, prompt="R> ", digits=4)
 @
 
 \maketitle
-
-%TODO(de) 'protocol buffers' or 'Protocol Buffers' ?
-% MS: Lets standardize on 'Protocol Buffers'?
 
 \section{Introduction} % TODO(DE) More sober: Friends don't let friends use CSV}
 % NOTE(MS): I really do think we can use add back:
@@ -463,7 +461,6 @@ structured data fields of the type specified in a Message Descriptor.
 Message Descriptors are defined in \texttt{.proto} files and define a
 schema for a particular named class of messages.
 
-
 % Commented out because we said this earlier.
 %This separation
 %between schema and the message objects is in contrast to
@@ -477,7 +474,6 @@ schema for a particular named class of messages.
 %structured once, and then you can read or write structured data to and
 %from a variety of data streams using a variety of different
 %languages.  The definition
-
 
 \subsection[Importing Message Descriptors from .proto files]{Importing Message Descriptors from \texttt{.proto} files}
 
@@ -501,27 +497,9 @@ being associated with a static hash table, this environment
 dynamically queries the in-memory database of loaded descriptors
 during normal variable lookup.
 
-%JO: can we just move the section 7 to here? It's only one paragraph%
-%MS: I replaced section 7 with 2 sentences above.
-
 <<>>=
 ls("RProtoBuf:DescriptorPool")
 @
-
-% The old section 7 in entirety:
-%The \texttt{RProtoBuf} package uses the user defined tables framework
-%that is defined as part of the \texttt{RObjectTables} package available
-%from the OmegaHat project \citep{RObjectTables}.
-%
-%The feature allows \texttt{RProtoBuf} to install the
-%special environment \emph{RProtoBuf:DescriptorPool} in the \proglang{R} search path.
-%The environment is special in that, instead of being associated with a
-%static hash table, it is dynamically queried by \proglang{R} as part of R's usual
-%variable lookup. In other words, it means that when the \proglang{R} interpreter
-%looks for a binding to a symbol (foo) in its search path,
-%it asks to our package if it knows the binding "foo", this is then
-%implemented by the \texttt{RProtoBuf} package by calling an internal
-%method of the \texttt{protobuf} C++ library.
 
 %\subsection{Importing proto files}
 %In contrast to the other languages (Java, C++, Python) that are officially
@@ -1566,8 +1544,9 @@ plot(as.histogram(hist))
 @
 \end{center}
 
-One of the authors has used this design pattern for several large
-scale studies of distributed storage systems \citep{sciencecloud,janus}.
+One of the authors has used this design pattern for several
+large-scale studies of distributed storage systems
+\citep{sciencecloud,janus}.
 
 \section{Application: Data Interchange in Web Services}
 \label{sec:opencpu}
@@ -1603,7 +1582,7 @@ HTTP(S) API to access and manipulate \proglang{R} objects and allows for perform
 remote \proglang{R} function calls. Clients do not need to understand 
 or generate any \proglang{R} code: HTTP requests are automatically mapped to 
 function calls, and arguments/return values can be posted/retrieved
-using several data interchange formats, such as protocol buffers.  
+using several data interchange formats, such as Protocol Buffers.  
 OpenCPU uses the \texttt{serialize\_pb} and \texttt{unserialize\_pb} functions
 from the \texttt{RProtoBuf} package to convert between \proglang{R} objects and protobuf
 messages. Therefore, clients need the \texttt{rexp.proto} descriptor mentioned
@@ -1694,7 +1673,7 @@ containing \proglang{R} objects to post to the server, as well as retrieve and p
 protobuf messages returned by the server. Using Protocol Buffers to post
 function arguments is not required, and for simple (scalar) arguments 
 the standard \texttt{application/x-www-form-urlencoded} format might be sufficient.
-However, with protocol buffers the client can perform function calls with
+However, with Protocol Buffers the client can perform function calls with
 more complex arguments such as \proglang{R} vectors or lists. The result is a complete
 RPC system to do arbitrary \proglang{R} function calls from within 
 any programming language.
@@ -1733,54 +1712,6 @@ fnargs <- unserialize_pb(inputmsg)
 val <- do.call(stats::rnorm, fnargs)
 outputmsg <- serialize_pb(val)
 @
-
-% OpenCPU also provides a lot of meta-functionality such as handling
-% of sessions, exceptions, security, and more. OpenCPU also makes it possible to store
-% output of a function call on the server, instead of directly retrieving it. Thereby 
-% objects can be shared with other users or used as arguments in a subsequent
-% function call.
-%  But in its essence, the HTTP API provides a simple way to perform remote 
-% \proglang{R} function calls over HTTPS. The same request can be performed in Python as demonstrated
-% below. The code is a bit verbose because to show how the REXP message is created from 
-% scratch. In practice would probably write a function or small module construct a Protocol
-% Buffer message representing an \proglang{R} list from a Python dictionary object. 
-%
-% \begin{verbatim}
-% import urllib2;
-% from rexp_pb2 import *;
-%
-% #create the post payload, i.e. list(n=42, mean=100)
-% payload = REXP(
-%  rclass = 5,
-%    rexpValue = [
-%      REXP(rclass = 2, realValue = [42]), 
-%      REXP(rclass = 2, realValue = [100])
-%    ],
-%    attrName = [
-%      "names"
-%    ],
-%    attrValue = [
-%      REXP(rclass = 0, stringValue = [STRING(strval="n"), STRING(strval="mean")])
-%    ]
-%);
-%
-%#HTTP POST
-%req = urllib2.Request(
-%  "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb", 
-%  data = payload.SerializeToString(), 
-%  headers = {
-%    'Content-type': 'application/x-protobuf'
-%  }
-%)
-%res = urllib2.urlopen(req);
-%        
-%#parse output pb
-%msg = REXP();
-%msg.ParseFromString(res.read());
-%
-%#the return value is a double vector in this case
-%print(msg.realValue);
-%\end{verbatim}
 
 \section{Summary}  % DE Simpler title
 \label{sec:summary}
