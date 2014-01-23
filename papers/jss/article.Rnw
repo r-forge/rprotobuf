@@ -37,8 +37,8 @@
 Modern data collection and analysis pipelines often involve
 a sophisticated mix of applications written in general purpose and
 specialized programming languages.  
-There are many formats used to import and export data between
-different programs or systems, such as CSV, but they are usually
+Many formats commonly used to import and export data between
+different programs or systems, such as \texttt{CSV} or \texttt{JSON}, are
 verbose, inefficient, not type-safe, or tied to a specific programming language.
 Protocol Buffers are a popular
 method of serializing structured data between applications---while remaining
