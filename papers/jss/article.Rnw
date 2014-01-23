@@ -42,7 +42,7 @@ different programs or systems, such as CSV, but they are usually
 verbose, inefficient, not type-safe, or tied to a specific programming language.
 Protocol Buffers are a popular
 method of serializing structured data between applications---while remaining
-independent of programming languages or operating system.
+independent of programming languages or operating systems.
 They offer a unique combination of features, performance, and maturity that seems
 particulary well suited for data-driven applications and numerical
 computing.
@@ -53,7 +53,7 @@ Buffers from the
 This paper outlines the general class of data serialization
 requirements for statistical computing, describes the implementation
 of the \CRANpkg{RProtoBuf} package, and illustrates its use with
-examples applications in large-scale data collection pipelines and web
+example applications in large-scale data collection pipelines and web
 services.
 %TODO(ms) keep it less than 150 words. -- I think this may be 154,
 %depending how emacs is counting.
@@ -146,11 +146,11 @@ through reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932
 These pipelines are frequently built using different programming 
 languages for the different phases of data analysis -- collection,
 cleaning, modeling, analysis, post-processing, and
-presentation in order to take advantage of the unique combination of
+presentation -- in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
 different environments and languages.  Each stage of such a data
 analysis pipeline may produce intermediate results that need to be
-stored in a file or sent over the network for further processing. 
+stored in a file, or sent over the network for further processing. 
 % JO Perhaps also mention that serialization is needed for distributed
 % systems to make systems scale up?
 
@@ -173,7 +173,7 @@ are usually language-specific and thereby lock the user into a single
 environment.  
 
 %\paragraph*{Friends don't let friends use CSV!}
-Data analysts and researchers often use character separated text formats such
+Data analysts and researchers often use character-separated text formats such
 as \texttt{CSV} \citep{shafranovich2005common} to export and import
 data. However, anyone who has ever used \texttt{CSV} files will have noticed
 that this method has many limitations: it is restricted to tabular data,
@@ -185,18 +185,18 @@ well-established and widely-supported format with the ability to define just
 about any arbitrarily complex schema \citep{nolan2013xml}. However, it pays
 for this complexity with comparatively large and verbose messages, and added
 complexity at the parsing side (which are somewhat mitigated by the
-availability of mature libraries and parsers). Because \texttt{XML} is text
-based and has no native notion of numeric types or arrays, it usually not a
+availability of mature libraries and parsers). Because \texttt{XML} is 
+text-based and has no native notion of numeric types or arrays, it usually not a
 very practical format to store numeric datasets as they appear in statistical
 applications.
 %
 
-A more modern, widely used format is \emph{JavaScript ObjectNotation} 
+A more modern format is \emph{JavaScript ObjectNotation} 
 (\texttt{JSON}), which is derived from the object literals of
-\proglang{JavaScript}, and used increasingly on the world wide web. 
+\proglang{JavaScript}, and already widely-used on the world wide web. 
 Several \proglang{R} packages implement functions to parse and generate
 \texttt{JSON} data from \proglang{R} objects \citep{rjson,RJSONIO,jsonlite}.
-\texttt{JSON} natively supports arrays and 4 primitive types: numbers, strings,
+\texttt{JSON} natively supports arrays and four primitive types: numbers, strings,
 booleans, and null. However, as it too is a text-based format, numbers are
 stored as human-readable decimal notation which is inefficient and
 leads to loss of type (double versus integer) and precision. 
@@ -222,7 +222,7 @@ enough, developers typically benefit from the use of an
 Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro
 provide a compact well-documented schema for cross-language data
 structures and efficient binary interchange formats.  Since the schema
-is provided separately from the encoded data, the data can be
+is provided separately from the data, the data can be
 efficiently encoded to minimize storage costs when
 compared with simple ``schema-less'' binary interchange formats.
 Many sources compare data serialization formats
@@ -270,9 +270,8 @@ motivation for their use.
 Section~\ref{sec:rprotobuf-basic} describes the interactive \proglang{R} interface
 provided by the \CRANpkg{RProtoBuf} package, and introduces the two main abstractions:
 \emph{Messages} and \emph{Descriptors}.  Section~\ref{sec:rprotobuf-classes}
-details the implementation details of the main S4 classes and methods
-contained in this
-package.  Section~\ref{sec:types} describes the challenges of type coercion
+details the implementation details of the main S4 classes and methods.  
+Section~\ref{sec:types} describes the challenges of type coercion
 between \proglang{R} and other languages.  Section~\ref{sec:evaluation} introduces a
 general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and evaluates
 it against the serialization capbilities built directly into \proglang{R}.  Sections~\ref{sec:mapreduce}
