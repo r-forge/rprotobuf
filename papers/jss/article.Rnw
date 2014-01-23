@@ -191,7 +191,7 @@ objects \citep{rjson,RJSONIO,jsonlite}.
 
 A number of binary formats based on \texttt{JSON} have been proposed
 that reduce the parsing cost and improve efficiency.  \pkg{MessagePack}
-and \pkg{BSON} both have R
+and \pkg{BSON} both have \proglang{R}
 interfaces \citep{msgpackR,rmongodb}, but these formats lack a separate schema for the serialized
 data and thus still duplicate field names with each message sent over
 the network or stored in a file.  Such formats also lack support for
@@ -258,7 +258,7 @@ contained in this
 package.  Section~\ref{sec:types} describes the challenges of type coercion
 between \proglang{R} and other languages.  Section~\ref{sec:evaluation} introduces a
 general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and evaluates
-it against the serialization capbilities built directly into R.  Sections~\ref{sec:mapreduce}
+it against the serialization capbilities built directly into \proglang{R}.  Sections~\ref{sec:mapreduce}
 and \ref{sec:opencpu} provide real-world use cases of \CRANpkg{RProtoBuf}
 in MapReduce and web service environments, respectively, before
 Section~\ref{sec:summary} concludes.
@@ -312,9 +312,9 @@ Common use cases include populating a request remote-procedure call (RPC)
 Protocol Buffer in \proglang{R} that is then serialized and sent over the network to a
 remote server.  The server would then deserialize the message, act on the
 request, and respond with a new Protocol Buffer over the network. 
-The key difference to, say, a request to an Rserve instance is that
+The key difference to, say, a request to an \pkg{Rserve} instance is that
 the remote server may be implemented in any language, with no
-dependence on R.
+dependence on \proglang{R}.
 
 While traditional IDLs have at times been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
@@ -456,7 +456,7 @@ next section.
 This section describes how to use the \proglang{R} API to create and manipulate
 protocol buffer messages in \proglang{R}, and how to read and write the
 binary representation of the message (often called the \emph{payload}) to files and arbitrary binary
-R connections.
+\proglang{R} connections.
 The two fundamental building blocks of Protocol Buffers are \emph{Messages}
 and \emph{Descriptors}.  Messages provide a common abstract encapsulation of
 structured data fields of the type specified in a Message Descriptor.
@@ -478,16 +478,6 @@ schema for a particular named class of messages.
 %from a variety of data streams using a variety of different
 %languages.  The definition
 
-
-
-%This section may contain a figure such as Figure~\ref{figure:rlogo}.
-%
-%\begin{figure}[htbp]
-%  \centering
-%  \includegraphics{Rlogo}
-%  \caption{The logo of R.}
-%  \label{figure:rlogo}
-%\end{figure}
 
 \subsection[Importing Message Descriptors from .proto files]{Importing Message Descriptors from \texttt{.proto} files}
 
@@ -562,7 +552,7 @@ p <- new(tutorial.Person, name = "Murray", id = 1)
 \subsection{Access and modify fields of a message}
 
 Once the message is created, its fields can be queried
-and modified using the dollar operator of R, making protocol
+and modified using the dollar operator of \proglang{R}, making protocol
 buffer messages seem like lists.
 
 <<>>=
@@ -712,7 +702,7 @@ allows the package to dispatch methods that are not
 generic in the S3 sense, such as \texttt{new} and
 \texttt{serialize}.
 Table~\ref{class-summary-table} lists the six
-primary Message and Descriptor classes in RProtoBuf.  Each \proglang{R} object
+primary Message and Descriptor classes in \CRANpkg{RProtoBuf}.  Each \proglang{R} object
 contains an external pointer to an object managed by the
 \texttt{protobuf} \proglang{C++} library, and the \proglang{R} objects make calls into more
 than 100 \proglang{C++} functions that provide the
@@ -765,7 +755,7 @@ The \texttt{RProtoBuf} package supports two forms for calling
 functions with these S4 classes:
 \begin{itemize}
 \item The functional dispatch mechanism of the the form
-  \verb|method(object, arguments)| (common to R), and
+  \verb|method(object, arguments)| (common to \proglang{R}), and
 \item The traditional object oriented notation
   \verb|object$method(arguments)|.
 \end{itemize}
@@ -905,7 +895,7 @@ type in this descriptor.\\
 \label{subsec-field-descriptor}
 
 The class \emph{FieldDescriptor} represents field
-descriptors in R. This is a wrapper S4 class around the
+descriptors in \proglang{R}. This is a wrapper S4 class around the
 \texttt{google::protobuf::FieldDescriptor} \proglang{C++} class.
 Table~\ref{fielddescriptor-methods-table} describes the methods
 defined for the \texttt{FieldDescriptor} class.
@@ -956,7 +946,7 @@ defined for the \texttt{FieldDescriptor} class.
 \subsection{Enum Descriptors}
 \label{subsec-enum-descriptor}
 
-The class \emph{EnumDescriptor} represents enum descriptors in R.
+The class \emph{EnumDescriptor} represents enum descriptors in \proglang{R}.
 This is a wrapper S4 class around the
 \texttt{google::protobuf::EnumDescriptor} \proglang{C++} class.
 Table~\ref{enumdescriptor-methods-table} describes the methods
@@ -1007,7 +997,7 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \subsection{File Descriptors}
 \label{subsec-file-descriptor}
 
-The class \emph{FileDescriptor} represents file descriptors in R.
+The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
 This is a wrapper S4 class around the
 \texttt{google::protobuf::FileDescriptor} \proglang{C++} class.
 Table~\ref{filedescriptor-methods-table} describes the methods
@@ -1052,7 +1042,7 @@ f$Person
 \label{subsec-enumvalue-descriptor}
 
 The class \emph{EnumValueDescriptor} represents enumeration value
-descriptors in R.  This is a wrapper S4 class around the
+descriptors in \proglang{R}.  This is a wrapper S4 class around the
 \texttt{google::protobuf::EnumValueDescriptor} \proglang{C++} class.
 Table~\ref{EnumValueDescriptor-methods-table} describes the methods
 defined for the \texttt{EnumValueDescriptor} class.
@@ -1141,7 +1131,7 @@ message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \textt
 
 \subsection{Booleans}
 
-R booleans can accept three values: \texttt{TRUE}, \texttt{FALSE}, and
+\proglang{R} booleans can accept three values: \texttt{TRUE}, \texttt{FALSE}, and
 \texttt{NA}.  However, most other languages, including the Protocol
 Buffer schema, only accept \texttt{TRUE} or \texttt{FALSE}.  This means
 that we simply can not store \proglang{R} logical vectors that include all three
@@ -1175,9 +1165,9 @@ Error: NA boolean values can not be stored in bool protocol buffer fields
 
 \subsection{Unsigned Integers}
 
-R lacks a native unsigned integer type.  Values between $2^{31}$ and
+\proglang{R} lacks a native unsigned integer type.  Values between $2^{31}$ and
 $2^{32} - 1$ read from unsigned into Protocol Buffer fields must be
-stored as doubles in R.
+stored as doubles in \proglang{R}.
 
 <<>>=
 as.integer(2^31-1)
@@ -1189,7 +1179,7 @@ class(2^31)
 \subsection{64-bit integers}
 \label{sec:int64}
 
-R also does not support the native 64-bit integer type. Numeric vectors
+\proglang{R} also does not support the native 64-bit integer type. Numeric vectors
 with values $\geq 2^{31}$ can only be stored as doubles, which have
 limited precision. Thereby \proglang{R} loses the ability to distinguish some
 distinct integers:
@@ -1199,9 +1189,9 @@ distinct integers:
 @
 
 However, most modern languages do have support for 64-bit integers, 
-which becomes problematic when \pkg{RProtoBuf} is used to exchange data 
+which becomes problematic when \CRANpkg{RProtoBuf} is used to exchange data 
 with a system that requires this integer type. To work around this, 
-RProtoBuf allows users to get and set 64-bit integer values by specifying 
+\CRANpkg{RProtoBuf} allows users to get and set 64-bit integer values by specifying 
 them as character strings.
 
 If we try to set an int64 field in \proglang{R} to double values, we lose
@@ -1213,7 +1203,7 @@ test$repeated_int64 <- c(2^53, 2^53+1)
 length(unique(test$repeated_int64))
 @
 
-But when the values are specified as character strings, RProtoBuf
+But when the values are specified as character strings, \CRANpkg{RProtoBuf}
 will automatically coerce them into a true 64-bit integer types 
 before storing them in the Protocol Buffer message:
 
@@ -1221,13 +1211,13 @@ before storing them in the Protocol Buffer message:
 test$repeated_int64 <- c("9007199254740992", "9007199254740993")
 @
 
-When reading the value back into R, numeric types are returned by
+When reading the value back into \proglang{R}, numeric types are returned by
 default, but when the full precision is required a character value
 will be returned if the \texttt{RProtoBuf.int64AsString} option is set
 to \texttt{TRUE}.  The character values are useful because they can
-accurately be used as unique identifiers and can easily be passed to R
+accurately be used as unique identifiers and can easily be passed to \proglang{R}
 packages such as \CRANpkg{int64} \citep{int64} or \CRANpkg{bit64}
-\citep{bit64} which represent 64-bit integers in R.
+\citep{bit64} which represent 64-bit integers in \proglang{R}.
 
 <<>>=
 options("RProtoBuf.int64AsString" = FALSE)
@@ -1250,7 +1240,7 @@ for creating, manipulating, parsing and serializing Protocol Buffer
 messages of a defined schema.  This is useful when there are
 pre-existing systems with defined schemas or significant software
 components written in other languages that need to be accessed from
-within R.
+within \proglang{R}.
 
 The package also provides methods for converting arbitrary \proglang{R} data structures into protocol
 buffers and vice versa with a universal \proglang{R} object schema. The \texttt{serialize\_pb} and \texttt{unserialize\_pb}
@@ -1275,10 +1265,10 @@ as Protocol Buffers: interoperability is achieved without effort or close coordi
 The \texttt{rexp.proto} schema supports all main \proglang{R} storage types holding \emph{data}.
 These include \texttt{NULL}, \texttt{list} and vectors of type \texttt{logical}, 
 \texttt{character}, \texttt{double}, \texttt{integer} and \texttt{complex}. In addition,
-every type can contain a named set of attributes, as is the case in R. The \texttt{rexp.proto}
+every type can contain a named set of attributes, as is the case in \proglang{R}. The \texttt{rexp.proto}
 schema does not support some of the special \proglang{R} specific storage types, such as \texttt{function},
 \texttt{language} or \texttt{environment}. Such objects have no native equivalent 
-type in Protocol Buffers, and have little meaning outside the context of R.
+type in Protocol Buffers, and have little meaning outside the context of \proglang{R}.
 When serializing \proglang{R} objects using \texttt{serialize\_pb}, values or attributes of
 unsupported types are skipped with a warning. If the user really wishes to serialize these 
 objects, they need to be converted into a supported type. For example, the  can use 
@@ -1367,12 +1357,12 @@ returned by object.size() compared to the serialized sizes.
 %The summary compression sizes are listed below, and a full table for a
 %sample of 50 datasets is included on the next page.  
 Sizes are comparable but Protocol Buffers provide simple getters and setters
-in multiple languages instead of requiring other programs to parse the R
+in multiple languages instead of requiring other programs to parse the \proglang{R}
 serialization format. % \citep{serialization}.
 One takeaway from this table is that the universal \proglang{R} object schema
 included in \pkg{RProtoBuf} does not in general provide
 any significant saving in file size compared to the normal serialization
-mechanism in R.
+mechanism in \proglang{R}.
 % redundant: which is seen as equally compact.
 The benefits of \pkg{RProtoBuf} accrue more naturally in applications where
 multiple programming languages are involved, or when a more concise
@@ -1389,7 +1379,7 @@ section satisfies both of these conditions.
 \scalebox{0.9}{
 \begin{tabular}{lrrrrr}
   \toprule
-  Data Set & object.size & \multicolumn{2}{c}{R Serialization} &
+  Data Set & object.size & \multicolumn{2}{c}{\proglang{R} Serialization} &
   \multicolumn{2}{c}{RProtoBuf Serial.} \\
   & & default & gzipped & default & gzipped \\
   \cmidrule(r){2-6}
@@ -1513,10 +1503,10 @@ message HistogramState {
 \end{example}
 
 This HistogramState message type is designed to be helpful if some of
-the Map or Reduce tasks are written in R, or if those components are
+the Map or Reduce tasks are written in \proglang{R}, or if those components are
 written in other languages and only the resulting output histograms
-need to be manipulated in R.  For example, to create HistogramState
-messages in Python for later consumption by R, we first compile the 
+need to be manipulated in \proglang{R}.  For example, to create HistogramState
+messages in Python for later consumption by \proglang{R}, we first compile the 
 \texttt{histogram.proto} descriptor into a python module using the
 \texttt{protoc} compiler:
 
@@ -1547,7 +1537,7 @@ outfile.close()
 \end{Code}
 
 The protocol buffer can then be read into \proglang{R} and converted to a native
-R histogram object for plotting:
+\proglang{R} histogram object for plotting:
 
 \begin{Code}
 library(RProtoBuf)
@@ -1638,7 +1628,7 @@ interpret the response as a protobuf message.
 Because both HTTP and Protocol Buffers have libraries available for many 
 languages, clients can be implemented in just a few lines of code. Below
 is example code for both \proglang{R} and Python that retrieves a dataset from \proglang{R} with 
-OpenCPU using a protobuf message. In R, we use the HTTP client from 
+OpenCPU using a protobuf message. In \proglang{R}, we use the HTTP client from 
 the \texttt{httr} package \citep{httr}. In this example we
 download a dataset which is part of the base \proglang{R} distribution, so we can
 verify that the object was transferred without loss of information.
@@ -1712,7 +1702,7 @@ The following example \proglang{R} client code performs the remote function call
 \texttt{stats::rnorm(n=42, mean=100)}. The function arguments (in this
 case \texttt{n} and \texttt{mean}) as well as the return value (a vector
 with 42 random numbers) are transferred using a protobuf message. RPC in
-OpenCPU works like the \texttt{do.call} function in R, hence all arguments
+OpenCPU works like the \texttt{do.call} function in \proglang{R}, hence all arguments
 are contained within a list.
 
 <<eval=FALSE>>=
@@ -1818,7 +1808,7 @@ with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{P
 other languages.
 
 The \pkg{RProtoBuf} package provides users with the ability to generate,
-parse and manipulate Protocol Buffer messages in R.  It is our hope that this
+parse and manipulate Protocol Buffer messages in \proglang{R}.  It is our hope that this
 package will make Protocol Buffers more accessible to the \proglang{R} community, and
 thereby makes a small contribution towards better integration between \proglang{R} and
 other software systems and applications.
