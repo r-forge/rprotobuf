@@ -1225,14 +1225,13 @@ options("RProtoBuf.int64AsString" = FALSE)
 \label{sec:evaluation}
 
 The previous sections discussed functionality in the \pkg{RProtoBuf} package
-for creating, manipulating, parsing and serializing Protocol Buffer
+for creating, manipulating, parsing, and serializing Protocol Buffer
 messages of a defined schema.  This is useful when there are
 pre-existing systems with defined schemas or significant software
 components written in other languages that need to be accessed from
 within \proglang{R}.
-
 The package also provides methods for converting arbitrary \proglang{R} data structures into protocol
-buffers and vice versa with a universal \proglang{R} object schema. The \texttt{serialize\_pb} and \texttt{unserialize\_pb}
+buffers and vice versa with a universal \proglang{R} object schema. The \code{serialize\_pb} and \code{unserialize\_pb}
 functions serialize arbitrary \proglang{R} objects into a universal Protocol Buffer 
 message:
 
