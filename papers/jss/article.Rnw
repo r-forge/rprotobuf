@@ -1787,7 +1787,7 @@ The first versions of \CRANpkg{RProtoBuf} were written during 2009-2010.
 Very significant contributions, both in code and design, were made by
 Romain Fran\c{c}ois whose continued influence on design and code is
 greatly appreciated. Several features of the package reflect
-the design of the \CRANpkg{rJava} package by Simon Urbanek
+the design of the \CRANpkg{rJava} package by Simon Urbanek.
 The user-defined table mechanism, implemented by Duncan Temple Lang for the
 purpose of the \pkg{RObjectTables} package, allows for the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
