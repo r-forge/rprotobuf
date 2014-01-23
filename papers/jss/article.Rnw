@@ -2,10 +2,12 @@
 \usepackage{booktabs}
 \usepackage[toc,page]{appendix}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%5
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Spelling Standardization:
 % Protocol Buffers, not protocol buffers
 % large-scale, not large scale
+% Oxford comma: foo, bar, and baz.
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% declarations for jss.cls %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -34,11 +36,20 @@
 \Abstract{
 Modern data collection and analysis pipelines often involve
 a sophisticated mix of applications written in general purpose and
-specialized programming languages.  Protocol Buffers are a popular
+specialized programming languages.  
+There are many formats used to import and export data between
+different programs or systems, such as CSV, but they are usually
+verbose, inefficient, not type-safe, or tied to a specific programming language.
+Protocol Buffers are a popular
 method of serializing structured data between applications---while remaining
-independent of programming languages or operating system.  The
-\CRANpkg{RProtoBuf} package provides a complete interface between this
-library and the \proglang{R} environment for statistical computing.
+independent of programming languages or operating system.
+They offer a unique combination of features, performance, and maturity that seems
+particulary well suited for data-driven applications and numerical
+computing.
+The
+\CRANpkg{RProtoBuf} package provides a complete interface to Protocol
+Buffers from the
+\proglang{R} environment for statistical computing.
 %TODO(ms) keep it less than 150 words.
 % Maybe add Jeroen's sentence:
 % JO: added this sentence to the conclustion, but could use it in abstract as well.
