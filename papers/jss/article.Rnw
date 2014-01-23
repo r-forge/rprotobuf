@@ -1727,28 +1727,30 @@ outputmsg <- serialize_pb(val)
 Over the past decade, many formats for interoperable
 data exchange have become available, each with their unique features,
 strengths and weaknesses.  
-Text based formats such as CSV and JSON are easy to use, and will likely 
+Text based formats such as \texttt{CSV} and \texttt{JSON} are easy to use, and will likely 
 remain popular among statisticians for many years to come. However, in the 
 context of increasingly complex analysis stacks and applications involving 
 distributed computing as well as mixed language analysis pipelines, choosing a more 
 sophisticated data interchange format may reap considerable benefits. 
-The Protocol Buffers protocol and library offers a unique combination of features, performance,
-maturity, and forward-compatibility that seems particulary well suited for data-driven 
+%Protocol Buffers is itself not a protocol.
+%Forward-compatibility is one of the features. No need to re-iterate those 
+The Protocol Buffers standard and library offer a unique combination of features, 
+performance, and maturity, that seems particulary well suited for data-driven 
 applications and numerical computing.
 
 %% DE Re-ordering so that we end on RProtoBuf
-The \pkg{RProtoBuf} package builds on the Protocol Buffers library, and
-extends the \proglang{R} system with the ability to create, read,
+The \pkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} library, 
+and extends the \proglang{R} system with the ability to create, read,
 write, parse, and manipulate Protocol
 Buffer messages. \pkg{RProtoBuf} has been used extensively inside Google 
 for the past three years by statisticians, analysts, and software engineers.
-At the time of this writing there are more than 300 active
+At the time of this writing there are over 300 active
 users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{Python}, and 
-other languages.  It is our hope that this
-package will make Protocol Buffers more accessible to the \proglang{R} community, and
-thereby makes a small contribution towards better integration between \proglang{R} and
-other software systems and applications.
+other languages. We hope that making Protocol Buffers available to the
+\proglang{R} community will contribute towards better software integration
+and allow for building even more advanced applications and analysis pipelines 
+with \proglang{R}.
 
 %\emph{Other Approaches}
 %
