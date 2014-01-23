@@ -30,7 +30,7 @@
 %% for pretty printing and a nice hypersummary also set:
 \Plainauthor{Dirk Eddelbuettel, Murray Stokely, Jeroen Ooms} %% comma-separated
 \Plaintitle{RProtoBuf: Efficient Cross-Language Data Serialization in R}
-\Shorttitle{\pkg{RProtoBuf}: Protocol Buffers in \proglang{R}} %% a short title (if necessary)
+\Shorttitle{\CRANpkg{RProtoBuf}: Protocol Buffers in \proglang{R}} %% a short title (if necessary)
 
 %% an abstract and keywords
 \Abstract{
@@ -509,7 +509,7 @@ function, which can either import a single file, all files in a directory,
 or every \texttt{.proto} file provided by a particular \proglang{R} package.
 
 After importing proto files, the corresponding message descriptors are
-available from the \texttt{RProtoBuf:DescriptorPool} environment in 
+available from the \code{RProtoBuf:DescriptorPool} environment in 
 the \proglang{R} search path.  This environment is implemented with the user
 defined tables framework from the \pkg{RObjectTables} package
 available from the OmegaHat project \citep{RObjectTables}.  Instead of
@@ -641,17 +641,17 @@ close(con)
 
 \subsection{Parsing messages}
 
-The \texttt{RProtoBuf} package defines the \texttt{read} and
-\texttt{readASCII} functions to read messages from files, raw vectors,
-or arbitrary connections.  \texttt{read} expects to read the message
-payload from binary files or connections and \texttt{readASCII} parses
+The \CRANpkg{RProtoBuf} package defines the \code{read} and
+\code{readASCII} functions to read messages from files, raw vectors,
+or arbitrary connections.  \code{read} expects to read the message
+payload from binary files or connections and \code{readASCII} parses
 the human-readable ASCII output that is created with
 \code{as.character}.
 
 The binary representation of the message
 does not contain information that can be used to dynamically
 infer the message type, so we have to provide this information
-to the \texttt{read} function in the form of a descriptor:
+to the \code{read} function in the form of a descriptor:
 
 <<>>=
 msg <- read(tutorial.Person, tf1)
@@ -737,8 +737,8 @@ facilitate this integration of the \proglang{R} and \proglang{C++} code for thes
 Each method is wrapped individually which allows us to add user
 friendly custom error handling, type coercion, and performance
 improvements at the cost of a more verbose implementation.
-The \pkg{RProtoBuf} package in many ways motivated
-the development of \pkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
+The \CRANpkg{RProtoBuf} package in many ways motivated
+the development of \CRANpkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
 which provide a more concise way of wrapping \proglang{C++} functions and classes
 in a single entity.
 
@@ -750,7 +750,7 @@ in a single entity.
 % grep RPB_ * | grep -v RPB_FUNCTION | grep METHOD|wc -l
 % 33
 
-The \texttt{RProtoBuf} package supports two forms for calling
+The \CRANpkg{RProtoBuf} package supports two forms for calling
 functions with these S4 classes:
 \begin{itemize}
 \item The functional dispatch mechanism of the the form
@@ -759,7 +759,7 @@ functions with these S4 classes:
   \verb|object$method(arguments)|.
 \end{itemize}
 
-Additionally, \pkg{RProtoBuf} supports tab completion for all
+Additionally, \CRANpkg{RProtoBuf} supports tab completion for all
 classes.  Completion possibilities include pseudo-method names for all
 classes, plus \emph{dynamic dispatch} on names or types specific to a given
 object.  This functionality is implemented with the
@@ -1124,7 +1124,7 @@ message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \textt
 \end{small}
 \caption{\label{table-get-types}Correspondence between field type and
   \proglang{R} type retrieved by the extractors. Note that \proglang{R} lacks native
-  64-bit integers, so the \texttt{RProtoBuf.int64AsString} option is
+  64-bit integers, so the \code{RProtoBuf.int64AsString} option is
   available to return large integers as characters to avoid losing
   precision.  This option is described in Section~\ref{sec:int64}.}
 \end{table}
@@ -1213,7 +1213,7 @@ test$repeated_int64 <- c("9007199254740992", "9007199254740993")
 
 When reading the value back into \proglang{R}, numeric types are returned by
 default, but when the full precision is required a character value
-will be returned if the \texttt{RProtoBuf.int64AsString} option is set
+will be returned if the \code{RProtoBuf.int64AsString} option is set
 to \texttt{TRUE}.  The character values are useful because they can
 accurately be used as unique identifiers and can easily be passed to \proglang{R}
 packages such as \CRANpkg{int64} \citep{int64} or \CRANpkg{bit64}
@@ -1235,7 +1235,7 @@ options("RProtoBuf.int64AsString" = FALSE)
 \section[Converting R Data Structures into Protocol Buffers]{Converting \proglang{R} Data Structures into Protocol Buffers}
 \label{sec:evaluation}
 
-The previous sections discussed functionality in the \pkg{RProtoBuf} package
+The previous sections discussed functionality in the \CRANpkg{RProtoBuf} package
 for creating, manipulating, parsing, and serializing Protocol Buffer
 messages of a defined schema.  This is useful when there are
 pre-existing systems with defined schemas or significant software
@@ -1251,12 +1251,12 @@ msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 @
 
-In order to accomplish this, \pkg{RProtoBuf} uses the same catch-all \texttt{proto}
+In order to accomplish this, \CRANpkg{RProtoBuf} uses the same catch-all \texttt{proto}
 schema used by \pkg{RHIPE} for exchanging \proglang{R} data with Hadoop \citep{rhipe}. This 
 schema, which we will refer to as \texttt{rexp.proto}, is printed in
 %appendix \ref{rexp.proto}.
 the appendix.
-The Protocol Buffer messages generated by \pkg{RProtoBuf} and
+The Protocol Buffer messages generated by \CRANpkg{RProtoBuf} and
 \pkg{RHIPE} are naturally compatible between the two systems because they use the 
 same schema. This shows the power of using a schema based cross-platform format such
 as Protocol Buffers: interoperability is achieved without effort or close coordination.
@@ -1359,11 +1359,11 @@ Sizes are comparable but Protocol Buffers provide simple getters and setters
 in multiple languages instead of requiring other programs to parse the \proglang{R}
 serialization format. % \citep{serialization}.
 One takeaway from this table is that the universal \proglang{R} object schema
-included in \pkg{RProtoBuf} does not in general provide
+included in \CRANpkg{RProtoBuf} does not in general provide
 any significant saving in file size compared to the normal serialization
 mechanism in \proglang{R}.
 % redundant: which is seen as equally compact.
-The benefits of \pkg{RProtoBuf} accrue more naturally in applications where
+The benefits of \CRANpkg{RProtoBuf} accrue more naturally in applications where
 multiple programming languages are involved, or when a more concise
 application-specific schema has been defined.  The example in the next
 section satisfies both of these conditions.
@@ -1436,7 +1436,7 @@ section satisfies both of these conditions.
 \end{tabular}
 }
 \caption{Serialization sizes for default serialization in \proglang{R} and
-  RProtoBuf for 50 \proglang{R} datasets.}
+  \CRANpkg{RProtoBuf} for 50 \proglang{R} datasets.}
 \label{tab:compression}
 \end{center}
 \end{table}
@@ -1488,8 +1488,8 @@ the pre-processing as well as any downstream data analysis tasks must
 share a schema of the histogram representation to coordinate
 effectively.
 
-The \pkg{HistogramTools} package \citep{histogramtools} enhances
-\pkg{RProtoBuf} by providing a concise schema for \proglang{R} histogram objects:
+The \CRANpkg{HistogramTools} package \citep{histogramtools} enhances
+\CRANpkg{RProtoBuf} by providing a concise schema for \proglang{R} histogram objects:
 
 \begin{example}
 package HistogramTools;
@@ -1550,7 +1550,7 @@ hist <- HistogramTools.HistogramState$read("/tmp/hist.pb")
 hist
 [1] "message of type 'HistogramTools.HistogramState' with 3 fields set"
 
-# Convert to native \proglang{R} histogram object and plot
+# Convert to native R histogram object and plot
 plot(as.histogram(hist))
 \end{Code}
 
@@ -1604,7 +1604,7 @@ or generate any \proglang{R} code: HTTP requests are automatically mapped to
 function calls, and arguments/return values can be posted/retrieved
 using several data interchange formats, such as Protocol Buffers.  
 OpenCPU uses the \texttt{serialize\_pb} and \texttt{unserialize\_pb} functions
-from the \texttt{RProtoBuf} package to convert between \proglang{R} objects and protobuf
+from the \CRANpkg{RProtoBuf} package to convert between \proglang{R} objects and protobuf
 messages. Therefore, clients need the \texttt{rexp.proto} descriptor mentioned
 earlier to parse and generate protobuf messages when interacting with OpenCPU.
 
@@ -1750,13 +1750,13 @@ performance, and maturity, that seems particulary well suited for data-driven
 applications and numerical computing.
 
 %% DE Re-ordering so that we end on RProtoBuf
-The \pkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} library, 
+The \CRANpkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} library, 
 and extends the \proglang{R} system with the ability to create, read,
 write, parse, and manipulate Protocol
-Buffer messages. \pkg{RProtoBuf} has been used extensively inside Google 
+Buffer messages. \CRANpkg{RProtoBuf} has been used extensively inside Google 
 for the past three years by statisticians, analysts, and software engineers.
 At the time of this writing there are over 300 active
-users of \pkg{RProtoBuf} using it to read data from and otherwise interact
+users of \CRANpkg{RProtoBuf} using it to read data from and otherwise interact
 with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{Python}, and 
 other languages. We hope that making Protocol Buffers available to the
 \proglang{R} community will contribute towards better software integration
@@ -1805,7 +1805,7 @@ Kenton Varda was generous with his time in reviewing code and explaining
 obscure protocol buffer semantics.  Karl Millar was very
 helpful in reviewing code and offering suggestions.  Saptarshi Guha's
 work on RHIPE and implementation of a universal message type for \proglang{R}
-language objects allowed us to add the \code{serialize_pb} and \code{unserialize\_pb}
+language objects allowed us to add the \code{serialize_pb} and \code{unserialize_pb}
 methods for turning arbitrary R objects into protocol buffers without
 a specialized pre-defined schema.
 
@@ -1818,7 +1818,7 @@ a specialized pre-defined schema.
 \label{rexp.proto}
 
 Below a print of the \texttt{rexp.proto} schema (originally designed by \cite{rhipe})
-that is included with the \pkg{RProtoBuf} package and used by \texttt{serialize\_pb} and
+that is included with the \CRANpkg{RProtoBuf} package and used by \texttt{serialize\_pb} and
 \texttt{unserialize\_pb}.
 
 \begin{verbatim}
