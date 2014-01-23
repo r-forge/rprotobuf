@@ -66,14 +66,14 @@ library and the \proglang{R} environment for statistical computing.
   Murray Stokely\\
   Google, Inc.\\
   1600 Amphitheatre Parkway\\
-  Mountain View, CA 94040\\
-  USA\\
+  Mountain View, CA, USA\\
   E-mail: \email{mstokely@google.com}\\
   URL: \url{http://www.stokely.org/}\\
   \\
   Jeroen Ooms\\
   UCLA Department of Statistics\\
   University of California\\
+  Los Angeles, CA, USA\\
   E-mail: \email{jeroen.ooms@stat.ucla.edu}\\
   URL: \url{http://jeroenooms.github.io}
 }
@@ -248,15 +248,17 @@ and show Protocol Buffers compare very favorably to the alternatives; see
 
 This paper describes an \proglang{R} interface to Protocol Buffers,
 and is organized as follows. Section~\ref{sec:protobuf}
-provides a general overview of Protocol Buffers.
+provides a general high-level overview of Protocol Buffers as well as a basic
+motivation for their use.
 Section~\ref{sec:rprotobuf-basic} describes the interactive \proglang{R} interface
-provided by \CRANpkg{RProtoBuf} and introduces the two main abstractions:
+provided by the \CRANpkg{RProtoBuf} package, and introduces the two main abstractions:
 \emph{Messages} and \emph{Descriptors}.  Section~\ref{sec:rprotobuf-classes}
-describes the implementation details of the main S4 classes making up this
+details the implementation details of the main S4 classes and methods
+contained in this
 package.  Section~\ref{sec:types} describes the challenges of type coercion
 between \proglang{R} and other languages.  Section~\ref{sec:evaluation} introduces a
 general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and evaluates
-it against R's built-in serialization.  Sections~\ref{sec:mapreduce}
+it against the serialization capbilities built directly into R.  Sections~\ref{sec:mapreduce}
 and \ref{sec:opencpu} provide real-world use cases of \CRANpkg{RProtoBuf}
 in MapReduce and web service environments, respectively, before
 Section~\ref{sec:summary} concludes.
@@ -1309,7 +1311,7 @@ m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
 (\Sexpr{format(100*m/n,digits=1)}\%) without loss of information. Upon closer
 inspection, all other datasets are objects of class \texttt{nfnGroupedData}.
 This class represents a special type of data frame that has some additional 
-attributes used by the \pkg{nlme} package, among which a \emph{formula} object.
+attributes (such as a \emph{formula} object) used by the \pkg{nlme} package.
 Because formulas are \proglang{R} \emph{language} objects, they have little meaning to
 other systems, and are not supported by the \texttt{rexp.proto} descriptor.
 When \texttt{serialize\_pb} is used on objects of this class, it will serialize
@@ -1368,14 +1370,14 @@ Sizes are comparable but Protocol Buffers provide simple getters and setters
 in multiple languages instead of requiring other programs to parse the R
 serialization format. % \citep{serialization}.
 One takeaway from this table is that the universal \proglang{R} object schema
-included in RProtoBuf does not in general provide
+included in \pkg{RProtoBuf} does not in general provide
 any significant saving in file size compared to the normal serialization
 mechanism in R.
 % redundant: which is seen as equally compact.
-The benefits of RProtoBuf accrue more naturally in applications where
+The benefits of \pkg{RProtoBuf} accrue more naturally in applications where
 multiple programming languages are involved, or when a more concise
 application-specific schema has been defined.  The example in the next
-section provides both of these conditions.
+section satisfies both of these conditions.
 
 % N.B. see table.Rnw for how this table is created.
 %
@@ -1563,6 +1565,7 @@ hist
 plot(as.histogram(hist))
 \end{Code}
 
+\begin{center}
 <<echo=FALSE,fig=TRUE,width=8,height=4>>=
 require(RProtoBuf)
 require(HistogramTools)
@@ -1570,6 +1573,7 @@ readProtoFiles(package="HistogramTools")
 hist <- HistogramTools.HistogramState$read("hist.pb")
 plot(as.histogram(hist))
 @
+\end{center}
 
 One of the authors has used this design pattern for several large
 scale studies of distributed filesystems \citep{janus}.
@@ -1584,7 +1588,7 @@ scale studies of distributed filesystems \citep{janus}.
 
 As described earlier, the primary application of Protocol Buffers is data
 interchange in the context of inter-system communications.  Network protocols
-such as HTTP provide mechanisms for client-server communication, i.e. how to
+such as HTTP provide mechanisms for client-server communication, i.e.~how to
 initiate requests, authenticate, send messages, etc.  However, network
 protocols generally do not regulate the \emph{content} of messages: they
 allow transfer of any media type, such as web pages, static files or
@@ -1919,7 +1923,5 @@ message CMPLX {
 \newpage
 \bibliography{article}
 
-%\section[About Java]{About \proglang{Java}}
-%% Note: If there is markup in \(sub)section, then it has to be escape as above.
 
 \end{document}
