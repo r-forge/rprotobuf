@@ -13,17 +13,17 @@
 \RequirePackage{fancyvrb}
 \RequirePackage{alltt}
 \DefineVerbatimEnvironment{example}{Verbatim}{}
+% Articles with many authors we should shorten to FirstAuthor, et al.
 \shortcites{janus,dremel}
-%% almost as usual
 \author{Dirk Eddelbuettel\\Debian Project \And 
         Murray Stokely\\Google, Inc \And
         Jeroen Ooms\\UCLA}
-\title{\pkg{RProtoBuf}: Efficient Cross-Language Data Serialization in R}
+\title{\pkg{RProtoBuf}: Efficient Cross-Language Data Serialization in \proglang{R}}
 
 %% for pretty printing and a nice hypersummary also set:
 \Plainauthor{Dirk Eddelbuettel, Murray Stokely, Jeroen Ooms} %% comma-separated
 \Plaintitle{RProtoBuf: Efficient Cross-Language Data Serialization in R}
-\Shorttitle{\pkg{RProtoBuf}: Protocol Buffers in R} %% a short title (if necessary)
+\Shorttitle{\pkg{RProtoBuf}: Protocol Buffers in \proglang{R}} %% a short title (if necessary)
 
 %% an abstract and keywords
 \Abstract{
@@ -105,8 +105,8 @@ library and the \proglang{R} environment for statistical computing.
 \fvset{listparameters={\setlength{\topsep}{0pt}}}
 \renewenvironment{Schunk}{\vspace{\topsep}}{\vspace{\topsep}}
 
-\title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
-\author{by Dirk Eddelbuettel, Murray Stokely and Jeroen Ooms}
+%\title{RProtoBuf: Efficient Cross-Language Data Serialization in R}
+%\author{by Dirk Eddelbuettel, Murray Stokely and Jeroen Ooms}
 
 %% DE: I tend to have wider option(width=...) so this
 %%     guarantees better line breaks
@@ -772,7 +772,7 @@ functions with these S4 classes:
 
 Additionally, \pkg{RProtoBuf} supports tab completion for all
 classes.  Completion possibilities include pseudo-method names for all
-classes, plus dynamic dispatch on names or types specific to a given
+classes, plus \emph{dynamic dispatch} on names or types specific to a given
 object.  This functionality is implemented with the
 \texttt{.DollarNames} S3 generic function defined in the \pkg{utils}
 package.
