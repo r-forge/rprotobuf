@@ -183,7 +183,7 @@ A more modern, widely used format is \emph{JavaScript Object
   Notation} (\texttt{JSON}), which is derived from the object literals of
 \proglang{JavaScript}, and used increasingly on the world wide web. \texttt{JSON} natively
 supports arrays and distinguishes 4 primitive types: numbers, strings,
-booleans and null. However, as it too is a text-based format, numbers are
+booleans, and null. However, as it too is a text-based format, numbers are
 stored as human-readable decimal notation which is inefficient and
 leads to loss of type (double versus integer) and precision. Several \proglang{R} packages
 implement functions to parse and generate \texttt{JSON} data from \proglang{R}
@@ -419,7 +419,7 @@ For added speed and efficiency, the \proglang{C++}, \proglang{Java},
 and \proglang{Python} bindings to
 Protocol Buffers are used with a compiler that translates a Protocol
 Buffer schema description file (ending in \texttt{.proto}) into
-language-specific classes that can be used to create, read, write and
+language-specific classes that can be used to create, read, write, and
 manipulate Protocol Buffer messages.  The \proglang{R} interface, in contrast,
 uses a reflection-based API that is particularly well-suited for
 interactive data analysis.  
@@ -1264,7 +1264,7 @@ as Protocol Buffers: interoperability is achieved without effort or close coordi
 
 The \texttt{rexp.proto} schema supports all main \proglang{R} storage types holding \emph{data}.
 These include \texttt{NULL}, \texttt{list} and vectors of type \texttt{logical}, 
-\texttt{character}, \texttt{double}, \texttt{integer} and \texttt{complex}. In addition,
+\texttt{character}, \texttt{double}, \texttt{integer}, and \texttt{complex}. In addition,
 every type can contain a named set of attributes, as is the case in \proglang{R}. The \texttt{rexp.proto}
 schema does not support some of the special \proglang{R} specific storage types, such as \texttt{function},
 \texttt{language} or \texttt{environment}. Such objects have no native equivalent 
@@ -1799,16 +1799,16 @@ applications and numerical computing.
 
 %% DE Re-ordering so that we end on RProtoBuf
 The \pkg{RProtoBuf} package builds on the Protocol Buffers library, and
-extends the \proglang{R} system with the ability to create, read and write Protocol
-Buffer message. \pkg{RProtoBuf} has been used extensively inside Google 
-for the past three years by statisticians, analysts and software engineers.
+extends the \proglang{R} system with the ability to create, read, and write Protocol
+Buffer messages. \pkg{RProtoBuf} has been used extensively inside Google 
+for the past three years by statisticians, analysts, and software engineers.
 At the time of this writing there are more than 300 active
 users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{Python}, and 
 other languages.
 
 The \pkg{RProtoBuf} package provides users with the ability to generate,
-parse and manipulate Protocol Buffer messages in \proglang{R}.  It is our hope that this
+parse, and manipulate Protocol Buffer messages in \proglang{R}.  It is our hope that this
 package will make Protocol Buffers more accessible to the \proglang{R} community, and
 thereby makes a small contribution towards better integration between \proglang{R} and
 other software systems and applications.
