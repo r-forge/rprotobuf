@@ -1790,9 +1790,11 @@ The user-defined table mechanism, implemented by Duncan Temple Lang for the
 purpose of the \pkg{RObjectTables} package, allows for the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
 obscure protocol buffer semantics.  Karl Millar was very
-helpful in reviewing code and offering suggestions.  
-%The contemporaneous work by Saptarshi Guha on \pkg{RHIPE} was a strong
-%initial motivator.
+helpful in reviewing code and offering suggestions.  Saptarshi Guha's
+work on RHIPE and implementation of a universal message type for \proglang{R}
+language objects allowed us to add the \code{serialize_pb} and \code{unserialize\_pb}
+methods for turning arbitrary R objects into protocol buffers without
+a specialized pre-defined schema.
 
 \newpage
 \appendix
