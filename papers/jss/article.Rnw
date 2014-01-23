@@ -426,8 +426,10 @@ Protocol Buffers are used with a compiler that translates a Protocol
 Buffer schema description file (ending in \texttt{.proto}) into
 language-specific classes that can be used to create, read, write, and
 manipulate Protocol Buffer messages.  The \proglang{R} interface, in contrast,
-uses a reflection-based API that is particularly well-suited for
-interactive data analysis.  
+uses a reflection-based API that makes some operations slightly
+slower but which is much more convenient for interactive data analysis.
+%particularly well-suited for
+%interactive data analysis.  
 All messages in \proglang{R} have a single class
 structure, but different accessor methods are created at runtime based
 on the named fields of the specified message type, as described in the
@@ -554,7 +556,7 @@ of a messages, supplying either their name or their tag number :
 <<>>=
 p[["name"]] <- "Murray Stokely"
 p[[ 2 ]] <- 3
-p[[ "email" ]]
+p[["email"]]
 @
 
 Protocol Buffers include a 64-bit integer type, but \proglang{R} lacks native
