@@ -1355,9 +1355,12 @@ Table~\ref{tab:compression} shows the sizes of 50 sample \proglang{R} datasets a
 returned by object.size() compared to the serialized sizes.
 %The summary compression sizes are listed below, and a full table for a
 %sample of 50 datasets is included on the next page.  
-Sizes are comparable but Protocol Buffers provide simple getters and setters
-in multiple languages instead of requiring other programs to parse the \proglang{R}
-serialization format. % \citep{serialization}.
+Note that protocol buffer serialization results in slightly
+smaller byte streams compared to native \proglang{R} serialization in most cases,
+but this difference disappears if the results are compressed with gzip.
+%Sizes are comparable but Protocol Buffers provide simple getters and setters
+%in multiple languages instead of requiring other programs to parse the \proglang{R}
+%serialization format. % \citep{serialization}.
 One takeaway from this table is that the universal \proglang{R} object schema
 included in \CRANpkg{RProtoBuf} does not in general provide
 any significant saving in file size compared to the normal serialization
@@ -1432,6 +1435,9 @@ section satisfies both of these conditions.
   islands & 3496 & 1232 & 563 & 1098 & 561 \\
   OrchardSprays & 3600 & 2164 & 445 & 1897 & 483 \\
   WWWusage & 1232 & 916 & 274 & 859 & 251 \\
+  \bottomrule
+%  Total & 391176 & 327537 & 99161 & 313456 & 100308 \\
+  Relative Size & 100\% & 83.7\% & 25.3\% & 80.1\% & 25.6\%\\
   \bottomrule
 \end{tabular}
 }
