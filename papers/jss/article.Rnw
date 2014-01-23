@@ -50,12 +50,13 @@ The
 \CRANpkg{RProtoBuf} package provides a complete interface to Protocol
 Buffers from the
 \proglang{R} environment for statistical computing.
-%TODO(ms) keep it less than 150 words.
-% Maybe add Jeroen's sentence:
-% JO: added this sentence to the conclustion, but could use it in abstract as well.
-% They offer a unique combination of features, performance, and maturity that seems
-% particulary well suited for data-driven applications and numerical
-% computing.
+This paper outlines the general class of data serialization
+requirements for statistical computing, describes the implementation
+of the \CRANpkg{RProtoBuf} package, and illustrates its use with
+examples applications in large-scale data collection pipelines and web
+services.
+%TODO(ms) keep it less than 150 words. -- I think this may be 154,
+%depending how emacs is counting.
 }
 \Keywords{\proglang{R}, \pkg{Rcpp}, protocol buffers, serialization, cross-platform}
 \Plainkeywords{R, Rcpp, protocol buffers, serialization, cross-platform} %% without formatting
