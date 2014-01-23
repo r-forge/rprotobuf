@@ -585,12 +585,13 @@ writeLines(as.character(p))
 
 \subsection{Serializing messages}
 
-However, the main focus of Protocol Buffer messages is
-efficiency. Therefore, messages are transported as a sequence
-of bytes. The \texttt{serialize} method is implemented for
+One of the primary benefits of Protocol Buffers is the efficient
+binary wire-format representation.  
+The \texttt{serialize} method is implemented for
 Protocol Buffer messages to serialize a message into a sequence of
-bytes that represents the message.
-%(raw vector in \proglang{R} speech) that represents the message.
+bytes (raw vector) that represents the message.
+The raw bytes can then be parsed back into the original message safely
+as long as the message type is known and its descriptor is available.
 
 <<>>=
 serialize(p, NULL)
