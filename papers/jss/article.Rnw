@@ -551,7 +551,7 @@ p$email <- "murray@stokely.org"
 As opposed to \proglang{R} lists, no partial matching is performed
 and the name must be given entirely.
 The \verb|[[| operator can also be used to query and set fields
-of a messages, supplying either their name or their tag number :
+of a messages, supplying either their name or their tag number:
 
 <<>>=
 p[["name"]] <- "Murray Stokely"
@@ -569,7 +569,7 @@ Section~\ref{sec:int64} for working with large integer values.
 \subsection{Display messages}
 
 Protocol Buffer messages and descriptors implement \texttt{show}
-methods that provide basic information about the message :
+methods that provide basic information about the message:
 
 <<>>=
 p
@@ -597,7 +597,7 @@ as long as the message type is known and its descriptor is available.
 serialize(p, NULL)
 @
 
-The same method can be used to serialize messages to files :
+The same method can be used to serialize messages to files:
 
 <<>>=
 tf1 <- tempfile()
@@ -640,7 +640,7 @@ the human-readable ASCII output that is created with
 The binary representation of the message
 does not contain information that can be used to dynamically
 infer the message type, so we have to provide this information
-to the \texttt{read} function in the form of a descriptor :
+to the \texttt{read} function in the form of a descriptor:
 
 <<>>=
 msg <- read(tutorial.Person, tf1)
@@ -657,7 +657,7 @@ close(con)
 writeLines(as.character(message))
 @
 
-Finally, the payload of the message can be used :
+Finally, the payload of the message can be used:
 
 <<>>=
 # reading the raw vector payload of the message
@@ -667,7 +667,7 @@ message <- read(tutorial.Person, payload)
 
 
 \texttt{read} can also be used as a pseudo-method of the descriptor
-object :
+object:
 
 <<>>=
 # reading from a file
@@ -723,7 +723,7 @@ EnumValueDescriptor & 3 & \phantom{1}6 & no\\
 The \CRANpkg{Rcpp} package
 \citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
 facilitate this integration of the \proglang{R} and \proglang{C++} code for these objects.
-Each method is wrapped individually which alllows us to add user
+Each method is wrapped individually which allows us to add user
 friendly custom error handling, type coercion, and performance
 improvements at the cost of a more verbose implementation.
 The \pkg{RProtoBuf} package in many ways motivated
@@ -765,7 +765,7 @@ of the data defined in the Message, as well as a number of
 complete list of the slots and methods for \texttt{Messages}
 is available in Table~\ref{Message-methods-table}.
 
-\begin{table}[h]
+\begin{table}[tbp]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
@@ -1155,7 +1155,7 @@ Error: NA boolean values can not be stored in bool protocol buffer fields
 \subsection{Unsigned Integers}
 
 \proglang{R} lacks a native unsigned integer type.  Values between $2^{31}$ and
-$2^{32} - 1$ read from unsigned into Protocol Buffer fields must be
+$2^{32} - 1$ read from unsigned integer Protocol Buffer fields must be
 stored as doubles in \proglang{R}.
 
 <<>>=
