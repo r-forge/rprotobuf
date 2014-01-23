@@ -318,8 +318,8 @@ dependence on \proglang{R}.
 
 While traditional IDLs have at times been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
-model that is flexible and simple to use.  The schema for structured
-protocol buffer data is defined in \texttt{.proto} files which may
+model that is flexible and easy to use.  The schema for structured
+protocol buffer data is defined in \texttt{.proto} files, which may
 contain one or more message types.  Each message type has one or more
 fields.  A field is specified with a unique number, a name, a value
 type, and a field rule specifying whether the field is optional,
@@ -328,7 +328,7 @@ enumerations, booleans, strings, raw bytes, or other nested message
 types.  The \texttt{.proto} file syntax for defining the structure of protocol
 buffer data is described comprehensively on Google Code\footnote{See 
 \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
-Table~\ref{tab:proto} shows an example \texttt{.proto} file which
+Table~\ref{tab:proto} shows an example \texttt{.proto} file that
 defines the \texttt{tutorial.Person} type.  The \proglang{R} code in the right
 column shows an example of creating a new message of this type and
 populating its fields.
@@ -561,7 +561,7 @@ p$id
 p$email <- "murray@stokely.org"
 @
 
-However, as opposed to \proglang{R} lists, no partial matching is performed
+As opposed to \proglang{R} lists, no partial matching is performed
 and the name must be given entirely.
 The \verb|[[| operator can also be used to query and set fields
 of a messages, supplying either their name or their tag number :
