@@ -1092,7 +1092,8 @@ the most appropriate type in different environments.
 Table~\ref{table-get-types} details the correspondence between the
 field type and the type of data that is retrieved by \verb|$| and \verb|[[|
 extractors.  Three types in particular need further attention due to
-specific differences in the \proglang{R} language.
+specific differences in the \proglang{R} language: booleans, unsigned
+integers, and 64-bit integers.
 
 \begin{table}[h]
 \centering
@@ -1298,7 +1299,7 @@ m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
 @
 
 \Sexpr{m} data sets can be converted to Protocol Buffers
-(\Sexpr{format(100*m/n,digits=1)}\%) without loss of information. Upon closer
+without loss of information (\Sexpr{format(100*m/n,digits=1)}\%). Upon closer
 inspection, all other datasets are objects of class \texttt{nfnGroupedData}.
 This class represents a special type of data frame that has some additional 
 attributes (such as a \emph{formula} object) used by the \pkg{nlme} package.
@@ -1783,8 +1784,6 @@ outputmsg <- serialize_pb(val)
 
 \section{Summary}  % DE Simpler title
 \label{sec:summary}
-% TODO(mstokely): Get cibona approval for these two sentences before
-% publishing
 Over the past decade, many formats for interoperable
 data exchange have become available, each with their unique features,
 strengths and weaknesses.  
@@ -1799,16 +1798,14 @@ applications and numerical computing.
 
 %% DE Re-ordering so that we end on RProtoBuf
 The \pkg{RProtoBuf} package builds on the Protocol Buffers library, and
-extends the \proglang{R} system with the ability to create, read, and write Protocol
+extends the \proglang{R} system with the ability to create, read,
+write, parse, and manipulate Protocol
 Buffer messages. \pkg{RProtoBuf} has been used extensively inside Google 
 for the past three years by statisticians, analysts, and software engineers.
 At the time of this writing there are more than 300 active
 users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{Python}, and 
-other languages.
-
-The \pkg{RProtoBuf} package provides users with the ability to generate,
-parse, and manipulate Protocol Buffer messages in \proglang{R}.  It is our hope that this
+other languages.  It is our hope that this
 package will make Protocol Buffers more accessible to the \proglang{R} community, and
 thereby makes a small contribution towards better integration between \proglang{R} and
 other software systems and applications.
