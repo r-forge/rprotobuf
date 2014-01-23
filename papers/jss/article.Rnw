@@ -14,7 +14,7 @@
 \RequirePackage{alltt}
 \DefineVerbatimEnvironment{example}{Verbatim}{}
 % Articles with many authors we should shorten to FirstAuthor, et al.
-\shortcites{janus,dremel}
+\shortcites{sciencecloud,janus,dremel}
 \author{Dirk Eddelbuettel\\Debian Project \And 
         Murray Stokely\\Google, Inc \And
         Jeroen Ooms\\UCLA}
@@ -1566,7 +1566,7 @@ plot(as.histogram(hist))
 \end{center}
 
 One of the authors has used this design pattern for several large
-scale studies of distributed filesystems \citep{janus}.
+scale studies of distributed storage systems \citep{sciencecloud,janus}.
 
 \section{Application: Data Interchange in Web Services}
 \label{sec:opencpu}
