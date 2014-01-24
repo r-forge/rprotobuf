@@ -58,8 +58,8 @@ services.
 %TODO(ms) keep it less than 150 words. -- I think this may be 154,
 %depending how emacs is counting.
 }
-\Keywords{\proglang{R}, \pkg{Rcpp}, protocol buffers, serialization, cross-platform}
-\Plainkeywords{R, Rcpp, protocol buffers, serialization, cross-platform} %% without formatting
+\Keywords{\proglang{R}, \pkg{Rcpp}, Protocol Buffers, serialization, cross-platform}
+\Plainkeywords{R, Rcpp, Protocol Buffers, serialization, cross-platform} %% without formatting
 %% at least one keyword must be supplied
 
 %% publication information
@@ -335,14 +335,14 @@ dependence on \proglang{R}.
 While traditional IDLs have at times been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
 model that is flexible and easy to use.  The schema for structured
-protocol buffer data is defined in \texttt{.proto} files, which may
+Protocol Buffer data is defined in \texttt{.proto} files, which may
 contain one or more message types.  Each message type has one or more
 fields.  A field is specified with a unique number, a name, a value
 type, and a field rule specifying whether the field is optional,
 required, or repeated.  The supported value types are numbers,
 enumerations, booleans, strings, raw bytes, or other nested message
-types.  The \texttt{.proto} file syntax for defining the structure of protocol
-buffer data is described comprehensively on Google Code\footnote{See 
+types.  The \texttt{.proto} file syntax for defining the structure of Protocol
+Buffer data is described comprehensively on Google Code\footnote{See 
 \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
 Table~\ref{tab:proto} shows an example \texttt{.proto} file that
 defines the \texttt{tutorial.Person} type.  The \proglang{R} code in the right
@@ -472,7 +472,7 @@ next section.
 \label{sec:rprotobuf-basic}
 
 This section describes how to use the \proglang{R} API to create and manipulate
-protocol buffer messages in \proglang{R}, and how to read and write the
+Protocol Buffer messages in \proglang{R}, and how to read and write the
 binary representation of the message (often called the \emph{payload}) to files and arbitrary binary
 \proglang{R} connections.
 The two fundamental building blocks of Protocol Buffers are \emph{Messages}
@@ -510,8 +510,8 @@ or every \texttt{.proto} file provided by a particular \proglang{R} package.
 
 After importing proto files, the corresponding message descriptors are
 available from the \code{RProtoBuf:DescriptorPool} environment in 
-the \proglang{R} search path.  This environment is implemented with the user
-defined tables framework from the \pkg{RObjectTables} package
+the \proglang{R} search path.  This environment is implemented with the 
+user-defined tables framework from the \pkg{RObjectTables} package
 available from the OmegaHat project \citep{RObjectTables}.  Instead of
 being associated with a static hash table, this environment
 dynamically queries the in-memory database of loaded descriptors
@@ -550,8 +550,8 @@ p <- new(tutorial.Person, name = "Murray", id = 1)
 \subsection{Access and modify fields of a message}
 
 Once the message is created, its fields can be queried
-and modified using the dollar operator of \proglang{R}, making protocol
-buffer messages seem like lists.
+and modified using the dollar operator of \proglang{R}, making Protocol
+Buffer messages seem like lists.
 
 <<>>=
 p$name
@@ -734,8 +734,8 @@ EnumValueDescriptor & 3 & \phantom{1}6 & no\\
 The \CRANpkg{Rcpp} package
 \citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
 facilitate this integration of the \proglang{R} and \proglang{C++} code for these objects.
-Each method is wrapped individually which allows us to add user
-friendly custom error handling, type coercion, and performance
+Each method is wrapped individually which allows us to add 
+user-friendly custom error handling, type coercion, and performance
 improvements at the cost of a more verbose implementation.
 The \CRANpkg{RProtoBuf} package in many ways motivated
 the development of \CRANpkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
@@ -1019,7 +1019,7 @@ f$Person
 \textbf{Slot} & \textbf{Description} \\
 \cmidrule(r){2-2}
 \texttt{pointer} & external pointer to the \texttt{FileDescriptor} object of the \proglang{C++} proto library. Documentation for the
-\texttt{FileDescriptor} class is available from the protocol buffer project page:
+\texttt{FileDescriptor} class is available from the Protocol Buffer project page:
 \url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
 \texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
 \texttt{package} & package name defined in this \texttt{.proto} file.\\[.3cm]
@@ -1136,7 +1136,7 @@ message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \textt
 Buffer schema, only accept \texttt{TRUE} or \texttt{FALSE}.  This means
 that we simply can not store \proglang{R} logical vectors that include all three
 possible values as booleans.  The library will refuse to store
-\texttt{NA}s in protocol buffer boolean fields, and users must instead
+\texttt{NA}s in Protocol Buffer boolean fields, and users must instead
 choose another type (such as enum or integer) capable of storing three
 distinct values.
 
@@ -1159,7 +1159,7 @@ R> a$optional_bool <- FALSE
 R> a$optional_bool <- NA
 \end{CodeInput}
 \begin{CodeOutput}
-Error: NA boolean values can not be stored in bool protocol buffer fields
+Error: NA boolean values can not be stored in bool Protocol Buffer fields
 \end{CodeOutput}
 \end{CodeChunk}
 
@@ -1241,8 +1241,8 @@ messages of a defined schema.  This is useful when there are
 pre-existing systems with defined schemas or significant software
 components written in other languages that need to be accessed from
 within \proglang{R}.
-The package also provides methods for converting arbitrary \proglang{R} data structures into protocol
-buffers and vice versa with a universal \proglang{R} object schema. The \code{serialize\_pb} and \code{unserialize\_pb}
+The package also provides methods for converting arbitrary \proglang{R} data structures into Protocol
+Buffers and vice versa with a universal \proglang{R} object schema. The \code{serialize\_pb} and \code{unserialize\_pb}
 functions serialize arbitrary \proglang{R} objects into a universal Protocol Buffer 
 message:
 
@@ -1355,7 +1355,7 @@ Table~\ref{tab:compression} shows the sizes of 50 sample \proglang{R} datasets a
 returned by object.size() compared to the serialized sizes.
 %The summary compression sizes are listed below, and a full table for a
 %sample of 50 datasets is included on the next page.  
-Note that protocol buffer serialization results in slightly
+Note that Protocol Buffer serialization results in slightly
 smaller byte streams compared to native \proglang{R} serialization in most cases,
 but this difference disappears if the results are compressed with gzip.
 %Sizes are comparable but Protocol Buffers provide simple getters and setters
@@ -1521,7 +1521,7 @@ messages in Python for later consumption by \proglang{R}, we first compile the
 This generates a Python module called \texttt{histogram\_pb2.py}, containing both the 
 descriptor information as well as methods to read and manipulate the histogram 
 message data.  The following simple Python script uses this generated
-module to create a histogram and write out the protocol buffer
+module to create a histogram and write out the Protocol Buffer
 representation to a file:
 
 \begin{Code}
@@ -1541,7 +1541,7 @@ outfile.write(hist.SerializeToString())
 outfile.close()
 \end{Code}
 
-The protocol buffer can then be read into \proglang{R} and converted to a native
+The Protocol Buffer can then be read into \proglang{R} and converted to a native
 \proglang{R} histogram object for plotting:
 
 \begin{Code}
@@ -1808,11 +1808,11 @@ the design of the \CRANpkg{rJava} package by Simon Urbanek.
 The user-defined table mechanism, implemented by Duncan Temple Lang for the
 purpose of the \pkg{RObjectTables} package, allows for the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
-obscure protocol buffer semantics.  Karl Millar was very
+obscure Protocol Buffer semantics.  Karl Millar was very
 helpful in reviewing code and offering suggestions.  Saptarshi Guha's
 work on RHIPE and implementation of a universal message type for \proglang{R}
 language objects allowed us to add the \code{serialize_pb} and \code{unserialize_pb}
-methods for turning arbitrary R objects into protocol buffers without
+methods for turning arbitrary R objects into Protocol Buffers without
 a specialized pre-defined schema.
 
 \newpage
