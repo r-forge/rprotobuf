@@ -468,7 +468,7 @@ next section.
 %languages to support protocol buffers is compiled as part of the
 %project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
 
-\section{Basic Usage: Messages and Descriptors}
+\section{Basic Usage: Messages and descriptors}
 \label{sec:rprotobuf-basic}
 
 This section describes how to use the \proglang{R} API to create and manipulate
@@ -495,7 +495,7 @@ schema for a particular named class of messages.
 %from a variety of data streams using a variety of different
 %languages.  The definition
 
-\subsection[Importing Message Descriptors from .proto files]{Importing Message Descriptors from \texttt{.proto} files}
+\subsection[Importing message descriptors from .proto files]{Importing message descriptors from \texttt{.proto} files}
 
 %The three basic abstractions of \CRANpkg{RProtoBuf} are Messages,
 %which encapsulate a data structure, Descriptors, which define the
@@ -692,7 +692,7 @@ message <- tutorial.Person$read(payload)
 @
 
 
-\section{Under the hood: S4 Classes, Methods, and Pseudo Methods}
+\section{Under the hood: S4 classes, methods, and pseudo methods}
 \label{sec:rprotobuf-classes}
 
 The \CRANpkg{RProtoBuf} package uses the S4 system to store
@@ -890,7 +890,7 @@ type in this descriptor.\\
 \caption{\label{Descriptor-methods-table}Description of slots and methods for the \texttt{Descriptor} S4 class}
 \end{table}
 
-\subsection{Field Descriptors}
+\subsection{Field descriptors}
 \label{subsec-field-descriptor}
 
 The class \emph{FieldDescriptor} represents field
@@ -942,7 +942,7 @@ defined for the \texttt{FieldDescriptor} class.
 % separate '$' dispatch like Messages, Descriptors, and
 % EnumDescriptors do.  Should it?
 
-\subsection{Enum Descriptors}
+\subsection{Enum descriptors}
 \label{subsec-enum-descriptor}
 
 The class \emph{EnumDescriptor} represents enum descriptors in \proglang{R}.
@@ -993,7 +993,7 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \caption{\label{enumdescriptor-methods-table}Description of slots and methods for the \texttt{EnumDescriptor} S4 class}
 \end{table}
 
-\subsection{File Descriptors}
+\subsection{File descriptors}
 \label{subsec-file-descriptor}
 
 The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
@@ -1037,7 +1037,7 @@ f$Person
 \caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class}
 \end{table}
 
-\subsection{Enum Value Descriptors}
+\subsection{Enum value descriptors}
 \label{subsec-enumvalue-descriptor}
 
 The class \emph{EnumValueDescriptor} represents enumeration value
@@ -1080,7 +1080,7 @@ tutorial.Person$PhoneType$value(number=1)
   and methods for the \texttt{EnumValueDescriptor} S4 class}
 \end{table}
 
-\section{Type Coercion}
+\section{Type coercion}
 \label{sec:types}
 
 One of the benefits of using an Interface Definition Language (IDL)
@@ -1163,7 +1163,7 @@ Error: NA boolean values can not be stored in bool Protocol Buffer fields
 \end{CodeOutput}
 \end{CodeChunk}
 
-\subsection{Unsigned Integers}
+\subsection{Unsigned integers}
 
 \proglang{R} lacks a native unsigned integer type.  Values between $2^{31}$ and
 $2^{32} - 1$ read from unsigned integer Protocol Buffer fields must be
@@ -1232,7 +1232,7 @@ length(unique(test$repeated_int64))
 options("RProtoBuf.int64AsString" = FALSE)
 @
 
-\section[Converting R Data Structures into Protocol Buffers]{Converting \proglang{R} Data Structures into Protocol Buffers}
+\section[Converting R data structures into Protocol Buffers]{Converting \proglang{R} data structures into Protocol Buffers}
 \label{sec:evaluation}
 
 The previous sections discussed functionality in the \CRANpkg{RProtoBuf} package
@@ -1274,7 +1274,7 @@ objects, they need to be converted into a supported type. For example, the  can 
 \texttt{deparse} to convert functions or language objects into strings, or \texttt{as.list}
 for environments.
 
-\subsection[Evaluation: Converting R Data Sets]{Evaluation: Converting \proglang{R} Data Sets}
+\subsection[Evaluation: Converting R data sets]{Evaluation: Converting \proglang{R} data sets}
 
 To illustrate how this method works, we attempt to convert all of the built-in 
 datasets from \proglang{R} into this serialized Protocol Buffer representation.
@@ -1316,7 +1316,7 @@ identical(dim(CO2), dim(object))
 attr(object, "formula")
 @
 
-\subsection{Compression Performance}
+\subsection{Compression performance}
 \label{sec:compression}
 
 This section compares how many bytes are used to store data sets
@@ -1448,7 +1448,7 @@ section satisfies both of these conditions.
 \end{table}
 
 
-\section{Application: Distributed Data Collection with MapReduce}
+\section{Application: Distributed data collection with MapReduce}
 \label{sec:mapreduce}
 
 Many large data sets in fields such as particle physics and information
@@ -1574,7 +1574,7 @@ One of the authors has used this design pattern for several
 large-scale studies of distributed storage systems
 \citep{sciencecloud,janus}.
 
-\section{Application: Data Interchange in Web Services}
+\section{Application: Data Interchange in web Services}
 \label{sec:opencpu}
 
 % TODO(jeroen): I think maybe some of this should go earlier in the
