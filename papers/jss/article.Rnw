@@ -1584,7 +1584,7 @@ large-scale studies of distributed storage systems
 
 As described earlier, the primary application of Protocol Buffers is data
 interchange in the context of inter-system communications.  Network protocols
-such as HTTP provide mechanisms for client-server communication, i.e.~how to
+such as HTTP provide mechanisms for client-server communication, i.e., how to
 initiate requests, authenticate, send messages, etc.  However, network
 protocols generally do not regulate the \emph{content} of messages: they
 allow transfer of any media type, such as web pages, static files or
