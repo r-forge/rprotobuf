@@ -136,9 +136,9 @@ Modern data collection and analysis pipelines increasingly involve collections
 of decoupled components in order to better manage software complexity 
 through reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
 These pipelines are frequently built using different programming 
-languages for the different phases of data analysis -- collection,
+languages for the different phases of data analysis --- collection,
 cleaning, modeling, analysis, post-processing, and
-presentation -- in order to take advantage of the unique combination of
+presentation --- in order to take advantage of the unique combination of
 performance, speed of development, and library support offered by
 different environments and languages.  Each stage of such a data
 analysis pipeline may produce intermediate results that need to be
@@ -171,7 +171,7 @@ for this complexity with comparatively large and verbose messages, and added
 complexity at the parsing side (which are somewhat mitigated by the
 availability of mature libraries and parsers). Because \texttt{XML} is 
 text-based and has no native notion of numeric types or arrays, it usually not a
-very practical format to store numeric datasets as they appear in statistical
+very practical format to store numeric data sets as they appear in statistical
 applications.
 
 
@@ -214,7 +214,7 @@ details the implementation details of the main S4 classes and methods.
 Section~\ref{sec:types} describes the challenges of type coercion
 between \proglang{R} and other languages.  Section~\ref{sec:evaluation} introduces a
 general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and evaluates
-it against the serialization capbilities built directly into \proglang{R}.  Sections~\ref{sec:mapreduce}
+it against the serialization capabilities built directly into \proglang{R}.  Sections~\ref{sec:mapreduce}
 and \ref{sec:opencpu} provide real-world use cases of \CRANpkg{RProtoBuf}
 in MapReduce and web service environments, respectively, before
 Section~\ref{sec:summary} concludes.
@@ -231,7 +231,7 @@ the key features provided by Protocol Buffers for data analysis include:
   applications as well as different computers or operating systems.
 \item \emph{Efficient}:  Data is serialized into a compact binary
   representation for transmission or storage.
-\item \emph{Extensible}:  New fields can be added to Protocol Buffer Schemas
+\item \emph{Extensible}:  New fields can be added to Protocol Buffer schemas
   in a forward-compatible way that does not break older applications.
 \item \emph{Stable}:  Protocol Buffers have been in wide use for over a
   decade.
@@ -246,7 +246,7 @@ the key features provided by Protocol Buffers for data analysis include:
 \end{figure}
 
 Figure~\ref{fig:protobuf-distributed-usecase} illustrates an example
-communication workflow with Protocol Buffers and an interactive \proglang{R} session.
+communication work flow with Protocol Buffers and an interactive \proglang{R} session.
 Common use cases include populating a request remote-procedure call (RPC)
 Protocol Buffer in \proglang{R} that is then serialized and sent over the network to a
 remote server.  The server would then deserialize the message, act on the
@@ -1097,7 +1097,7 @@ for environments.
 \subsection[Evaluation: Converting R data sets]{Evaluation: Converting \proglang{R} data sets}
 
 To illustrate how this method works, we attempt to convert all of the built-in 
-datasets from \proglang{R} into this serialized Protocol Buffer representation.
+data sets from \proglang{R} into this serialized Protocol Buffer representation.
 
 <<echo=TRUE>>=
 datasets <- as.data.frame(data(package="datasets")$results)
@@ -1105,8 +1105,8 @@ datasets$name <- sub("\\s+.*$", "", datasets$Item)
 n <- nrow(datasets)
 @
 
-There are \Sexpr{n} standard data sets included in the base-r \pkg{datasets}
-package. These datasets include data frames, matrices, time series, tables lists,
+There are \Sexpr{n} standard data sets included in the \pkg{datasets}
+package included with \proglang{R}. These data sets include data frames, matrices, time series, tables lists,
 and some more exotic data classes. The \texttt{can\_serialize\_pb} method is 
 used to determine which of those can fully be converted to the \texttt{rexp.proto}
 Protocol Buffer representation. This method simply checks if any of the values or
@@ -1118,7 +1118,7 @@ m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
 
 \Sexpr{m} data sets can be converted to Protocol Buffers
 without loss of information (\Sexpr{format(100*m/n,digits=1)}\%). Upon closer
-inspection, all other datasets are objects of class \texttt{nfnGroupedData}.
+inspection, all other data sets are objects of class \texttt{nfnGroupedData}.
 This class represents a special type of data frame that has some additional 
 attributes (such as a \emph{formula} object) used by the \pkg{nlme} package.
 Because formulas are \proglang{R} \emph{language} objects, they have little meaning to
@@ -1171,10 +1171,10 @@ clean.df <- data.frame(dataset=datasets$name,
                        check.names=FALSE)
 @
 
-Table~\ref{tab:compression} shows the sizes of 50 sample \proglang{R} datasets as
+Table~\ref{tab:compression} shows the sizes of 50 sample \proglang{R} data sets as
 returned by object.size() compared to the serialized sizes.
 %The summary compression sizes are listed below, and a full table for a
-%sample of 50 datasets is included on the next page.  
+%sample of 50 data sets is included on the next page.  
 Note that Protocol Buffer serialization results in slightly
 smaller byte streams compared to native \proglang{R} serialization in most cases,
 but this difference disappears if the results are compressed with gzip.
@@ -1260,7 +1260,7 @@ section satisfies both of these conditions.
 \end{tabular}
 }
 \caption{Serialization sizes for default serialization in \proglang{R} and
-  \CRANpkg{RProtoBuf} for 50 \proglang{R} datasets.}
+  \CRANpkg{RProtoBuf} for 50 \proglang{R} data sets.}
 \label{tab:compression}
 \end{center}
 \end{table}
@@ -1430,7 +1430,7 @@ earlier to parse and generate protobuf messages when interacting with OpenCPU.
 \subsection[HTTP GET: Retrieving an R object]{HTTP GET: Retrieving an \proglang{R} object}
 
 The \texttt{HTTP GET} method is used to read a resource from OpenCPU. For example,
-to access the dataset \texttt{Animals} from the package \texttt{MASS}, a 
+to access the data set \texttt{Animals} from the package \texttt{MASS}, a 
 client performs the following HTTP request:
 
 \begin{verbatim}
@@ -1446,10 +1446,10 @@ interpret the response as a protobuf message.
 
 Because both HTTP and Protocol Buffers have libraries available for many 
 languages, clients can be implemented in just a few lines of code. Below
-is example code for both \proglang{R} and Python that retrieves a dataset from \proglang{R} with 
+is example code for both \proglang{R} and Python that retrieves a data set from \proglang{R} with 
 OpenCPU using a protobuf message. In \proglang{R}, we use the HTTP client from 
 the \texttt{httr} package \citep{httr}. In this example we
-download a dataset which is part of the base \proglang{R} distribution, so we can
+download a data set which is part of the base \proglang{R} distribution, so we can
 verify that the object was transferred without loss of information.
 
 <<eval=FALSE>>=
@@ -1469,7 +1469,7 @@ This code suggests a method for exchanging objects between \proglang{R} servers,
 well be done without Protocol Buffers. The main advantage of using an inter-operable format 
 is that we can actually access \proglang{R} objects from within another
 programming language. For example, in a very similar fashion we can retrieve the same
-dataset in a Python client. To parse messages in Python, we first compile the 
+data set in a Python client. To parse messages in Python, we first compile the 
 \texttt{rexp.proto} descriptor into a python module using the \texttt{protoc} compiler:
 
 \begin{verbatim}
@@ -1494,7 +1494,7 @@ msg = REXP()
 msg.ParseFromString(res.read())
 print(msg)
 \end{verbatim}
-The \texttt{msg} object contains all data from the Animals dataset. From here we
+The \texttt{msg} object contains all data from the Animals data set. From here we
 can easily extract the desired fields for further use in Python.
 
 
@@ -1565,7 +1565,7 @@ sophisticated data interchange format may reap considerable benefits.
 %Protocol Buffers is itself not a protocol.
 %Forward-compatibility is one of the features. No need to re-iterate those 
 The Protocol Buffers standard and library offer a unique combination of features, 
-performance, and maturity, that seems particulary well suited for data-driven 
+performance, and maturity, that seems particularly well suited for data-driven 
 applications and numerical computing.
 
 The \CRANpkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} library, 
