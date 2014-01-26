@@ -130,19 +130,11 @@ options(width=65, prompt="R> ", digits=4)
 
 \maketitle
 
-\section{Introduction} % TODO(DE) More sober: Friends don't let friends use CSV}
-% NOTE(MS): I really do think we can use add back:
-% \section{Introduction: Friends Don't Let Friends Use CSV}
-% I didn't use proper Title Caps the first time around but really I
-% think it makes the paper more readable to have a tl;dr intro title
-% that is fun and engaging since this paper is still on the dry/boring
-% side.
+\section{Introduction} 
+
 Modern data collection and analysis pipelines increasingly involve collections
 of decoupled components in order to better manage software complexity 
 through reusability, modularity, and fault isolation \citep{Wegiel:2010:CTT:1932682.1869479}.
-% This is really a different pattern not connected well here.
-%Data analysis patterns such as Split-Apply-Combine
-%\citep{wickham2011split} explicitly break up large problems into manageable pieces.  
 These pipelines are frequently built using different programming 
 languages for the different phases of data analysis -- collection,
 cleaning, modeling, analysis, post-processing, and
@@ -151,8 +143,6 @@ performance, speed of development, and library support offered by
 different environments and languages.  Each stage of such a data
 analysis pipeline may produce intermediate results that need to be
 stored in a file, or sent over the network for further processing. 
-% JO Perhaps also mention that serialization is needed for distributed
-% systems to make systems scale up?
 
 Given these requirements, how do we safely and efficiently share intermediate results
 between different applications, possibly written in different
@@ -161,18 +151,12 @@ In computer programming, \emph{serialization} is the process of
 translating data structures, variables, and session state into a
 format that can be stored or transmitted and then reconstructed in the
 original form later \citep{clinec++}.
-% Reverted to my original above, because the replacement below puts me
-% to sleep:
-%Such systems require reliable and efficient exchange of intermediate
-%results between the individual components, using formats that are
-%independent of platform, language, operating system or architecture.
 Programming
 languages such as \proglang{R}, \proglang{Julia}, \proglang{Java}, and \proglang{Python} include built-in
 support for serialization, but the default formats 
 are usually language-specific and thereby lock the user into a single
 environment.  
 
-%\paragraph*{Friends don't let friends use CSV!}
 Data analysts and researchers often use character-separated text formats such
 as \texttt{CSV} \citep{shafranovich2005common} to export and import
 data. However, anyone who has ever used \texttt{CSV} files will have noticed
@@ -189,7 +173,7 @@ availability of mature libraries and parsers). Because \texttt{XML} is
 text-based and has no native notion of numeric types or arrays, it usually not a
 very practical format to store numeric datasets as they appear in statistical
 applications.
-%
+
 
 A more modern format is \emph{JavaScript ObjectNotation} 
 (\texttt{JSON}), which is derived from the object literals of
@@ -205,16 +189,6 @@ that reduce the parsing cost and improve efficiency, but these formats
 are not widely supported.  Furthermore, such formats lack a separate
 schema for the serialized data and thus still duplicate field names
 with each message sent over the network or stored in a file.
-% and still must send duplicate field names
-% with each message since there is no separate schema.
-% \pkg{MessagePack}
-% and \pkg{BSON} both have \proglang{R}
-% interfaces \citep{msgpackR,rmongodb}, but these formats lack a separate schema for the serialized
-% data and thus still duplicate field names with each message sent over
-% the network or stored in a file.  Such formats also lack support for
-% versioning when data storage needs evolve over time, or when
-% application logic and requirement changes dictate updates to the
-%message format.
 
 Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
@@ -228,40 +202,6 @@ compared with simple ``schema-less'' binary interchange formats.
 Many sources compare data serialization formats
 and show Protocol Buffers compare very favorably to the alternatives; see
 \citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
-
-% Too technical, move to section 2.
-% The schema can be used to generate model classes for statically-typed programming languages
-%such as C++ and Java, or can be used with reflection for dynamically-typed programming
-%languages.
-
-% TODO(mstokely): Will need to define reflection if we use it here.
-% Maybe in the next section since its not as key as 'serialization'
-% which we already defined.
- 
-%\paragraph*{Enter Protocol Buffers:}
-
-% In 2008, and following several years of internal use, Google released an open
-% source version of Protocol Buffers. It provides data  
-% interchange format that was designed and used for their internal infrastructure.
-% Google officially provides high-quality parsing libraries for \texttt{Java}, 
-% \texttt{C++} and \texttt{Python}, and community-developed open source implementations
-% are available for many other languages. 
-% Protocol Buffers take a quite different approach from many other popular formats.
-
-% TODO(mstokely): Good sentence from Jeroen, add it here or sec 2.
-% They offer a unique combination of features, performance, and maturity that seems
-% particulary well suited for data-driven applications and numerical
-% computing.
-
-% TODO(DE): Mention "future proof" forward compatibility of schemata
-
-
-% TODO(mstokely): Take a more conversational tone here asking
-% questions and motivating protocol buffers?
-
-% NOTE(mstokely): I don't like these roadmap paragraphs in general,
-% but it seems ueful here because we have a boring bit in the middle
-% (full class/method details) and interesting applications at the end.
 
 This paper describes an \proglang{R} interface to Protocol Buffers,
 and is organized as follows. Section~\ref{sec:protobuf}
@@ -279,24 +219,9 @@ and \ref{sec:opencpu} provide real-world use cases of \CRANpkg{RProtoBuf}
 in MapReduce and web service environments, respectively, before
 Section~\ref{sec:summary} concludes.
 
-%This article describes the basics of Google's Protocol Buffers through
-%an easy to use \proglang{R} package, \CRANpkg{RProtoBuf}.  After describing the
-%basics of protocol buffers and \CRANpkg{RProtoBuf}, we illustrate
-%several common use cases for protocol buffers in data analysis.
-
 \section{Protocol Buffers}
 \label{sec:protobuf}
 
-% JO: I'm not sure where to put this paragraph. I think it is too technical
-% for the introduction section. Maybe start this section with some explanation
-% of what a schema is and then continue with showing how PB implement this?
-% MS: Yes I agree, tried to address below.
-
-% This content is good.  Maybe use and cite?
-% http://martin.kleppmann.com/2012/12/05/schema-evolution-in-avro-protocol-buffers-thrift.html
-
-%% TODO(de,ms)  What follows is oooooold and was lifted from the webpage
-%%              Rewrite?
 Protocol Buffers are a modern, language-neutral, platform-neutral,
 extensible mechanism for sharing and storing structured data.  Some of
 the key features provided by Protocol Buffers for data analysis include:
@@ -312,8 +237,6 @@ the key features provided by Protocol Buffers for data analysis include:
   decade.
 \end{itemize}
 
-% Lets place this at the top of the page or the bottom, or on a float
-% page, but not just here in the middle of the page.
 \begin{figure}[tbp]
 \begin{center}
 \includegraphics[width=\textwidth]{figures/protobuf-distributed-system-crop.pdf}
@@ -349,7 +272,6 @@ defines the \texttt{tutorial.Person} type.  The \proglang{R} code in the right
 column shows an example of creating a new message of this type and
 populating its fields.
 
-%% TODO(de) Can we make this not break the width of the page?
 \noindent
 \begin{table}
 \begin{tabular}{p{.40\textwidth}p{0.55\textwidth}}
@@ -396,41 +318,6 @@ class(p)
 \end{table}
 
 
-% The schema can be used to generate model classes for statically-typed programming languages
-%such as C++ and Java, or can be used with reflection for dynamically-typed programming
-%languages.
-
-% TODO(mstokely): Maybe find a place to add this?  
-% Since their
-% introduction, Protocol Buffers have been widely adopted in industry with
-% applications as varied as %database-internal messaging (Drizzle), % DE: citation?
-% Sony Playstations, Twitter, Google Search, Hadoop, and Open Street
-% Map.  
-
-% TODO(DE): This either needs a citation, or remove the name drop
-% MS: These are mostly from blog posts, I can't find a good reference
-% that has a long list, and the name and year citation style seems
-% less conducive to long lists of marginal citations like blog posts
-% compared to say concise CS/math style citations [3,4,5,6]. Thoughts?
-
-
-% The schema can be used to generate classes for statically-typed programming languages
-% such as C++ and Java, or can be used with reflection for dynamically-typed programming
-% languages.
-
-
-
-%Protocol buffers are a language-neutral, platform-neutral, extensible
-%way of serializing structured data for use in communications
-%protocols, data storage, and more.
-
-%Protocol Buffers offer key features such as an efficient data interchange
-%format that is both language- and operating system-agnostic yet uses a
-%lightweight and highly performant encoding, object serialization and
-%de-serialization as well data and configuration management. Protocol
-%buffers are also forward compatible: updates to the \texttt{proto}
-%files do not break programs built against the previous specification.
-
 For added speed and efficiency, the \proglang{C++}, \proglang{Java},
 and \proglang{Python} bindings to
 Protocol Buffers are used with a compiler that translates a Protocol
@@ -439,34 +326,10 @@ language-specific classes that can be used to create, read, write, and
 manipulate Protocol Buffer messages.  The \proglang{R} interface, in contrast,
 uses a reflection-based API that makes some operations slightly
 slower but which is much more convenient for interactive data analysis.
-%particularly well-suited for
-%interactive data analysis.  
 All messages in \proglang{R} have a single class
 structure, but different accessor methods are created at runtime based
 on the named fields of the specified message type, as described in the
 next section.
-
-% In other words, given the 'proto'
-%description file, code is automatically generated for the chosen
-%target language(s). The project page contains a tutorial for each of
-%these officially supported languages:
-%\url{http://code.google.com/apis/protocolbuffers/docs/tutorials.html}
-
-%The protocol buffers code is released under an open-source (BSD) license. The
-%protocol buffer project (\url{http://code.google.com/p/protobuf/})
-%contains a C++ library and a set of runtime libraries and compilers for
-%C++, Java and Python.
-
-%With these languages, the workflow follows standard practice of so-called
-%Interface Description Languages (IDL)
-%(c.f. \href{http://en.wikipedia.org/wiki/Interface_description_language}{Wikipedia
-%  on IDL}).  This consists of compiling a protocol buffer description file
-%(ending in \texttt{.proto}) into language specific classes that can be used
-
-%Besides the officially supported C++, Java and Python implementations, several projects have been
-%created to support protocol buffers for many languages. The list of known
-%languages to support protocol buffers is compiled as part of the
-%project page: \url{http://code.google.com/p/protobuf/wiki/ThirdPartyAddOns}
 
 \section{Basic Usage: Messages and descriptors}
 \label{sec:rprotobuf-basic}
@@ -481,26 +344,7 @@ structured data fields of the type specified in a Message Descriptor.
 Message Descriptors are defined in \texttt{.proto} files and define a
 schema for a particular named class of messages.
 
-% Commented out because we said this earlier.
-%This separation
-%between schema and the message objects is in contrast to
-%more verbose formats like JSON, and when combined with the efficient
-%binary representation of any Message object explains a large part of
-%the performance and storage-space advantage offered by Protocol
-%Buffers. TODO(ms): we already said some of this above.  clean up.
-
-% lifted from protobuf page:
-%With Protocol Buffers you define how you want your data to be
-%structured once, and then you can read or write structured data to and
-%from a variety of data streams using a variety of different
-%languages.  The definition
-
 \subsection[Importing message descriptors from .proto files]{Importing message descriptors from \texttt{.proto} files}
-
-%The three basic abstractions of \CRANpkg{RProtoBuf} are Messages,
-%which encapsulate a data structure, Descriptors, which define the
-%schema used by one or more messages, and DescriptorPools, which
-%provide access to descriptors.
 
 To create or parse a Protocol Buffer Message, one must first read in 
 the message type specification from a \texttt{.proto} file. The 
@@ -520,16 +364,6 @@ during normal variable lookup.
 <<>>=
 ls("RProtoBuf:DescriptorPool")
 @
-
-%\subsection{Importing proto files}
-%In contrast to the other languages (Java, C++, Python) that are officially
-%supported by Google, the implementation used by the \texttt{RProtoBuf}
-%package does not rely on the \texttt{protoc} compiler (with the exception of
-%the two functions discussed in the previous section). This means that no
-%initial step of statically compiling the proto file into C++ code that is
-%then accessed by \proglang{R} code is necessary. Instead, \texttt{proto} files are
-%parsed and processed \textsl{at runtime} by the protobuf C++ library---which
-%is much more appropriate for a dynamic language.
 
 \subsection{Creating a message}
 
@@ -574,8 +408,6 @@ Protocol Buffers include a 64-bit integer type, but \proglang{R} lacks native
 64-bit integer support.  A workaround is available and described in
 Section~\ref{sec:int64} for working with large integer values.
 
-% TODO(mstokely): Document extensions here.
-% There are none in addressbook.proto though.
 
 \subsection{Display messages}
 
@@ -708,8 +540,6 @@ than 100 \proglang{C++} functions that provide the
 glue code between the \proglang{R} language classes and the underlying \proglang{C++}
 classes.
 
-% MS: I think this looks better at the bottom of the page.
-% so it appears after the new section starts where it is referenced.
 \begin{table}[bp]
 \centering
 \begin{tabular}{lccl}
@@ -742,13 +572,6 @@ the development of \CRANpkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
 which provide a more concise way of wrapping \proglang{C++} functions and classes
 in a single entity.
 
-% Message, Descriptor, FieldDescriptor, EnumDescriptor,
-% FileDescriptor, EnumValueDescriptor
-%
-% grep RPB_FUNC * | grep -v define|wc -l
-% 84
-% grep RPB_ * | grep -v RPB_FUNCTION | grep METHOD|wc -l
-% 33
 
 The \CRANpkg{RProtoBuf} package supports two forms for calling
 functions with these S4 classes:
@@ -938,9 +761,6 @@ defined for the \texttt{FieldDescriptor} class.
   methods for the \texttt{FieldDescriptor} S4 class}
 \end{table}
 
-% TODO(ms): Useful distinction to make -- FieldDescriptor does not do
-% separate '$' dispatch like Messages, Descriptors, and
-% EnumDescriptors do.  Should it?
 
 \subsection{Enum descriptors}
 \label{subsec-enum-descriptor}
@@ -1371,8 +1191,6 @@ multiple programming languages are involved, or when a more concise
 application-specific schema has been defined.  The example in the next
 section satisfies both of these conditions.
 
-% N.B. see table.Rnw for how this table is created.
-%
 % latex table generated in \proglang{R} 3.0.2 by xtable 1.7-0 package
 % Fri Dec 27 17:00:03 2013
 \begin{table}[h!]
@@ -1577,11 +1395,6 @@ large-scale studies of distributed storage systems
 \section{Application: Data Interchange in web Services}
 \label{sec:opencpu}
 
-% TODO(jeroen): I think maybe some of this should go earlier in the
-% paper, so this part can focus only on introducing the application,
-% Can you integrate some of this text earlier, maybe into the the
-% introduction?
-
 As described earlier, the primary application of Protocol Buffers is data
 interchange in the context of inter-system communications.  Network protocols
 such as HTTP provide mechanisms for client-server communication, i.e., how to
@@ -1739,7 +1552,7 @@ val <- do.call(stats::rnorm, fnargs)
 outputmsg <- serialize_pb(val)
 @
 
-\section{Summary}  % DE Simpler title
+\section{Summary}  
 \label{sec:summary}
 Over the past decade, many formats for interoperable
 data exchange have become available, each with their unique features,
@@ -1755,7 +1568,6 @@ The Protocol Buffers standard and library offer a unique combination of features
 performance, and maturity, that seems particulary well suited for data-driven 
 applications and numerical computing.
 
-%% DE Re-ordering so that we end on RProtoBuf
 The \CRANpkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} library, 
 and extends the \proglang{R} system with the ability to create, read,
 write, parse, and manipulate Protocol
@@ -1768,33 +1580,6 @@ other languages. We hope that making Protocol Buffers available to the
 \proglang{R} community will contribute towards better software integration
 and allow for building even more advanced applications and analysis pipelines 
 with \proglang{R}.
-
-%\emph{Other Approaches}
-%
-%== JO: I don't really like this section here, it gives the entire paper a bit of a 
-%sour aftertaste. Perhaps we can mention performance caveats in the technical
-%sections? I think it's nicer to leave it at the above paragraphs.==
-%
-% DE: Agreed -- commenting out
-
-%% \pkg{RProtoBuf} is quite flexible and easy to use for interactive use,
-%% but it is not designed for efficient high-speed manipulation of large
-%% numbers of protocol buffers once they have been read into R.  For
-%% example, taking a list of 100,000 Protocol Buffers, extracting a named
-%% field from each one, and computing an aggregate statistic on those
-%% values would be relatively slow with RProtoBuf.  Mechanisms to address
-%% such use cases are under investigation for possible incorporation into
-%% future releases of RProtoBuf, but currently, the package relies on
-%% other database systems to provide query and aggregation semantics
-%% before the resulting protocol buffers are read into R.  Inside Google,
-%% the Dremel query system \citep{dremel} is often employed in this role
-%% in conjunction with \pkg{RProtoBuf}.
-
-% Such queries could be
-%supported in a future version of \pkg{RProtoBuf} by supporting a
-%vector of messages type such that \emph{slicing} operations over a
-%given field across a large number of messages could be done
-%efficiently in \proglang{C++}.
 
 
 
