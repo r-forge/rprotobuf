@@ -727,8 +727,8 @@ FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
 EnumValueDescriptor & 3 & \phantom{1}6 & no\\
 \bottomrule
 \end{tabular}
-\caption{\label{class-summary-table}Overview of Class, Slot, Method and
-  Dispatch Relationships}
+\caption{\label{class-summary-table}Overview of class, slot, method and
+  dispatch relationships}
 \end{table}
 
 The \CRANpkg{Rcpp} package
@@ -1482,7 +1482,7 @@ output to a data store.
 \begin{center}
 \includegraphics[width=\textwidth]{figures/histogram-mapreduce-diag1.pdf}
 \end{center}
-\caption{Diagram of MapReduce Histogram Generation Pattern}
+\caption{Diagram of MapReduce histogram generation pattern}
 \label{fig:mr-histogram-pattern1}
 \end{figure}
 
