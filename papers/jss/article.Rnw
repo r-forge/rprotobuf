@@ -600,6 +600,10 @@ of the data defined in the Message, as well as a number of
 complete list of the slots and methods for \texttt{Messages}
 is available in Table~\ref{Message-methods-table}.
 
+<<>>=
+new(tutorial.Person)
+@
+
 \begin{table}[tbp]
 \centering
 \begin{small}
@@ -672,7 +676,7 @@ tutorial.Person.PhoneNumber
 Table~\ref{Descriptor-methods-table} provides a complete list of the
 slots and available methods for Descriptors.
 
-\begin{table}[tbp]
+\begin{table}[p]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
