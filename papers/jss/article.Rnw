@@ -125,7 +125,8 @@ services.
 %% DE: I tend to have wider option(width=...) so this
 %%     guarantees better line breaks
 <<echo=FALSE,print=FALSE>>=
-options(width=65, prompt="R> ", digits=4)
+## cf http://www.jstatsoft.org/style#q12
+options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE, digits=4)
 @
 
 \maketitle
