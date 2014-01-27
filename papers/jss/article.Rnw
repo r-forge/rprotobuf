@@ -238,7 +238,7 @@ the key features provided by Protocol Buffers for data analysis include:
   decade.
 \end{itemize}
 
-\begin{figure}[tbp]
+\begin{figure}[bp]
 \begin{center}
 \includegraphics[width=\textwidth]{figures/protobuf-distributed-system-crop.pdf}
 \end{center}
