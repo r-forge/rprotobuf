@@ -271,8 +271,8 @@ Buffer data is described comprehensively on Google Code\footnote{See
 Table~\ref{tab:proto} shows an example \texttt{.proto} file that
 defines the \texttt{tutorial.Person} type\footnote{The compound name
   \texttt{tutorial.Person} in R is derived from the name of the
-  message and the name of the package defined at the top of the
-  \texttt{.proto} file in which it is defined.}.  The \proglang{R} code in the right
+  message (\emph{Person}) and the name of the package defined at the top of the
+  \texttt{.proto} file in which it is defined (\emph{tutorial}).}.  The \proglang{R} code in the right
 column shows an example of creating a new message of this type and
 populating its fields.
 
@@ -557,8 +557,8 @@ Message             & 2 & 20 & yes (field names)\\
 Descriptor          & 2 & 16 & yes (field names, enum types, nested types)\\
 FieldDescriptor     & 4 & 18 & no\\
 EnumDescriptor      & 4 & 11 & yes (enum constant names)\\
-FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
 EnumValueDescriptor & 3 & \phantom{1}6 & no\\
+FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
 \bottomrule
 \end{tabular}
 \caption{\label{class-summary-table}Overview of class, slot, method and
@@ -678,7 +678,7 @@ tutorial.Person.PhoneNumber
 Table~\ref{Descriptor-methods-table} provides a complete list of the
 slots and available methods for Descriptors.
 
-\begin{table}[p]
+\begin{table}[tbp]
 \centering
 \begin{small}
 \begin{tabular}{lp{10cm}}
@@ -824,50 +824,6 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \caption{\label{enumdescriptor-methods-table}Description of slots and methods for the \texttt{EnumDescriptor} S4 class}
 \end{table}
 
-\subsection{File descriptors}
-\label{subsec-file-descriptor}
-
-The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
-This is a wrapper S4 class around the
-\texttt{google::protobuf::FileDescriptor} \proglang{C++} class.
-Table~\ref{filedescriptor-methods-table} describes the methods
-defined for the \texttt{FileDescriptor} class.
-
-The \verb|$| operator can be used to retrieve named fields defined in
-the FileDescriptor, or to invoke pseudo-methods.
-
-<<>>=
-f <- tutorial.Person$fileDescriptor()
-f
-f$Person
-@
-
-\begin{table}[tbp]
-\centering
-\begin{small}
-\begin{tabular}{lp{10cm}}
-\toprule
-\textbf{Slot} & \textbf{Description} \\
-\cmidrule(r){2-2}
-\texttt{pointer} & external pointer to the \texttt{FileDescriptor} object of the \proglang{C++} proto library. Documentation for the
-\texttt{FileDescriptor} class is available from the Protocol Buffer project page:
-\url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
-\texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
-\texttt{package} & package name defined in this \texttt{.proto} file.\\[.3cm]
-\textbf{Method} & \textbf{Description} \\
-\cmidrule(r){2-2}
-\texttt{name} & Return the filename for this FileDescriptorProto.\\
-\texttt{package} & Return the file-level package name specified in this FileDescriptorProto.\\
-\texttt{as.character} & character representation of a descriptor. \\
-\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
-\texttt{asMessage} & return FileDescriptorProto message. \\
-\texttt{as.list} & return named list of descriptors defined in this file descriptor.\\
-\bottomrule
-\end{tabular}
-\end{small}
-\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class}
-\end{table}
-
 \subsection{Enum value descriptors}
 \label{subsec-enumvalue-descriptor}
 
@@ -910,6 +866,50 @@ tutorial.Person$PhoneType$value(number=1)
 \caption{\label{EnumValueDescriptor-methods-table}Description of slots
   and methods for the \texttt{EnumValueDescriptor} S4 class}
 \end{table}
+
+\subsection{File descriptors}
+\label{subsec-file-descriptor}
+
+\begin{table}[tbp]
+\centering
+\begin{small}
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{Slot} & \textbf{Description} \\
+\cmidrule(r){2-2}
+\texttt{pointer} & external pointer to the \texttt{FileDescriptor} object of the \proglang{C++} proto library. Documentation for the
+\texttt{FileDescriptor} class is available from the Protocol Buffer project page:
+\url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
+\texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
+\texttt{package} & package name defined in this \texttt{.proto} file.\\[.3cm]
+\textbf{Method} & \textbf{Description} \\
+\cmidrule(r){2-2}
+\texttt{name} & Return the filename for this FileDescriptorProto.\\
+\texttt{package} & Return the file-level package name specified in this FileDescriptorProto.\\
+\texttt{as.character} & character representation of a descriptor. \\
+\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
+\texttt{asMessage} & return FileDescriptorProto message. \\
+\texttt{as.list} & return named list of descriptors defined in this file descriptor.\\
+\bottomrule
+\end{tabular}
+\end{small}
+\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class}
+\end{table}
+
+The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
+This is a wrapper S4 class around the
+\texttt{google::protobuf::FileDescriptor} \proglang{C++} class.
+Table~\ref{filedescriptor-methods-table} describes the methods
+defined for the \texttt{FileDescriptor} class.
+
+The \verb|$| operator can be used to retrieve named fields defined in
+the FileDescriptor, or to invoke pseudo-methods.
+
+<<>>=
+f <- tutorial.Person$fileDescriptor()
+f
+f$Person
+@
 
 \section{Type coercion}
 \label{sec:types}
