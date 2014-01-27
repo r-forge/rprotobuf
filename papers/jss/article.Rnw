@@ -21,7 +21,7 @@
 \RequirePackage{alltt}
 \DefineVerbatimEnvironment{example}{Verbatim}{}
 % Articles with many authors we should shorten to FirstAuthor, et al.
-\shortcites{sciencecloud,janus,dremel}
+\shortcites{sciencecloud,janus,dremel,nlme}
 \author{Dirk Eddelbuettel\\Debian Project \And 
         Murray Stokely\\Google, Inc \And
         Jeroen Ooms\\UCLA}
@@ -1120,7 +1120,7 @@ m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
 without loss of information (\Sexpr{format(100*m/n,digits=1)}\%). Upon closer
 inspection, all other data sets are objects of class \texttt{nfnGroupedData}.
 This class represents a special type of data frame that has some additional 
-attributes (such as a \emph{formula} object) used by the \pkg{nlme} package.
+attributes (such as a \emph{formula} object) used by the \pkg{nlme} package \citep{nlme}.
 Because formulas are \proglang{R} \emph{language} objects, they have little meaning to
 other systems, and are not supported by the \texttt{rexp.proto} descriptor.
 When \texttt{serialize\_pb} is used on objects of this class, it will serialize
