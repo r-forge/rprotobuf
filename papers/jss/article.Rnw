@@ -357,7 +357,7 @@ function, which can either import a single file, all files in a directory,
 or every \texttt{.proto} file provided by a particular \proglang{R} package.
 
 After importing proto files, the corresponding message descriptors are
-available from the \code{RProtoBuf:DescriptorPool} environment in 
+available by name from the \code{RProtoBuf:DescriptorPool} environment in 
 the \proglang{R} search path.  This environment is implemented with the 
 user-defined tables framework from the \pkg{RObjectTables} package
 available from the OmegaHat project \citep{RObjectTables}.  Instead of
