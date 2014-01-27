@@ -660,10 +660,12 @@ used to retrieve descriptors that are contained in the descriptor, or
 invoke pseudo-methods.
 
 When \CRANpkg{RProtoBuf} is first loaded it calls
-\texttt{readProtoFiles} to read in an example \texttt{.proto} file
+\texttt{readProtoFiles} to read in the example \texttt{addressbook.proto} file
 included with the package.  The \texttt{tutorial.Person} descriptor
-and any other descriptors defined in loaded \texttt{.proto} files are
-then available on the search path.
+and all other descriptors defined in the loaded \texttt{.proto} files are
+then available on the search path\footnote{This explains why the example in
+Table~\ref{tab:proto} lacked an explicit call to
+\texttt{readProtoFiles}.}.
 
 <<>>=
 tutorial.Person$email # field descriptor
