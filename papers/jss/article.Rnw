@@ -261,7 +261,7 @@ complexity, Protocol Buffers are based on a simple list and records
 model that is flexible and easy to use.  The schema for structured
 Protocol Buffer data is defined in \texttt{.proto} files, which may
 contain one or more message types.  Each message type has one or more
-fields.  A field is specified with a unique number, a name, a value
+fields.  A field is specified with a unique number (called a \emph{tag number}), a name, a value
 type, and a field rule specifying whether the field is optional,
 required, or repeated.  The supported value types are numbers,
 enumerations, booleans, strings, raw bytes, or other nested message
@@ -269,7 +269,10 @@ types.  The \texttt{.proto} file syntax for defining the structure of Protocol
 Buffer data is described comprehensively on Google Code\footnote{See 
 \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
 Table~\ref{tab:proto} shows an example \texttt{.proto} file that
-defines the \texttt{tutorial.Person} type.  The \proglang{R} code in the right
+defines the \texttt{tutorial.Person} type\footnote{The compound name
+  \texttt{tutorial.Person} in R is derived from the name of the
+  message and the name of the package defined at the top of the
+  \texttt{.proto} file in which it is defined.}.  The \proglang{R} code in the right
 column shows an example of creating a new message of this type and
 populating its fields.
 
@@ -650,7 +653,7 @@ has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
 
 Descriptors describe the type of a Message.  This includes what fields
 a message contains and what the types of those fields are.  Message
-descriptors are represented in \proglang{R} with the \emph{Descriptor} S4
+descriptors are represented in \proglang{R} by the \emph{Descriptor} S4
 class. The class contains the slots \texttt{pointer} and
 \texttt{type}.  Similarly to messages, the \verb|$| operator can be
 used to retrieve descriptors that are contained in the descriptor, or
@@ -666,7 +669,6 @@ then available on the search path.
 tutorial.Person$email # field descriptor
 
 tutorial.Person$PhoneType # enum descriptor
-
 
 tutorial.Person$PhoneNumber # nested type descriptor
 # same as
@@ -779,6 +781,10 @@ defined for the \texttt{EnumDescriptor} class.
 The \verb|$| operator can be used to retrieve the value of enum
 constants contained in the EnumDescriptor, or to invoke
 pseudo-methods.
+
+The \texttt{EnumDescriptor} contains information about what values this type
+defines, while the \texttt{EnumValueDescriptor} describes an
+individual enum constant of a particular type.
 
 <<>>=
 tutorial.Person$PhoneType
