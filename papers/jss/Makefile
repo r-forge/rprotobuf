@@ -1,7 +1,7 @@
 all: clean article.pdf
 
 clean:
-	rm -fr article.pdf article.out article.aux article.log article.bbl \
+	rm -fr article.out article.aux article.log article.bbl \
 	  article.blg article.brf figures/fig-0??.pdf
 
 article.pdf: article.Rnw
