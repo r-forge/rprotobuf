@@ -44,7 +44,7 @@ Protocol Buffers are a popular
 method of serializing structured data between applications---while remaining
 independent of programming languages or operating systems.
 They offer a unique combination of features, performance, and maturity that seems
-particulary well suited for data-driven applications and numerical
+particularly well suited for data-driven applications and numerical
 computing.
 The
 \CRANpkg{RProtoBuf} package provides a complete interface to Protocol
