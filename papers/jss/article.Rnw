@@ -242,7 +242,7 @@ the key features provided by Protocol Buffers for data analysis include:
 \begin{center}
 \includegraphics[width=\textwidth]{figures/protobuf-distributed-system-crop.pdf}
 \end{center}
-\caption{Example protobuf usage}
+\caption{Example ussage of Protocol Buffers.}
 \label{fig:protobuf-distributed-usecase}
 \end{figure}
 
@@ -252,7 +252,8 @@ Common use cases include populating a request remote-procedure call (RPC)
 Protocol Buffer in \proglang{R} that is then serialized and sent over the network to a
 remote server.  The server would then deserialize the message, act on the
 request, and respond with a new Protocol Buffer over the network. 
-The key difference to, say, a request to an \pkg{Rserve} instance is that
+The key difference to, say, a request to an \pkg{Rserve} 
+\citep{Urbanek:2003:Rserve,CRAN:Rserve} instance is that
 the remote server may be implemented in any language, with no
 dependence on \proglang{R}.
 
@@ -278,34 +279,36 @@ populating its fields.
 
 \noindent
 \begin{table}
-\begin{tabular}{p{.40\textwidth}p{0.55\textwidth}}
+\begin{tabular}{p{0.45\textwidth}p{0.5\textwidth}}
 \toprule
-Schema : \texttt{addressbook.proto} & Example \proglang{R} Session\\
+Schema : \texttt{addressbook.proto} & Example \proglang{R} session\\
 \cmidrule{1-2}
 \begin{minipage}{.40\textwidth}
 \vspace{2mm}
 \begin{example}
 package tutorial;
 message Person {
- required string name = 1;
- required int32 id = 2;
- optional string email = 3;
- enum PhoneType {
-   MOBILE = 0; HOME = 1;
-   WORK = 2;
- }
- message PhoneNumber {
-   required string number = 1;
-   optional PhoneType type = 2;
- }
- repeated PhoneNumber phone = 4;
+  required string name = 1;
+  required int32 id = 2;
+  optional string email = 3;
+  enum PhoneType {
+    MOBILE = 0; 
+    HOME = 1;
+    WORK = 2;
+  }
+  message PhoneNumber {
+    required string number = 1;
+    optional PhoneType type = 2;
+  }
+  repeated PhoneNumber phone = 4;
 }
 \end{example}
 \vspace{2mm}
 \end{minipage} & \begin{minipage}{.55\textwidth}
 <<echo=TRUE>>=
-library(RProtoBuf)
-p <- new(tutorial.Person,id=1,name="Dirk")
+library("RProtoBuf")
+p <- new(tutorial.Person, id=1,
+         name="Dirk")
 p$name
 p$name <- "Murray"
 cat(as.character(p))
@@ -335,7 +338,7 @@ structure, but different accessor methods are created at runtime based
 on the named fields of the specified message type, as described in the
 next section.
 
-\section{Basic Usage: Messages and descriptors}
+\section{Basic usage: Messages and descriptors}
 \label{sec:rprotobuf-basic}
 
 This section describes how to use the \proglang{R} API to create and manipulate
@@ -463,17 +466,17 @@ readBin(tf2, raw(0), 500)
 @
 
 \texttt{serialize} can also be called in a more traditional
-object oriented fashion using the dollar operator:
+object oriented fashion using the dollar operator.
 
 <<>>=
-# serialize to a file
 p$serialize(tf1)
-# serialize to a binary connection
 con <- file(tf2, open = "wb")
 p$serialize(con)
 close(con)
 @
 
+Here, we first serialize to a file \code{tf1} before we serialize to a binary
+connection to file \code{tf2}.
 
 \subsection{Parsing messages}
 
@@ -504,10 +507,9 @@ close(con)
 writeLines(as.character(message))
 @
 
-Finally, the payload of the message can be used:
+Finally, the raw vector payload of the message can be used:
 
 <<>>=
-# reading the raw vector payload of the message
 payload <- readBin(tf1, raw(0), 5000)
 message <- read(tutorial.Person, payload)
 @
@@ -517,15 +519,15 @@ message <- read(tutorial.Person, payload)
 object:
 
 <<>>=
-# reading from a file
 message <- tutorial.Person$read(tf1)
-# reading from a binary connection
 con <- file(tf2, open = "rb")
 message <- tutorial.Person$read(con)
 close(con)
-# read from the payload
 message <- tutorial.Person$read(payload)
 @
+
+Here we read first from a file, then from a binary connection and lastly from
+a message payload.
 
 
 \section{Under the hood: S4 classes, methods, and pseudo methods}
@@ -548,11 +550,8 @@ classes.
 \centering
 \begin{tabular}{lccl}
 \toprule
-\textbf{Class}      & 
-     \textbf{Slots} & 
-     \textbf{Methods} & 
-     \textbf{Dynamic Dispatch}\\
-\cmidrule{1-4}
+Class               & Slots & Methods & Dynamic dispatch\\
+\cmidrule{2-4}
 Message             & 2 & 20 & yes (field names)\\
 Descriptor          & 2 & 16 & yes (field names, enum types, nested types)\\
 FieldDescriptor     & 4 & 18 & no\\
@@ -562,7 +561,7 @@ FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
 \bottomrule
 \end{tabular}
 \caption{\label{class-summary-table}Overview of class, slot, method and
-  dispatch relationships}
+  dispatch relationships.}
 \end{table}
 
 The \CRANpkg{Rcpp} package
@@ -591,7 +590,7 @@ classes.  Completion possibilities include pseudo-method names for all
 classes, plus \emph{dynamic dispatch} on names or types specific to a given
 object.  This functionality is implemented with the
 \texttt{.DollarNames} S3 generic function defined in the \pkg{utils}
-package.
+package that is included with \pronglang{R} \citep{r}.
 
 \subsection{Messages}
 
@@ -612,14 +611,15 @@ new(tutorial.Person)
 \begin{small}
 \begin{tabular}{lp{10cm}}
 \toprule
-\textbf{Slot} & \textbf{Description} \\
+Slot & Description \\
 \cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{Message} object of the \proglang{C++} protobuf library. Documentation for the
 \texttt{Message} class is available from the Protocol Buffer project page. \\
 %(\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message}) \\
 \texttt{type} & Fully qualified name of the message. For example a \texttt{Person} message
 has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
-\textbf{Method} & \textbf{Description} \\
+
+Method & Description \\
 \cmidrule(r){2-2}
 \texttt{has} & Indicates if a message has a given field.   \\
 \texttt{clone} & Creates a clone of the message \\
@@ -646,7 +646,7 @@ has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{Message-methods-table}Description of slots and methods for the \texttt{Message} S4 class}
+\caption{\label{Message-methods-table}Description of slots and methods for the \texttt{Message} S4 class.}
 \end{table}
 
 \subsection{Descriptors}
@@ -668,12 +668,12 @@ Table~\ref{tab:proto} lacked an explicit call to
 \texttt{readProtoFiles}.}.
 
 <<>>=
-tutorial.Person$email # field descriptor
+tutorial.Person$email 
 
-tutorial.Person$PhoneType # enum descriptor
+tutorial.Person$PhoneType 
 
-tutorial.Person$PhoneNumber # nested type descriptor
-# same as
+tutorial.Person$PhoneNumber 
+
 tutorial.Person.PhoneNumber
 @
 
@@ -685,14 +685,15 @@ slots and available methods for Descriptors.
 \begin{small}
 \begin{tabular}{lp{10cm}}
 \toprule
-\textbf{Slot} & \textbf{Description} \\
+Slot & Description \\
 \cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{Descriptor} object of the \proglang{C++} proto library. Documentation for the
 \texttt{Descriptor} class is available from the Protocol Buffer project page.\\
 %\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
 \texttt{type} & Fully qualified path of the message type. \\[.3cm]
 %
-\textbf{Method} & \textbf{Description} \\
+
+Method & Description \\
 \cmidrule(r){2-2}
 \texttt{new} & Creates a prototype of a message described by this descriptor.\\
 \texttt{read} & Reads a message from a file or binary connection.\\
@@ -719,7 +720,7 @@ type in this descriptor.\\
 \bottomrule
 \end{tabular}
 \end{small}
-\caption{\label{Descriptor-methods-table}Description of slots and methods for the \texttt{Descriptor} S4 class}
+\caption{\label{Descriptor-methods-table}Description of slots and methods for the \texttt{Descriptor} S4 class.}
 \end{table}
 
 \subsection{Field descriptors}
@@ -736,14 +737,15 @@ defined for the \texttt{FieldDescriptor} class.
 \begin{small}
 \begin{tabular}{lp{10cm}}
 \toprule
-\textbf{Slot} & \textbf{Description} \\
+Slot & Description \\
 \cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{FieldDescriptor} \proglang{C++} variable \\
 \texttt{name} & Simple name of the field \\
 \texttt{full\_name} & Fully qualified name of the field \\
 \texttt{type} & Name of the message type where the field is declared \\[.3cm]
 %
-\textbf{Method} & \textbf{Description} \\
+
+Method & Description \\
 \cmidrule(r){2-2}
 \texttt{as.character} & Character representation of a descriptor\\
 \texttt{toString} & Character representation of a descriptor (same as \texttt{as.character}) \\
@@ -767,7 +769,7 @@ defined for the \texttt{FieldDescriptor} class.
 \end{tabular}
 \end{small}
 \caption{\label{fielddescriptor-methods-table}Description of slots and
-  methods for the \texttt{FieldDescriptor} S4 class}
+  methods for the \texttt{FieldDescriptor} S4 class.}
 \end{table}
 
 
@@ -798,14 +800,15 @@ tutorial.Person$PhoneType$WORK
 \begin{small}
 \begin{tabular}{lp{10cm}}
 \toprule
-\textbf{Slot} & \textbf{Description} \\
+Slot & Description \\
 \cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{EnumDescriptor} \proglang{C++} variable \\
 \texttt{name} & Simple name of the enum \\
 \texttt{full\_name} & Fully qualified name of the enum \\
 \texttt{type} & Name of the message type where the enum is declared \\[.3cm]
 %
-\textbf{Method} & \textbf{Description} \\
+
+Method & Description \\
 \cmidrule(r){2-2}
 \texttt{as.list} & return a named
 integer vector with the values of the enum and their names.\\
@@ -823,7 +826,8 @@ representation of a descriptor (same as \texttt{as.character}) \\
 \bottomrule
 \end{tabular}
 \end{small}
-\caption{\label{enumdescriptor-methods-table}Description of slots and methods for the \texttt{EnumDescriptor} S4 class}
+\caption{\label{enumdescriptor-methods-table}Description of slots and methods
+  for the \texttt{EnumDescriptor} S4 class.} 
 \end{table}
 
 \subsection{Enum value descriptors}
@@ -848,13 +852,14 @@ tutorial.Person$PhoneType$value(number=1)
 \begin{small}
 \begin{tabular}{lp{10cm}}
 \toprule
-\textbf{Slot} & \textbf{Description} \\
+Slot & Description \\
 \cmidrule(r){2-2}
 \texttt{pointer} & External pointer to the \texttt{EnumValueDescriptor} \proglang{C++} variable \\
 \texttt{name} & simple name of the enum value \\
 \texttt{full\_name} & fully qualified name of the enum value \\[.3cm]
 %
-\textbf{Method} & \textbf{Description} \\
+
+Method & Description \\
 \cmidrule(r){2-2}
 \texttt{number} & return the number of this EnumValueDescriptor. \\
 \texttt{name} & Return the name of the enum value descriptor.\\
@@ -866,7 +871,7 @@ tutorial.Person$PhoneType$value(number=1)
 \end{tabular}
 \end{small}
 \caption{\label{EnumValueDescriptor-methods-table}Description of slots
-  and methods for the \texttt{EnumValueDescriptor} S4 class}
+  and methods for the \texttt{EnumValueDescriptor} S4 class.}
 \end{table}
 
 \subsection{File descriptors}
@@ -877,14 +882,15 @@ tutorial.Person$PhoneType$value(number=1)
 \begin{small}
 \begin{tabular}{lp{10cm}}
 \toprule
-\textbf{Slot} & \textbf{Description} \\
+Slot & Description \\
 \cmidrule(r){2-2}
 \texttt{pointer} & external pointer to the \texttt{FileDescriptor} object of the \proglang{C++} proto library. Documentation for the
 \texttt{FileDescriptor} class is available from the Protocol Buffer project page:
 \url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
 \texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
 \texttt{package} & package name defined in this \texttt{.proto} file.\\[.3cm]
-\textbf{Method} & \textbf{Description} \\
+
+Method & Description \\
 \cmidrule(r){2-2}
 \texttt{name} & Return the filename for this FileDescriptorProto.\\
 \texttt{package} & Return the file-level package name specified in this FileDescriptorProto.\\
@@ -895,7 +901,7 @@ tutorial.Person$PhoneType$value(number=1)
 \bottomrule
 \end{tabular}
 \end{small}
-\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class}
+\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class.}
 \end{table}
 
 The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
@@ -1313,7 +1319,7 @@ output to a data store.
 \begin{center}
 \includegraphics[width=\textwidth]{figures/histogram-mapreduce-diag1.pdf}
 \end{center}
-\caption{Diagram of MapReduce histogram generation pattern}
+\caption{Diagram of MapReduce histogram generation pattern.}
 \label{fig:mr-histogram-pattern1}
 \end{figure}
 
@@ -1352,42 +1358,39 @@ messages in Python for later consumption by \proglang{R}, we first compile the
 This generates a Python module called \texttt{histogram\_pb2.py}, containing both the 
 descriptor information as well as methods to read and manipulate the histogram 
 message data.  The following simple Python script uses this generated
-module to create a histogram and write out the Protocol Buffer
+module to create a histogram (to which breakpoints and binned data are
+added), and writes out the Protocol Buffer
 representation to a file:
 
 \begin{Code}
 from histogram_pb2 import HistogramState;
 
-# Create empty Histogram message
 hist = HistogramState()
 
-# Add breakpoints and binned data set.
 hist.counts.extend([2, 6, 2, 4, 6])
 hist.breaks.extend(range(6))
 hist.name="Example Histogram Created in Python"
 
-# Output the histogram
 outfile = open("/tmp/hist.pb", "wb")
 outfile.write(hist.SerializeToString())
 outfile.close()
 \end{Code}
 
 The Protocol Buffer can then be read into \proglang{R} and converted to a native
-\proglang{R} histogram object for plotting:
+\proglang{R} histogram object for plotting. Here, the schema is read first,
+then the (serialized) histogram is read into the variable \code{hist} which
+is then converted a histogram object which is display as a plot.
 
 \begin{Code}
-library(RProtoBuf)
-library(HistogramTools)
+library("RProtoBuf")
+library("HistogramTools")
 
-# Read the Histogram schema
 readProtoFiles(package="HistogramTools")
 
-# Read the serialized histogram file.
 hist <- HistogramTools.HistogramState$read("/tmp/hist.pb")
 hist
 [1] "message of type 'HistogramTools.HistogramState' with 3 fields set"
 
-# Convert to native R histogram object and plot
 plot(as.histogram(hist))
 \end{Code}
 
@@ -1405,7 +1408,7 @@ One of the authors has used this design pattern for several
 large-scale studies of distributed storage systems
 \citep{sciencecloud,janus}.
 
-\section{Application: Data Interchange in web Services}
+\section{Application: Data interchange in web services}
 \label{sec:opencpu}
 
 As described earlier, the primary application of Protocol Buffers is data
@@ -1466,15 +1469,12 @@ download a data set which is part of the base \proglang{R} distribution, so we c
 verify that the object was transferred without loss of information.
 
 <<eval=FALSE>>=
-# Load packages
-library(RProtoBuf)
-library(httr)
+library("RProtoBuf")
+library("httr")
 
-# Retrieve and parse message
 req <- GET('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
 output <- unserialize_pb(req$content)
 
-# Check that no information was lost
 identical(output, MASS::Animals)
 @
 
@@ -1494,15 +1494,12 @@ message. In the example below we use the HTTP client from the \texttt{urllib2}
 module. 
 
 \begin{verbatim}
-# Import modules
 import urllib2
 from rexp_pb2 import REXP
 
-# Retrieve message
 req = urllib2.Request('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
 res = urllib2.urlopen(req)
         
-# Parse rexp.proto message
 msg = REXP()
 msg.ParseFromString(res.read())
 print(msg)
@@ -1538,9 +1535,8 @@ OpenCPU works like the \texttt{do.call} function in \proglang{R}, hence all argu
 are contained within a list.
 
 <<eval=FALSE>>=
-#requires httr >= 0.2.99
-library(httr)
-library(RProtoBuf)
+library("httr")       #requires httr >= 0.2.99
+library("RProtoBuf")
 
 args <- list(n=42, mean=100)
 payload <- serialize_pb(args, NULL)
@@ -1553,7 +1549,6 @@ req <- POST (
   )
 )
 
-#This is the output of stats::rnorm(n=42, mean=100)
 output <- unserialize_pb(req$content)
 print(output)
 @
@@ -1619,6 +1614,7 @@ a specialized pre-defined schema.
 %\begin{appendices}
 
 \section*{Appendix: The rexp.proto schema descriptor}
+
 \label{rexp.proto}
 
 Below a print of the \texttt{rexp.proto} schema (originally designed by \cite{rhipe})
