@@ -590,7 +590,7 @@ classes.  Completion possibilities include pseudo-method names for all
 classes, plus \emph{dynamic dispatch} on names or types specific to a given
 object.  This functionality is implemented with the
 \texttt{.DollarNames} S3 generic function defined in the \pkg{utils}
-package that is included with \pronglang{R} \citep{r}.
+package that is included with \proglang{R} \citep{r}.
 
 \subsection{Messages}
 
