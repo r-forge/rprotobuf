@@ -242,7 +242,7 @@ the key features provided by Protocol Buffers for data analysis include:
 \begin{center}
 \includegraphics[width=\textwidth]{figures/protobuf-distributed-system-crop.pdf}
 \end{center}
-\caption{Example ussage of Protocol Buffers.}
+\caption{Example usage of Protocol Buffers.}
 \label{fig:protobuf-distributed-usecase}
 \end{figure}
 
