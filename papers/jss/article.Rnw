@@ -124,7 +124,11 @@
 %%     guarantees better line breaks
 <<echo=FALSE,print=FALSE>>=
 ## cf http://www.jstatsoft.org/style#q12
-options(prompt = "R> ", continue = "+  ", width = 70, useFancyQuotes = FALSE, digits=4)
+options(prompt = "R> ", 
+        continue = "+  ", 
+        width = 70, 
+        useFancyQuotes = FALSE, 
+        digits = 4)
 @
 
 \maketitle
@@ -981,13 +985,13 @@ choose another type (such as enum or integer) capable of storing three
 distinct values.
 
 <<echo=FALSE,print=FALSE>>=
-    if (!exists("protobuf_unittest.TestAllTypes",
-                "RProtoBuf:DescriptorPool")) {
-        unittest.proto.file <- system.file("unitTests", "data",
-                                           "unittest.proto",
-                                           package="RProtoBuf")
-        readProtoFiles(file=unittest.proto.file)
-    }
+if (!exists("protobuf_unittest.TestAllTypes",
+            "RProtoBuf:DescriptorPool")) {
+    unittest.proto.file <- system.file("unitTests", "data",
+                                       "unittest.proto",
+                                       package="RProtoBuf")
+    readProtoFiles(file=unittest.proto.file)
+}
 @
 
 % We want a cleaner error message here.

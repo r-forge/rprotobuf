@@ -10,6 +10,7 @@ article.pdf: article.Rnw
 	bibtex article
 	pdflatex article.tex
 	pdflatex article.tex
+	R CMD Stangle article.Rnw
 
 jssarchive:
 	(cd .. && zip -r jssarchive.zip jss/)
