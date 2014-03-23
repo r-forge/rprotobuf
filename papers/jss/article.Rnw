@@ -37,7 +37,7 @@
   a sophisticated mix of applications written in general purpose and
   specialized programming languages.  
   Many formats commonly used to import and export data between
-  different programs or systems, such as \texttt{CSV} or \texttt{JSON}, are
+  different programs or systems, such as \code{CSV} or \code{JSON}, are
   verbose, inefficient, not type-safe, or tied to a specific programming language.
   Protocol Buffers are a popular
   method of serializing structured data between applications---while remaining
@@ -161,33 +161,33 @@ are usually language-specific and thereby lock the user into a single
 environment.  
 
 Data analysts and researchers often use character-separated text formats such
-as \texttt{CSV} \citep{shafranovich2005common} to export and import
-data. However, anyone who has ever used \texttt{CSV} files will have noticed
+as \code{CSV} \citep{shafranovich2005common} to export and import
+data. However, anyone who has ever used \code{CSV} files will have noticed
 that this method has many limitations: it is restricted to tabular data,
 lacks type-safety, and has limited precision for numeric values.  Moreover,
 ambiguities in the format itself frequently cause problems.  For example,
 conventions on which characters is used as separator or decimal point vary by
-country.  \emph{Extensible Markup Language} (\texttt{XML}) is another
+country.  \emph{Extensible Markup Language} (\code{XML}) is another
 well-established and widely-supported format with the ability to define just
 about any arbitrarily complex schema \citep{nolan2013xml}. However, it pays
 for this complexity with comparatively large and verbose messages, and added
 complexity at the parsing side (which are somewhat mitigated by the
-availability of mature libraries and parsers). Because \texttt{XML} is 
+availability of mature libraries and parsers). Because \code{XML} is 
 text-based and has no native notion of numeric types or arrays, it usually not a
 very practical format to store numeric data sets as they appear in statistical
 applications.
 
 
 A more modern format is \emph{JavaScript ObjectNotation} 
-(\texttt{JSON}), which is derived from the object literals of
+(\code{JSON}), which is derived from the object literals of
 \proglang{JavaScript}, and already widely-used on the world wide web. 
 Several \proglang{R} packages implement functions to parse and generate
-\texttt{JSON} data from \proglang{R} objects \citep{rjson,RJSONIO,jsonlite}.
-\texttt{JSON} natively supports arrays and four primitive types: numbers, strings,
+\code{JSON} data from \proglang{R} objects \citep{rjson,RJSONIO,jsonlite}.
+\code{JSON} natively supports arrays and four primitive types: numbers, strings,
 booleans, and null. However, as it too is a text-based format, numbers are
 stored as human-readable decimal notation which is inefficient and
 leads to loss of type (double versus integer) and precision. 
-A number of binary formats based on \texttt{JSON} have been proposed
+A number of binary formats based on \code{JSON} have been proposed
 that reduce the parsing cost and improve efficiency, but these formats
 are not widely supported.  Furthermore, such formats lack a separate
 schema for the serialized data and thus still duplicate field names
@@ -265,20 +265,20 @@ the remote server may be implemented in any language.
 While traditional IDLs have at times been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
 model that is flexible and easy to use.  The schema for structured
-Protocol Buffer data is defined in \texttt{.proto} files, which may
+Protocol Buffer data is defined in \code{.proto} files, which may
 contain one or more message types.  Each message type has one or more
 fields.  A field is specified with a unique number (called a \emph{tag number}), a name, a value
 type, and a field rule specifying whether the field is optional,
 required, or repeated.  The supported value types are numbers,
 enumerations, booleans, strings, raw bytes, or other nested message
-types.  The \texttt{.proto} file syntax for defining the structure of Protocol
+types.  The \code{.proto} file syntax for defining the structure of Protocol
 Buffer data is described comprehensively on Google Code\footnote{See 
 \url{http://code.google.com/apis/protocolbuffers/docs/proto.html}.}.
-Table~\ref{tab:proto} shows an example \texttt{.proto} file that
-defines the \texttt{tutorial.Person} type\footnote{The compound name
-  \texttt{tutorial.Person} in R is derived from the name of the
+Table~\ref{tab:proto} shows an example \code{.proto} file that
+defines the \code{tutorial.Person} type\footnote{The compound name
+  \code{tutorial.Person} in R is derived from the name of the
   message (\emph{Person}) and the name of the package defined at the top of the
-  \texttt{.proto} file in which it is defined (\emph{tutorial}).}.  The \proglang{R} code in the right
+  \code{.proto} file in which it is defined (\emph{tutorial}).}.  The \proglang{R} code in the right
 column shows an example of creating a new message of this type and
 populating its fields.
 
@@ -286,7 +286,7 @@ populating its fields.
 \begin{table}
 \begin{tabular}{p{0.45\textwidth}p{0.5\textwidth}}
 \toprule
-Schema : \texttt{addressbook.proto} & Example \proglang{R} session\\
+Schema : \code{addressbook.proto} & Example \proglang{R} session\\
 \cmidrule{1-2}
 \begin{minipage}{.40\textwidth}
 \vspace{2mm}
@@ -323,8 +323,8 @@ class(p)
 \end{minipage} \\
 \bottomrule
 \end{tabular}
-\caption{The schema representation from a \texttt{.proto} file for the
-  \texttt{tutorial.Person} class (left) and simple \proglang{R} code for creating
+\caption{The schema representation from a \code{.proto} file for the
+  \code{tutorial.Person} class (left) and simple \proglang{R} code for creating
   an object of this class and accessing its fields (right).}
 \label{tab:proto}
 \end{table}
@@ -333,7 +333,7 @@ class(p)
 For added speed and efficiency, the \proglang{C++}, \proglang{Java},
 and \proglang{Python} bindings to
 Protocol Buffers are used with a compiler that translates a Protocol
-Buffer schema description file (ending in \texttt{.proto}) into
+Buffer schema description file (ending in \code{.proto}) into
 language-specific classes that can be used to create, read, write, and
 manipulate Protocol Buffer messages.  The \proglang{R} interface, in contrast,
 uses a reflection-based API that makes some operations slightly
@@ -353,16 +353,16 @@ binary representation of the message (often called the \emph{payload}) to files 
 The two fundamental building blocks of Protocol Buffers are \emph{Messages}
 and \emph{Descriptors}.  Messages provide a common abstract encapsulation of
 structured data fields of the type specified in a Message Descriptor.
-Message Descriptors are defined in \texttt{.proto} files and define a
+Message Descriptors are defined in \code{.proto} files and define a
 schema for a particular named class of messages.
 
-\subsection[Importing message descriptors from .proto files]{Importing message descriptors from \texttt{.proto} files}
+\subsection[Importing message descriptors from .proto files]{Importing message descriptors from \code{.proto} files}
 
 To create or parse a Protocol Buffer Message, one must first read in 
-the message type specification from a \texttt{.proto} file. The 
-\texttt{.proto} files are imported using the \code{readProtoFiles}
+the message type specification from a \code{.proto} file. The 
+\code{.proto} files are imported using the \code{readProtoFiles}
 function, which can either import a single file, all files in a directory,
-or every \texttt{.proto} file provided by a particular \proglang{R} package.
+or every \code{.proto} file provided by a particular \proglang{R} package.
 
 After importing proto files, the corresponding message descriptors are
 available by name from the \code{RProtoBuf:DescriptorPool} environment in 
@@ -379,13 +379,13 @@ ls("RProtoBuf:DescriptorPool")
 
 \subsection{Creating a message}
 
-New messages are created with the \texttt{new} function which accepts
+New messages are created with the \code{new} function which accepts
 a Message Descriptor and optionally a list of ``name = value'' pairs
 to set in the message.
 %The objects contained in the special environment are
 %descriptors for their associated message types. Descriptors will be
 %discussed in detail in another part of this document, but for the
-%purpose of this section, descriptors are just used with the \texttt{new}
+%purpose of this section, descriptors are just used with the \code{new}
 %function to create messages.
 
 <<>>=
@@ -423,7 +423,7 @@ Section~\ref{sec:int64} for working with large integer values.
 
 \subsection{Display messages}
 
-Protocol Buffer messages and descriptors implement \texttt{show}
+Protocol Buffer messages and descriptors implement \code{show}
 methods that provide basic information about the message:
 
 <<>>=
@@ -431,7 +431,7 @@ p
 @
 
 For additional information, such as for debugging purposes,
-the \texttt{as.character} method provides a more complete ASCII
+the \code{as.character} method provides a more complete ASCII
 representation of the contents of a message.
 
 <<>>=
@@ -442,7 +442,7 @@ writeLines(as.character(p))
 
 One of the primary benefits of Protocol Buffers is the efficient
 binary wire-format representation.  
-The \texttt{serialize} method is implemented for
+The \code{serialize} method is implemented for
 Protocol Buffer messages to serialize a message into a sequence of
 bytes (raw vector) that represents the message.
 The raw bytes can then be parsed back into the original message safely
@@ -470,7 +470,7 @@ close(con)
 readBin(tf2, raw(0), 500)
 @
 
-\texttt{serialize} can also be called in a more traditional
+\code{serialize} can also be called in a more traditional
 object oriented fashion using the dollar operator.
 
 <<>>=
@@ -502,7 +502,7 @@ msg <- read(tutorial.Person, tf1)
 writeLines(as.character(msg))
 @
 
-The \texttt{input} argument of \texttt{read} can also be a binary
+The \code{input} argument of \code{read} can also be a binary
 readable \proglang{R} connection, such as a binary file connection:
 
 <<>>=
@@ -520,7 +520,7 @@ message <- read(tutorial.Person, payload)
 @
 
 
-\texttt{read} can also be used as a pseudo-method of the descriptor
+\code{read} can also be used as a pseudo-method of the descriptor
 object:
 
 <<>>=
@@ -541,12 +541,12 @@ a message payload.
 The \pkg{RProtoBuf} package uses the S4 system to store
 information about descriptors and messages.  Using the S4 system
 allows the package to dispatch methods that are not
-generic in the S3 sense, such as \texttt{new} and
-\texttt{serialize}.
+generic in the S3 sense, such as \code{new} and
+\code{serialize}.
 Table~\ref{class-summary-table} lists the six
 primary Message and Descriptor classes in \pkg{RProtoBuf}.  Each \proglang{R} object
 contains an external pointer to an object managed by the
-\texttt{protobuf} \proglang{C++} library, and the \proglang{R} objects make calls into more
+\code{protobuf} \proglang{C++} library, and the \proglang{R} objects make calls into more
 than 100 \proglang{C++} functions that provide the
 glue code between the \proglang{R} language classes and the underlying \proglang{C++}
 classes.
@@ -594,17 +594,17 @@ Additionally, \pkg{RProtoBuf} supports tab completion for all
 classes.  Completion possibilities include pseudo-method names for all
 classes, plus \emph{dynamic dispatch} on names or types specific to a given
 object.  This functionality is implemented with the
-\texttt{.DollarNames} S3 generic function defined in the \pkg{utils}
+\code{.DollarNames} S3 generic function defined in the \pkg{utils}
 package that is included with \proglang{R} \citep{r}.
 
 \subsection{Messages}
 
-The \texttt{Message} S4 class represents Protocol Buffer Messages and
-is the core abstraction of \pkg{RProtoBuf}. Each \texttt{Message}
-contains a pointer to a \texttt{Descriptor} which defines the schema
+The \code{Message} S4 class represents Protocol Buffer Messages and
+is the core abstraction of \pkg{RProtoBuf}. Each \code{Message}
+contains a pointer to a \code{Descriptor} which defines the schema
 of the data defined in the Message, as well as a number of
-\texttt{FieldDescriptors} for the individual fields of the message.  A
-complete list of the slots and methods for \texttt{Messages}
+\code{FieldDescriptors} for the individual fields of the message.  A
+complete list of the slots and methods for \code{Messages}
 is available in Table~\ref{Message-methods-table}.
 
 <<>>=
@@ -618,40 +618,40 @@ new(tutorial.Person)
 \toprule
 Slot & Description \\
 \cmidrule(r){2-2}
-\texttt{pointer} & External pointer to the \texttt{Message} object of the \proglang{C++} protobuf library. Documentation for the
-\texttt{Message} class is available from the Protocol Buffer project page. \\
+\code{pointer} & External pointer to the \code{Message} object of the \proglang{C++} protobuf library. Documentation for the
+\code{Message} class is available from the Protocol Buffer project page. \\
 %(\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message}) \\
-\texttt{type} & Fully qualified name of the message. For example a \texttt{Person} message
-has its \texttt{type} slot set to \texttt{tutorial.Person} \\[.3cm]
+\code{type} & Fully qualified name of the message. For example a \code{Person} message
+has its \code{type} slot set to \code{tutorial.Person} \\[.3cm]
 
 Method & Description \\
 \cmidrule(r){2-2}
-\texttt{has} & Indicates if a message has a given field.   \\
-\texttt{clone} & Creates a clone of the message \\
-\texttt{isInitialized} & Indicates if a message has all its required fields set\\
-\texttt{serialize} & serialize a message to a file, binary connection, or raw vector\\
-\texttt{clear} & Clear one or several fields of a message, or the entire message\\
-\texttt{size} & The number of elements in a message field\\
-\texttt{bytesize} & The number of bytes the message would take once serialized\\[3mm]
+\code{has} & Indicates if a message has a given field.   \\
+\code{clone} & Creates a clone of the message \\
+\code{isInitialized} & Indicates if a message has all its required fields set\\
+\code{serialize} & serialize a message to a file, binary connection, or raw vector\\
+\code{clear} & Clear one or several fields of a message, or the entire message\\
+\code{size} & The number of elements in a message field\\
+\code{bytesize} & The number of bytes the message would take once serialized\\[3mm]
 %
-\texttt{swap} & swap elements of a repeated field of a message\\
-\texttt{set} & set elements of a repeated field\\
-\texttt{fetch} & fetch elements of a repeated field\\
-\texttt{setExtension} & set an extension of a message\\
-\texttt{getExtension} & get the value of an extension of a message\\
-\texttt{add} & add elements to a repeated field \\[3mm]
+\code{swap} & swap elements of a repeated field of a message\\
+\code{set} & set elements of a repeated field\\
+\code{fetch} & fetch elements of a repeated field\\
+\code{setExtension} & set an extension of a message\\
+\code{getExtension} & get the value of an extension of a message\\
+\code{add} & add elements to a repeated field \\[3mm]
 %
-\texttt{str} & the \proglang{R} structure of the message\\
-\texttt{as.character} & character representation of a message\\
-\texttt{toString} & character representation of a message (same as \texttt{as.character}) \\
-\texttt{as.list} & converts message to a named \proglang{R} list\\
-\texttt{update} & updates several fields of a message at once\\
-\texttt{descriptor} & get the descriptor of the message type of this message\\
-\texttt{fileDescriptor} & get the file descriptor of this message's descriptor\\
+\code{str} & the \proglang{R} structure of the message\\
+\code{as.character} & character representation of a message\\
+\code{toString} & character representation of a message (same as \code{as.character}) \\
+\code{as.list} & converts message to a named \proglang{R} list\\
+\code{update} & updates several fields of a message at once\\
+\code{descriptor} & get the descriptor of the message type of this message\\
+\code{fileDescriptor} & get the file descriptor of this message's descriptor\\
 \hline
 \end{tabular}
 \end{small}
-\caption{\label{Message-methods-table}Description of slots and methods for the \texttt{Message} S4 class.}
+\caption{\label{Message-methods-table}Description of slots and methods for the \code{Message} S4 class.}
 \end{table}
 
 \subsection{Descriptors}
@@ -659,18 +659,18 @@ Method & Description \\
 Descriptors describe the type of a Message.  This includes what fields
 a message contains and what the types of those fields are.  Message
 descriptors are represented in \proglang{R} by the \emph{Descriptor} S4
-class. The class contains the slots \texttt{pointer} and
-\texttt{type}.  Similarly to messages, the \verb|$| operator can be
+class. The class contains the slots \code{pointer} and
+\code{type}.  Similarly to messages, the \verb|$| operator can be
 used to retrieve descriptors that are contained in the descriptor, or
 invoke pseudo-methods.
 
 When \pkg{RProtoBuf} is first loaded it calls
-\texttt{readProtoFiles} to read in the example \texttt{addressbook.proto} file
-included with the package.  The \texttt{tutorial.Person} descriptor
-and all other descriptors defined in the loaded \texttt{.proto} files are
+\code{readProtoFiles} to read in the example \code{addressbook.proto} file
+included with the package.  The \code{tutorial.Person} descriptor
+and all other descriptors defined in the loaded \code{.proto} files are
 then available on the search path\footnote{This explains why the example in
 Table~\ref{tab:proto} lacked an explicit call to
-\texttt{readProtoFiles}.}.
+\code{readProtoFiles}.}.
 
 <<>>=
 tutorial.Person$email 
@@ -692,40 +692,40 @@ slots and available methods for Descriptors.
 \toprule
 Slot & Description \\
 \cmidrule(r){2-2}
-\texttt{pointer} & External pointer to the \texttt{Descriptor} object of the \proglang{C++} proto library. Documentation for the
-\texttt{Descriptor} class is available from the Protocol Buffer project page.\\
+\code{pointer} & External pointer to the \code{Descriptor} object of the \proglang{C++} proto library. Documentation for the
+\code{Descriptor} class is available from the Protocol Buffer project page.\\
 %\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
-\texttt{type} & Fully qualified path of the message type. \\[.3cm]
+\code{type} & Fully qualified path of the message type. \\[.3cm]
 %
 
 Method & Description \\
 \cmidrule(r){2-2}
-\texttt{new} & Creates a prototype of a message described by this descriptor.\\
-\texttt{read} & Reads a message from a file or binary connection.\\
-\texttt{readASCII} & Read a message in ASCII format from a file or
+\code{new} & Creates a prototype of a message described by this descriptor.\\
+\code{read} & Reads a message from a file or binary connection.\\
+\code{readASCII} & Read a message in ASCII format from a file or
 text connection.\\
-\texttt{name} & Retrieve the name of the message type associated with
+\code{name} & Retrieve the name of the message type associated with
 this descriptor.\\
-\texttt{as.character} & character representation of a descriptor\\
-\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}) \\
-\texttt{as.list} & return a named
+\code{as.character} & character representation of a descriptor\\
+\code{toString} & character representation of a descriptor (same as \code{as.character}) \\
+\code{as.list} & return a named
 list of the field, enum, and nested descriptors included in this descriptor.\\
-\texttt{asMessage} & return DescriptorProto message. \\
-\texttt{fileDescriptor} & Retrieve the file descriptor of this
+\code{asMessage} & return DescriptorProto message. \\
+\code{fileDescriptor} & Retrieve the file descriptor of this
 descriptor.\\
-\texttt{containing\_type} & Retrieve the descriptor describing the message type containing this descriptor.\\
-\texttt{field\_count} & Return the number of fields in this descriptor.\\
-\texttt{field} & Return the descriptor for the specified field in this descriptor.\\
-\texttt{nested\_type\_count} & The number of nested types in this descriptor.\\
-\texttt{nested\_type} & Return the descriptor for the specified nested 
+\code{containing\_type} & Retrieve the descriptor describing the message type containing this descriptor.\\
+\code{field\_count} & Return the number of fields in this descriptor.\\
+\code{field} & Return the descriptor for the specified field in this descriptor.\\
+\code{nested\_type\_count} & The number of nested types in this descriptor.\\
+\code{nested\_type} & Return the descriptor for the specified nested 
 type in this descriptor.\\
-\texttt{enum\_type\_count} & The number of enum types in this descriptor.\\
-\texttt{enum\_type} & Return the descriptor for the specified enum
+\code{enum\_type\_count} & The number of enum types in this descriptor.\\
+\code{enum\_type} & Return the descriptor for the specified enum
 type in this descriptor.\\
 \bottomrule
 \end{tabular}
 \end{small}
-\caption{\label{Descriptor-methods-table}Description of slots and methods for the \texttt{Descriptor} S4 class.}
+\caption{\label{Descriptor-methods-table}Description of slots and methods for the \code{Descriptor} S4 class.}
 \end{table}
 
 \subsection{Field descriptors}
@@ -733,9 +733,9 @@ type in this descriptor.\\
 
 The class \emph{FieldDescriptor} represents field
 descriptors in \proglang{R}. This is a wrapper S4 class around the
-\texttt{google::protobuf::FieldDescriptor} \proglang{C++} class.
+\code{google::protobuf::FieldDescriptor} \proglang{C++} class.
 Table~\ref{fielddescriptor-methods-table} describes the methods
-defined for the \texttt{FieldDescriptor} class.
+defined for the \code{FieldDescriptor} class.
 
 \begin{table}[tbp]
 \centering
@@ -744,37 +744,37 @@ defined for the \texttt{FieldDescriptor} class.
 \toprule
 Slot & Description \\
 \cmidrule(r){2-2}
-\texttt{pointer} & External pointer to the \texttt{FieldDescriptor} \proglang{C++} variable \\
-\texttt{name} & Simple name of the field \\
-\texttt{full\_name} & Fully qualified name of the field \\
-\texttt{type} & Name of the message type where the field is declared \\[.3cm]
+\code{pointer} & External pointer to the \code{FieldDescriptor} \proglang{C++} variable \\
+\code{name} & Simple name of the field \\
+\code{full\_name} & Fully qualified name of the field \\
+\code{type} & Name of the message type where the field is declared \\[.3cm]
 %
 
 Method & Description \\
 \cmidrule(r){2-2}
-\texttt{as.character} & Character representation of a descriptor\\
-\texttt{toString} & Character representation of a descriptor (same as \texttt{as.character}) \\
-\texttt{asMessage} & Return FieldDescriptorProto message. \\
-\texttt{name} & Return the name of the field descriptor.\\
-\texttt{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
-\texttt{containing\_type} & Return the containing descriptor of this field.\\
-\texttt{is\_extension} & Return TRUE if this field is an extension.\\
-\texttt{number} & Gets the declared tag number of the field.\\
-\texttt{type} & Gets the type of the field.\\
-\texttt{cpp\_type} & Gets the \proglang{C++} type of the field.\\
-\texttt{label} & Gets the label of a field (optional, required, or repeated).\\
-\texttt{is\_repeated} & Return TRUE if this field is repeated.\\
-\texttt{is\_required} & Return TRUE if this field is required.\\
-\texttt{is\_optional} & Return TRUE if this field is optional.\\
-\texttt{has\_default\_value} & Return TRUE if this field has a default value.\\
-\texttt{default\_value} & Return the default value.\\
-\texttt{message\_type} & Return the message type if this is a message type field.\\
-\texttt{enum\_type} & Return the enum type if this is an enum type field.\\
+\code{as.character} & Character representation of a descriptor\\
+\code{toString} & Character representation of a descriptor (same as \code{as.character}) \\
+\code{asMessage} & Return FieldDescriptorProto message. \\
+\code{name} & Return the name of the field descriptor.\\
+\code{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
+\code{containing\_type} & Return the containing descriptor of this field.\\
+\code{is\_extension} & Return TRUE if this field is an extension.\\
+\code{number} & Gets the declared tag number of the field.\\
+\code{type} & Gets the type of the field.\\
+\code{cpp\_type} & Gets the \proglang{C++} type of the field.\\
+\code{label} & Gets the label of a field (optional, required, or repeated).\\
+\code{is\_repeated} & Return TRUE if this field is repeated.\\
+\code{is\_required} & Return TRUE if this field is required.\\
+\code{is\_optional} & Return TRUE if this field is optional.\\
+\code{has\_default\_value} & Return TRUE if this field has a default value.\\
+\code{default\_value} & Return the default value.\\
+\code{message\_type} & Return the message type if this is a message type field.\\
+\code{enum\_type} & Return the enum type if this is an enum type field.\\
 \bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{fielddescriptor-methods-table}Description of slots and
-  methods for the \texttt{FieldDescriptor} S4 class.}
+  methods for the \code{FieldDescriptor} S4 class.}
 \end{table}
 
 
@@ -783,16 +783,16 @@ Method & Description \\
 
 The class \emph{EnumDescriptor} represents enum descriptors in \proglang{R}.
 This is a wrapper S4 class around the
-\texttt{google::protobuf::EnumDescriptor} \proglang{C++} class.
+\code{google::protobuf::EnumDescriptor} \proglang{C++} class.
 Table~\ref{enumdescriptor-methods-table} describes the methods
-defined for the \texttt{EnumDescriptor} class.
+defined for the \code{EnumDescriptor} class.
 
 The \verb|$| operator can be used to retrieve the value of enum
 constants contained in the EnumDescriptor, or to invoke
 pseudo-methods.
 
-The \texttt{EnumDescriptor} contains information about what values this type
-defines, while the \texttt{EnumValueDescriptor} describes an
+The \code{EnumDescriptor} contains information about what values this type
+defines, while the \code{EnumValueDescriptor} describes an
 individual enum constant of a particular type.
 
 <<>>=
@@ -807,32 +807,32 @@ tutorial.Person$PhoneType$WORK
 \toprule
 Slot & Description \\
 \cmidrule(r){2-2}
-\texttt{pointer} & External pointer to the \texttt{EnumDescriptor} \proglang{C++} variable \\
-\texttt{name} & Simple name of the enum \\
-\texttt{full\_name} & Fully qualified name of the enum \\
-\texttt{type} & Name of the message type where the enum is declared \\[.3cm]
+\code{pointer} & External pointer to the \code{EnumDescriptor} \proglang{C++} variable \\
+\code{name} & Simple name of the enum \\
+\code{full\_name} & Fully qualified name of the enum \\
+\code{type} & Name of the message type where the enum is declared \\[.3cm]
 %
 
 Method & Description \\
 \cmidrule(r){2-2}
-\texttt{as.list} & return a named
+\code{as.list} & return a named
 integer vector with the values of the enum and their names.\\
-\texttt{as.character} & character representation of a descriptor\\
-\texttt{toString} & character
-representation of a descriptor (same as \texttt{as.character}) \\
-\texttt{asMessage} & return EnumDescriptorProto message. \\
-\texttt{name} & Return the name of the enum descriptor.\\
-\texttt{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
-\texttt{containing\_type} & Return the containing descriptor of this field.\\
-\texttt{length} & Return the number of constants in this enum.\\
-\texttt{has} & Return TRUE if this enum contains the specified named constant string.\\
-\texttt{value\_count} & Return the number of constants in this enum (same as \texttt{length}).\\
-\texttt{value} & Return the EnumValueDescriptor of an enum value of specified index, name, or number.\\
+\code{as.character} & character representation of a descriptor\\
+\code{toString} & character
+representation of a descriptor (same as \code{as.character}) \\
+\code{asMessage} & return EnumDescriptorProto message. \\
+\code{name} & Return the name of the enum descriptor.\\
+\code{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
+\code{containing\_type} & Return the containing descriptor of this field.\\
+\code{length} & Return the number of constants in this enum.\\
+\code{has} & Return TRUE if this enum contains the specified named constant string.\\
+\code{value\_count} & Return the number of constants in this enum (same as \code{length}).\\
+\code{value} & Return the EnumValueDescriptor of an enum value of specified index, name, or number.\\
 \bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{enumdescriptor-methods-table}Description of slots and methods
-  for the \texttt{EnumDescriptor} S4 class.} 
+  for the \code{EnumDescriptor} S4 class.} 
 \end{table}
 
 \subsection{Enum value descriptors}
@@ -840,9 +840,9 @@ representation of a descriptor (same as \texttt{as.character}) \\
 
 The class \emph{EnumValueDescriptor} represents enumeration value
 descriptors in \proglang{R}.  This is a wrapper S4 class around the
-\texttt{google::protobuf::EnumValueDescriptor} \proglang{C++} class.
+\code{google::protobuf::EnumValueDescriptor} \proglang{C++} class.
 Table~\ref{EnumValueDescriptor-methods-table} describes the methods
-defined for the \texttt{EnumValueDescriptor} class.
+defined for the \code{EnumValueDescriptor} class.
 
 The \verb|$| operator can be used to invoke pseudo-methods.
 
@@ -859,24 +859,24 @@ tutorial.Person$PhoneType$value(number=1)
 \toprule
 Slot & Description \\
 \cmidrule(r){2-2}
-\texttt{pointer} & External pointer to the \texttt{EnumValueDescriptor} \proglang{C++} variable \\
-\texttt{name} & simple name of the enum value \\
-\texttt{full\_name} & fully qualified name of the enum value \\[.3cm]
+\code{pointer} & External pointer to the \code{EnumValueDescriptor} \proglang{C++} variable \\
+\code{name} & simple name of the enum value \\
+\code{full\_name} & fully qualified name of the enum value \\[.3cm]
 %
 
 Method & Description \\
 \cmidrule(r){2-2}
-\texttt{number} & return the number of this EnumValueDescriptor. \\
-\texttt{name} & Return the name of the enum value descriptor.\\
-\texttt{enum\_type} & return the EnumDescriptor type of this EnumValueDescriptor. \\
-\texttt{as.character} & character representation of a descriptor. \\
-\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
-\texttt{asMessage} & return EnumValueDescriptorProto message. \\
+\code{number} & return the number of this EnumValueDescriptor. \\
+\code{name} & Return the name of the enum value descriptor.\\
+\code{enum\_type} & return the EnumDescriptor type of this EnumValueDescriptor. \\
+\code{as.character} & character representation of a descriptor. \\
+\code{toString} & character representation of a descriptor (same as \code{as.character}). \\
+\code{asMessage} & return EnumValueDescriptorProto message. \\
 \bottomrule
 \end{tabular}
 \end{small}
 \caption{\label{EnumValueDescriptor-methods-table}Description of slots
-  and methods for the \texttt{EnumValueDescriptor} S4 class.}
+  and methods for the \code{EnumValueDescriptor} S4 class.}
 \end{table}
 
 \subsection{File descriptors}
@@ -889,31 +889,31 @@ Method & Description \\
 \toprule
 Slot & Description \\
 \cmidrule(r){2-2}
-\texttt{pointer} & external pointer to the \texttt{FileDescriptor} object of the \proglang{C++} proto library. Documentation for the
-\texttt{FileDescriptor} class is available from the Protocol Buffer project page:
+\code{pointer} & external pointer to the \code{FileDescriptor} object of the \proglang{C++} proto library. Documentation for the
+\code{FileDescriptor} class is available from the Protocol Buffer project page:
 \url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
-\texttt{filename} & fully qualified pathname of the \texttt{.proto} file.\\
-\texttt{package} & package name defined in this \texttt{.proto} file.\\[.3cm]
+\code{filename} & fully qualified pathname of the \code{.proto} file.\\
+\code{package} & package name defined in this \code{.proto} file.\\[.3cm]
 
 Method & Description \\
 \cmidrule(r){2-2}
-\texttt{name} & Return the filename for this FileDescriptorProto.\\
-\texttt{package} & Return the file-level package name specified in this FileDescriptorProto.\\
-\texttt{as.character} & character representation of a descriptor. \\
-\texttt{toString} & character representation of a descriptor (same as \texttt{as.character}). \\
-\texttt{asMessage} & return FileDescriptorProto message. \\
-\texttt{as.list} & return named list of descriptors defined in this file descriptor.\\
+\code{name} & Return the filename for this FileDescriptorProto.\\
+\code{package} & Return the file-level package name specified in this FileDescriptorProto.\\
+\code{as.character} & character representation of a descriptor. \\
+\code{toString} & character representation of a descriptor (same as \code{as.character}). \\
+\code{asMessage} & return FileDescriptorProto message. \\
+\code{as.list} & return named list of descriptors defined in this file descriptor.\\
 \bottomrule
 \end{tabular}
 \end{small}
-\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \texttt{FileDescriptor} S4 class.}
+\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \code{FileDescriptor} S4 class.}
 \end{table}
 
 The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
 This is a wrapper S4 class around the
-\texttt{google::protobuf::FileDescriptor} \proglang{C++} class.
+\code{google::protobuf::FileDescriptor} \proglang{C++} class.
 Table~\ref{filedescriptor-methods-table} describes the methods
-defined for the \texttt{FileDescriptor} class.
+defined for the \code{FileDescriptor} class.
 
 The \verb|$| operator can be used to retrieve named fields defined in
 the FileDescriptor, or to invoke pseudo-methods.
@@ -945,24 +945,24 @@ integers, and 64-bit integers.
 \toprule
 Field type & \proglang{R} type (non repeated) & \proglang{R} type (repeated) \\
 \cmidrule(r){2-3}
-double	& \texttt{double} vector & \texttt{double} vector \\
-float	& \texttt{double} vector & \texttt{double} vector \\[3mm]
-uint32	  & \texttt{double} vector & \texttt{double} vector \\
-fixed32	  & \texttt{double} vector & \texttt{double} vector \\[3mm]
-int32	  & \texttt{integer} vector & \texttt{integer} vector \\
-sint32	  & \texttt{integer} vector & \texttt{integer} vector \\
-sfixed32  & \texttt{integer} vector & \texttt{integer} vector \\[3mm]
-int64	  & \texttt{integer} or \texttt{character}
-vector    & \texttt{integer} or \texttt{character} vector \\
-uint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
-sint64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
-fixed64	  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\
-sfixed64  & \texttt{integer} or \texttt{character} vector & \texttt{integer} or \texttt{character} vector \\[3mm]
-bool	& \texttt{logical} vector & \texttt{logical} vector \\[3mm]
-string	& \texttt{character} vector & \texttt{character} vector \\
-bytes	& \texttt{character} vector & \texttt{character} vector \\[3mm]
-enum & \texttt{integer} vector & \texttt{integer} vector \\[3mm]
-message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \texttt{S4} objects of class \texttt{Message} \\
+double	& \code{double} vector & \code{double} vector \\
+float	& \code{double} vector & \code{double} vector \\[3mm]
+uint32	  & \code{double} vector & \code{double} vector \\
+fixed32	  & \code{double} vector & \code{double} vector \\[3mm]
+int32	  & \code{integer} vector & \code{integer} vector \\
+sint32	  & \code{integer} vector & \code{integer} vector \\
+sfixed32  & \code{integer} vector & \code{integer} vector \\[3mm]
+int64	  & \code{integer} or \code{character}
+vector    & \code{integer} or \code{character} vector \\
+uint64	  & \code{integer} or \code{character} vector & \code{integer} or \code{character} vector \\
+sint64	  & \code{integer} or \code{character} vector & \code{integer} or \code{character} vector \\
+fixed64	  & \code{integer} or \code{character} vector & \code{integer} or \code{character} vector \\
+sfixed64  & \code{integer} or \code{character} vector & \code{integer} or \code{character} vector \\[3mm]
+bool	& \code{logical} vector & \code{logical} vector \\[3mm]
+string	& \code{character} vector & \code{character} vector \\
+bytes	& \code{character} vector & \code{character} vector \\[3mm]
+enum & \code{integer} vector & \code{integer} vector \\[3mm]
+message & \code{S4} object of class \code{Message} & \code{list} of \code{S4} objects of class \code{Message} \\
 \bottomrule
 \end{tabular}
 \end{small}
@@ -975,12 +975,12 @@ message & \texttt{S4} object of class \texttt{Message} & \texttt{list} of \textt
 
 \subsection{Booleans}
 
-\proglang{R} booleans can accept three values: \texttt{TRUE}, \texttt{FALSE}, and
-\texttt{NA}.  However, most other languages, including the Protocol
-Buffer schema, only accept \texttt{TRUE} or \texttt{FALSE}.  This means
+\proglang{R} booleans can accept three values: \code{TRUE}, \code{FALSE}, and
+\code{NA}.  However, most other languages, including the Protocol
+Buffer schema, only accept \code{TRUE} or \code{FALSE}.  This means
 that we simply can not store \proglang{R} logical vectors that include all three
 possible values as booleans.  The library will refuse to store
-\texttt{NA}s in Protocol Buffer boolean fields, and users must instead
+\code{NA}s in Protocol Buffer boolean fields, and users must instead
 choose another type (such as enum or integer) capable of storing three
 distinct values.
 
@@ -1058,7 +1058,7 @@ test$repeated_int64 <- c("9007199254740992", "9007199254740993")
 When reading the value back into \proglang{R}, numeric types are returned by
 default, but when the full precision is required a character value
 will be returned if the \code{RProtoBuf.int64AsString} option is set
-to \texttt{TRUE}.  The character values are useful because they can
+to \code{TRUE}.  The character values are useful because they can
 accurately be used as unique identifiers and can easily be passed to \proglang{R}
 packages such as \pkg{int64} \citep{int64} or \pkg{bit64}
 \citep{bit64} which represent 64-bit integers in \proglang{R}.
@@ -1095,9 +1095,9 @@ msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 @
 
-In order to accomplish this, \pkg{RProtoBuf} uses the same catch-all \texttt{proto}
+In order to accomplish this, \pkg{RProtoBuf} uses the same catch-all \code{proto}
 schema used by \pkg{RHIPE} for exchanging \proglang{R} data with Hadoop \citep{rhipe}. This 
-schema, which we will refer to as \texttt{rexp.proto}, is printed in
+schema, which we will refer to as \code{rexp.proto}, is printed in
 %appendix \ref{rexp.proto}.
 the appendix.
 The Protocol Buffer messages generated by \pkg{RProtoBuf} and
@@ -1105,17 +1105,17 @@ The Protocol Buffer messages generated by \pkg{RProtoBuf} and
 same schema. This shows the power of using a schema-based cross-platform format such
 as Protocol Buffers: interoperability is achieved without effort or close coordination.
 
-The \texttt{rexp.proto} schema supports all main \proglang{R} storage types holding \emph{data}.
-These include \texttt{NULL}, \texttt{list} and vectors of type \texttt{logical}, 
-\texttt{character}, \texttt{double}, \texttt{integer}, and \texttt{complex}. In addition,
-every type can contain a named set of attributes, as is the case in \proglang{R}. The \texttt{rexp.proto}
-schema does not support some of the special \proglang{R} specific storage types, such as \texttt{function},
-\texttt{language} or \texttt{environment}. Such objects have no native equivalent 
+The \code{rexp.proto} schema supports all main \proglang{R} storage types holding \emph{data}.
+These include \code{NULL}, \code{list} and vectors of type \code{logical}, 
+\code{character}, \code{double}, \code{integer}, and \code{complex}. In addition,
+every type can contain a named set of attributes, as is the case in \proglang{R}. The \code{rexp.proto}
+schema does not support some of the special \proglang{R} specific storage types, such as \code{function},
+\code{language} or \code{environment}. Such objects have no native equivalent 
 type in Protocol Buffers, and have little meaning outside the context of \proglang{R}.
-When serializing \proglang{R} objects using \texttt{serialize\_pb}, values or attributes of
+When serializing \proglang{R} objects using \code{serialize\_pb}, values or attributes of
 unsupported types are skipped with a warning. If the user really wishes to serialize these 
 objects, they need to be converted into a supported type. For example, the  can use 
-\texttt{deparse} to convert functions or language objects into strings, or \texttt{as.list}
+\code{deparse} to convert functions or language objects into strings, or \code{as.list}
 for environments.
 
 \subsection[Evaluation: Converting R data sets]{Evaluation: Converting \proglang{R} data sets}
@@ -1131,8 +1131,8 @@ n <- nrow(datasets)
 
 There are \Sexpr{n} standard data sets included in the \pkg{datasets}
 package included with \proglang{R}. These data sets include data frames, matrices, time series, tables lists,
-and some more exotic data classes. The \texttt{can\_serialize\_pb} method is 
-used to determine which of those can fully be converted to the \texttt{rexp.proto}
+and some more exotic data classes. The \code{can\_serialize\_pb} method is 
+used to determine which of those can fully be converted to the \code{rexp.proto}
 Protocol Buffer representation. This method simply checks if any of the values or
 attributes in an object is of an unsupported type:
 
@@ -1142,12 +1142,12 @@ m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
 
 \Sexpr{m} data sets can be converted to Protocol Buffers
 without loss of information (\Sexpr{format(100*m/n,digits=1)}\%). Upon closer
-inspection, all other data sets are objects of class \texttt{nfnGroupedData}.
+inspection, all other data sets are objects of class \code{nfnGroupedData}.
 This class represents a special type of data frame that has some additional 
 attributes (such as a \emph{formula} object) used by the \pkg{nlme} package \citep{nlme}.
 Because formulas are \proglang{R} \emph{language} objects, they have little meaning to
-other systems, and are not supported by the \texttt{rexp.proto} descriptor.
-When \texttt{serialize\_pb} is used on objects of this class, it will serialize
+other systems, and are not supported by the \code{rexp.proto} descriptor.
+When \code{serialize\_pb} is used on objects of this class, it will serialize
 the data frame and all attributes, except for the formula.
 
 <<>>=
@@ -1354,13 +1354,13 @@ the Map or Reduce tasks are written in \proglang{R}, or if those components are
 written in other languages and only the resulting output histograms
 need to be manipulated in \proglang{R}.  For example, to create HistogramState
 messages in Python for later consumption by \proglang{R}, we first compile the 
-\texttt{histogram.proto} descriptor into a python module using the
-\texttt{protoc} compiler:
+\code{histogram.proto} descriptor into a python module using the
+\code{protoc} compiler:
 
 \begin{verbatim}
   protoc histogram.proto --python_out=.
 \end{verbatim}
-This generates a Python module called \texttt{histogram\_pb2.py}, containing both the 
+This generates a Python module called \code{histogram\_pb2.py}, containing both the 
 descriptor information as well as methods to read and manipulate the histogram 
 message data.  The following simple Python script uses this generated
 module to create a histogram (to which breakpoints and binned data are
@@ -1428,7 +1428,7 @@ protocol that prescribes how these structures are to be represented in
 messages (buffers) on the network. Protocol Buffers solve exactly this
 problem by providing a cross-platform method for serializing arbitrary
 structures into well defined messages, which can then be exchanged using any
-protocol. The descriptors (\texttt{.proto} files) are used to formally define
+protocol. The descriptors (\code{.proto} files) are used to formally define
 the interface of a remote API or network application. Libraries to parse and
 generate protobuf messages are available for many programming languages,
 making it relatively straightforward to implement clients and servers.
@@ -1443,25 +1443,25 @@ remote \proglang{R} function calls. Clients do not need to understand
 or generate any \proglang{R} code: HTTP requests are automatically mapped to 
 function calls, and arguments/return values can be posted/retrieved
 using several data interchange formats, such as Protocol Buffers.  
-OpenCPU uses the \texttt{serialize\_pb} and \texttt{unserialize\_pb} functions
+OpenCPU uses the \code{serialize\_pb} and \code{unserialize\_pb} functions
 from the \pkg{RProtoBuf} package to convert between \proglang{R} objects and protobuf
-messages. Therefore, clients need the \texttt{rexp.proto} descriptor mentioned
+messages. Therefore, clients need the \code{rexp.proto} descriptor mentioned
 earlier to parse and generate protobuf messages when interacting with OpenCPU.
 
 \subsection[HTTP GET: Retrieving an R object]{HTTP GET: Retrieving an \proglang{R} object}
 
-The \texttt{HTTP GET} method is used to read a resource from OpenCPU. For example,
-to access the data set \texttt{Animals} from the package \texttt{MASS}, a 
+The \code{HTTP GET} method is used to read a resource from OpenCPU. For example,
+to access the data set \code{Animals} from the package \code{MASS}, a 
 client performs the following HTTP request:
 
 \begin{verbatim}
   GET https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb
 \end{verbatim}
-The postfix \texttt{/pb} in the URL tells the server to send this
+The postfix \code{/pb} in the URL tells the server to send this
 object in the form of a protobuf message. Alternative formats include 
-\texttt{/json}, \texttt{/csv}, \texttt{/rds} and others. If the request
+\code{/json}, \code{/csv}, \code{/rds} and others. If the request
 is successful, OpenCPU returns the serialized object with HTTP status 
-code 200 and HTTP response header \texttt{Content-Type: application/x-protobuf}. 
+code 200 and HTTP response header \code{Content-Type: application/x-protobuf}. 
 The latter is the conventional MIME type that formally notifies the client to
 interpret the response as a protobuf message. 
 
@@ -1469,7 +1469,7 @@ Because both HTTP and Protocol Buffers have libraries available for many
 languages, clients can be implemented in just a few lines of code. Below
 is example code for both \proglang{R} and Python that retrieves a data set from \proglang{R} with 
 OpenCPU using a protobuf message. In \proglang{R}, we use the HTTP client from 
-the \texttt{httr} package \citep{httr}. In this example we
+the \code{httr} package \citep{httr}. In this example we
 download a data set which is part of the base \proglang{R} distribution, so we can
 verify that the object was transferred without loss of information.
 
@@ -1488,14 +1488,14 @@ well be done without Protocol Buffers. The main advantage of using an inter-oper
 is that we can actually access \proglang{R} objects from within another
 programming language. For example, in a very similar fashion we can retrieve the same
 data set in a Python client. To parse messages in Python, we first compile the 
-\texttt{rexp.proto} descriptor into a python module using the \texttt{protoc} compiler:
+\code{rexp.proto} descriptor into a python module using the \code{protoc} compiler:
 
 \begin{verbatim}
   protoc rexp.proto --python_out=.
 \end{verbatim}
-This generates Python module called \texttt{rexp\_pb2.py}, containing both the 
+This generates Python module called \code{rexp\_pb2.py}, containing both the 
 descriptor information as well as methods to read and manipulate the \proglang{R} object 
-message. In the example below we use the HTTP client from the \texttt{urllib2}
+message. In the example below we use the HTTP client from the \code{urllib2}
 module. 
 
 \begin{verbatim}
@@ -1509,16 +1509,16 @@ msg = REXP()
 msg.ParseFromString(res.read())
 print(msg)
 \end{verbatim}
-The \texttt{msg} object contains all data from the Animals data set. From here we
+The \code{msg} object contains all data from the Animals data set. From here we
 can easily extract the desired fields for further use in Python.
 
 
 \subsection[HTTP POST: Calling an R function]{HTTP POST: Calling an \proglang{R} function}
 
-The example above shows how the \texttt{HTTP GET} method retrieves a 
-resource from OpenCPU, for example an \proglang{R} object. The \texttt{HTTP POST} 
+The example above shows how the \code{HTTP GET} method retrieves a 
+resource from OpenCPU, for example an \proglang{R} object. The \code{HTTP POST} 
 method on the other hand is used for calling functions and running scripts, 
-which is the primary purpose of the framework. As before, the \texttt{/pb} 
+which is the primary purpose of the framework. As before, the \code{/pb} 
 postfix requests to retrieve the output as a protobuf message, in this
 case the function return value. However, OpenCPU allows us to supply the
 arguments of the function call in the form of protobuf messages as well.
@@ -1526,17 +1526,17 @@ This is a bit more work, because clients needs to both generate messages
 containing \proglang{R} objects to post to the server, as well as retrieve and parse
 protobuf messages returned by the server. Using Protocol Buffers to post
 function arguments is not required, and for simple (scalar) arguments 
-the standard \texttt{application/x-www-form-urlencoded} format might be sufficient.
+the standard \code{application/x-www-form-urlencoded} format might be sufficient.
 However, with Protocol Buffers the client can perform function calls with
 more complex arguments such as \proglang{R} vectors or lists. The result is a complete
 RPC system to do arbitrary \proglang{R} function calls from within 
 any programming language.
 
 The following example \proglang{R} client code performs the remote function call 
-\texttt{stats::rnorm(n=42, mean=100)}. The function arguments (in this
-case \texttt{n} and \texttt{mean}) as well as the return value (a vector
+\code{stats::rnorm(n=42, mean=100)}. The function arguments (in this
+case \code{n} and \code{mean}) as well as the return value (a vector
 with 42 random numbers) are transferred using a protobuf message. RPC in
-OpenCPU works like the \texttt{do.call} function in \proglang{R}, hence all arguments
+OpenCPU works like the \code{do.call} function in \proglang{R}, hence all arguments
 are contained within a list.
 
 <<eval=FALSE>>=
@@ -1570,7 +1570,7 @@ outputmsg <- serialize_pb(val)
 Over the past decade, many formats for interoperable
 data exchange have become available, each with their unique features,
 strengths and weaknesses.  
-Text based formats such as \texttt{CSV} and \texttt{JSON} are easy to use, and will likely 
+Text based formats such as \code{CSV} and \code{JSON} are easy to use, and will likely 
 remain popular among statisticians for many years to come. However, in the 
 context of increasingly complex analysis stacks and applications involving 
 distributed computing as well as mixed language analysis pipelines, choosing a more 
@@ -1622,9 +1622,9 @@ a specialized pre-defined schema.
 
 \label{rexp.proto}
 
-Below a print of the \texttt{rexp.proto} schema (originally designed by \cite{rhipe})
-that is included with the \pkg{RProtoBuf} package and used by \texttt{serialize\_pb} and
-\texttt{unserialize\_pb}.
+Below a print of the \code{rexp.proto} schema (originally designed by \cite{rhipe})
+that is included with the \pkg{RProtoBuf} package and used by \code{serialize\_pb} and
+\code{unserialize\_pb}.
 
 \begin{verbatim}
 package rexp;
