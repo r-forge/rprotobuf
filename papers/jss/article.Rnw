@@ -16,7 +16,6 @@
 %
 % Local helpers to make this more compatible with R Journal style.
 %
-\newcommand{\CRANpkg}[1]{\pkg{#1}}
 \RequirePackage{fancyvrb}
 \RequirePackage{alltt}
 \DefineVerbatimEnvironment{example}{Verbatim}{}
@@ -30,33 +29,32 @@
 %% for pretty printing and a nice hypersummary also set:
 \Plainauthor{Dirk Eddelbuettel, Murray Stokely, Jeroen Ooms} %% comma-separated
 \Plaintitle{RProtoBuf: Efficient Cross-Language Data Serialization in R}
-\Shorttitle{\CRANpkg{RProtoBuf}: Protocol Buffers in \proglang{R}} %% a short title (if necessary)
+\Shorttitle{\pkg{RProtoBuf}: Protocol Buffers in \proglang{R}} %% a short title (if necessary)
 
 %% an abstract and keywords
 \Abstract{
-Modern data collection and analysis pipelines often involve
-a sophisticated mix of applications written in general purpose and
-specialized programming languages.  
-Many formats commonly used to import and export data between
-different programs or systems, such as \texttt{CSV} or \texttt{JSON}, are
-verbose, inefficient, not type-safe, or tied to a specific programming language.
-Protocol Buffers are a popular
-method of serializing structured data between applications---while remaining
-independent of programming languages or operating systems.
-They offer a unique combination of features, performance, and maturity that seems
-particularly well suited for data-driven applications and numerical
-computing.
-The
-\CRANpkg{RProtoBuf} package provides a complete interface to Protocol
-Buffers from the
-\proglang{R} environment for statistical computing.
-This paper outlines the general class of data serialization
-requirements for statistical computing, describes the implementation
-of the \CRANpkg{RProtoBuf} package, and illustrates its use with
-example applications in large-scale data collection pipelines and web
-services.
-%TODO(ms) keep it less than 150 words. -- I think this may be 154,
-%depending how emacs is counting.
+  Modern data collection and analysis pipelines often involve
+  a sophisticated mix of applications written in general purpose and
+  specialized programming languages.  
+  Many formats commonly used to import and export data between
+  different programs or systems, such as \texttt{CSV} or \texttt{JSON}, are
+  verbose, inefficient, not type-safe, or tied to a specific programming language.
+  Protocol Buffers are a popular
+  method of serializing structured data between applications---while remaining
+  independent of programming languages or operating systems.
+  They offer a unique combination of features, performance, and maturity that seems
+  particularly well suited for data-driven applications and numerical
+  computing.
+  The \pkg{RProtoBuf} package provides a complete interface to Protocol
+  Buffers from the
+  \proglang{R} environment for statistical computing.
+  This paper outlines the general class of data serialization
+  requirements for statistical computing, describes the implementation
+  of the \pkg{RProtoBuf} package, and illustrates its use with
+  example applications in large-scale data collection pipelines and web
+  services.
+  %% TODO(ms) keep it less than 150 words. -- I think this may be 154,
+  %% depending how emacs is counting.
 }
 \Keywords{\proglang{R}, \pkg{Rcpp}, Protocol Buffers, serialization, cross-platform}
 \Plainkeywords{R, Rcpp, Protocol Buffers, serialization, cross-platform} %% without formatting
@@ -194,29 +192,31 @@ with each message sent over the network or stored in a file.
 Once the data serialization needs of an application become complex
 enough, developers typically benefit from the use of an
 \emph{interface description language}, or \emph{IDL}.  IDLs like
-Protocol Buffers \citep{protobuf}, Apache Thrift, and Apache Avro
+Protocol Buffers \citep{protobuf}, Apache Thrift \citep{Apache:Thrift}, and Apache Avro \citep{Apache:Avro}
 provide a compact well-documented schema for cross-language data
 structures and efficient binary interchange formats.  Since the schema
 is provided separately from the data, the data can be
 efficiently encoded to minimize storage costs when
 compared with simple ``schema-less'' binary interchange formats.
-Many sources compare data serialization formats
-and show Protocol Buffers perform favorably to the alternatives; see
-\citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
+%Many sources compare data serialization formats
+%and show Protocol Buffers perform favorably to the alternatives; see
+%\citet{Sumaray:2012:CDS:2184751.2184810} for one such comparison.
+Protocol Buffers performs well in the comparison of such formats by
+\citet{Sumaray:2012:CDS:2184751.2184810}.
 
 This paper describes an \proglang{R} interface to Protocol Buffers,
 and is organized as follows. Section~\ref{sec:protobuf}
 provides a general high-level overview of Protocol Buffers as well as a basic
 motivation for their use.
 Section~\ref{sec:rprotobuf-basic} describes the interactive \proglang{R} interface
-provided by the \CRANpkg{RProtoBuf} package, and introduces the two main abstractions:
+provided by the \pkg{RProtoBuf} package, and introduces the two main abstractions:
 \emph{Messages} and \emph{Descriptors}.  Section~\ref{sec:rprotobuf-classes}
 details the implementation details of the main S4 classes and methods.  
 Section~\ref{sec:types} describes the challenges of type coercion
 between \proglang{R} and other languages.  Section~\ref{sec:evaluation} introduces a
 general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and evaluates
 it against the serialization capabilities built directly into \proglang{R}.  Sections~\ref{sec:mapreduce}
-and \ref{sec:opencpu} provide real-world use cases of \CRANpkg{RProtoBuf}
+and \ref{sec:opencpu} provide real-world use cases of \pkg{RProtoBuf}
 in MapReduce and web service environments, respectively, before
 Section~\ref{sec:summary} concludes.
 
@@ -238,9 +238,10 @@ the key features provided by Protocol Buffers for data analysis include:
   decade.
 \end{itemize}
 
-\begin{figure}[bp]
+%\begin{figure}[bp]
+\begin{figure}[h!]
 \begin{center}
-\includegraphics[width=\textwidth]{figures/protobuf-distributed-system-crop.pdf}
+\includegraphics[width=0.9\textwidth]{figures/protobuf-distributed-system-crop.pdf}
 \end{center}
 \caption{Example usage of Protocol Buffers.}
 \label{fig:protobuf-distributed-usecase}
@@ -254,8 +255,8 @@ remote server.  The server would then deserialize the message, act on the
 request, and respond with a new Protocol Buffer over the network. 
 The key difference to, say, a request to an \pkg{Rserve} 
 \citep{Urbanek:2003:Rserve,CRAN:Rserve} instance is that
-the remote server may be implemented in any language, with no
-dependence on \proglang{R}.
+the remote server may be implemented in any language.
+%, with no dependence on \proglang{R}.
 
 While traditional IDLs have at times been criticized for code bloat and
 complexity, Protocol Buffers are based on a simple list and records
@@ -480,7 +481,7 @@ connection to file \code{tf2}.
 
 \subsection{Parsing messages}
 
-The \CRANpkg{RProtoBuf} package defines the \code{read} and
+The \pkg{RProtoBuf} package defines the \code{read} and
 \code{readASCII} functions to read messages from files, raw vectors,
 or arbitrary connections.  \code{read} expects to read the message
 payload from binary files or connections and \code{readASCII} parses
@@ -533,13 +534,13 @@ a message payload.
 \section{Under the hood: S4 classes, methods, and pseudo methods}
 \label{sec:rprotobuf-classes}
 
-The \CRANpkg{RProtoBuf} package uses the S4 system to store
+The \pkg{RProtoBuf} package uses the S4 system to store
 information about descriptors and messages.  Using the S4 system
 allows the package to dispatch methods that are not
 generic in the S3 sense, such as \texttt{new} and
 \texttt{serialize}.
 Table~\ref{class-summary-table} lists the six
-primary Message and Descriptor classes in \CRANpkg{RProtoBuf}.  Each \proglang{R} object
+primary Message and Descriptor classes in \pkg{RProtoBuf}.  Each \proglang{R} object
 contains an external pointer to an object managed by the
 \texttt{protobuf} \proglang{C++} library, and the \proglang{R} objects make calls into more
 than 100 \proglang{C++} functions that provide the
@@ -564,19 +565,19 @@ FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
   dispatch relationships.}
 \end{table}
 
-The \CRANpkg{Rcpp} package
+The \pkg{Rcpp} package
 \citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
 facilitate this integration of the \proglang{R} and \proglang{C++} code for these objects.
 Each method is wrapped individually which allows us to add 
 user-friendly custom error handling, type coercion, and performance
 improvements at the cost of a more verbose implementation.
-The \CRANpkg{RProtoBuf} package in many ways motivated
-the development of \CRANpkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
+The \pkg{RProtoBuf} package in many ways motivated
+the development of \pkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
 which provide a more concise way of wrapping \proglang{C++} functions and classes
 in a single entity.
 
 
-The \CRANpkg{RProtoBuf} package supports two forms for calling
+The \pkg{RProtoBuf} package supports two forms for calling
 functions with these S4 classes:
 \begin{itemize}
 \item The functional dispatch mechanism of the the form
@@ -585,7 +586,7 @@ functions with these S4 classes:
   \verb|object$method(arguments)|.
 \end{itemize}
 
-Additionally, \CRANpkg{RProtoBuf} supports tab completion for all
+Additionally, \pkg{RProtoBuf} supports tab completion for all
 classes.  Completion possibilities include pseudo-method names for all
 classes, plus \emph{dynamic dispatch} on names or types specific to a given
 object.  This functionality is implemented with the
@@ -595,7 +596,7 @@ package that is included with \proglang{R} \citep{r}.
 \subsection{Messages}
 
 The \texttt{Message} S4 class represents Protocol Buffer Messages and
-is the core abstraction of \CRANpkg{RProtoBuf}. Each \texttt{Message}
+is the core abstraction of \pkg{RProtoBuf}. Each \texttt{Message}
 contains a pointer to a \texttt{Descriptor} which defines the schema
 of the data defined in the Message, as well as a number of
 \texttt{FieldDescriptors} for the individual fields of the message.  A
@@ -659,7 +660,7 @@ class. The class contains the slots \texttt{pointer} and
 used to retrieve descriptors that are contained in the descriptor, or
 invoke pseudo-methods.
 
-When \CRANpkg{RProtoBuf} is first loaded it calls
+When \pkg{RProtoBuf} is first loaded it calls
 \texttt{readProtoFiles} to read in the example \texttt{addressbook.proto} file
 included with the package.  The \texttt{tutorial.Person} descriptor
 and all other descriptors defined in the loaded \texttt{.proto} files are
@@ -1028,9 +1029,9 @@ distinct integers:
 @
 
 However, most modern languages do have support for 64-bit integers, 
-which becomes problematic when \CRANpkg{RProtoBuf} is used to exchange data 
+which becomes problematic when \pkg{RProtoBuf} is used to exchange data 
 with a system that requires this integer type. To work around this, 
-\CRANpkg{RProtoBuf} allows users to get and set 64-bit integer values by specifying 
+\pkg{RProtoBuf} allows users to get and set 64-bit integer values by specifying 
 them as character strings.
 
 If we try to set an int64 field in \proglang{R} to double values, we lose
@@ -1042,7 +1043,7 @@ test$repeated_int64 <- c(2^53, 2^53+1)
 length(unique(test$repeated_int64))
 @
 
-But when the values are specified as character strings, \CRANpkg{RProtoBuf}
+But when the values are specified as character strings, \pkg{RProtoBuf}
 will automatically coerce them into a true 64-bit integer types 
 before storing them in the Protocol Buffer message:
 
@@ -1055,7 +1056,7 @@ default, but when the full precision is required a character value
 will be returned if the \code{RProtoBuf.int64AsString} option is set
 to \texttt{TRUE}.  The character values are useful because they can
 accurately be used as unique identifiers and can easily be passed to \proglang{R}
-packages such as \CRANpkg{int64} \citep{int64} or \CRANpkg{bit64}
+packages such as \pkg{int64} \citep{int64} or \pkg{bit64}
 \citep{bit64} which represent 64-bit integers in \proglang{R}.
 
 <<>>=
@@ -1074,7 +1075,7 @@ options("RProtoBuf.int64AsString" = FALSE)
 \section[Converting R data structures into Protocol Buffers]{Converting \proglang{R} data structures into Protocol Buffers}
 \label{sec:evaluation}
 
-The previous sections discussed functionality in the \CRANpkg{RProtoBuf} package
+The previous sections discussed functionality in the \pkg{RProtoBuf} package
 for creating, manipulating, parsing, and serializing Protocol Buffer
 messages of a defined schema.  This is useful when there are
 pre-existing systems with defined schemas or significant software
@@ -1090,12 +1091,12 @@ msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 @
 
-In order to accomplish this, \CRANpkg{RProtoBuf} uses the same catch-all \texttt{proto}
+In order to accomplish this, \pkg{RProtoBuf} uses the same catch-all \texttt{proto}
 schema used by \pkg{RHIPE} for exchanging \proglang{R} data with Hadoop \citep{rhipe}. This 
 schema, which we will refer to as \texttt{rexp.proto}, is printed in
 %appendix \ref{rexp.proto}.
 the appendix.
-The Protocol Buffer messages generated by \CRANpkg{RProtoBuf} and
+The Protocol Buffer messages generated by \pkg{RProtoBuf} and
 \pkg{RHIPE} are naturally compatible between the two systems because they use the 
 same schema. This shows the power of using a schema-based cross-platform format such
 as Protocol Buffers: interoperability is achieved without effort or close coordination.
@@ -1201,11 +1202,11 @@ but this difference disappears if the results are compressed with gzip.
 %in multiple languages instead of requiring other programs to parse the \proglang{R}
 %serialization format. % \citep{serialization}.
 One takeaway from this table is that the universal \proglang{R} object schema
-included in \CRANpkg{RProtoBuf} does not in general provide
+included in \pkg{RProtoBuf} does not in general provide
 any significant saving in file size compared to the normal serialization
 mechanism in \proglang{R}.
 % redundant: which is seen as equally compact.
-The benefits of \CRANpkg{RProtoBuf} accrue more naturally in applications where
+The benefits of \pkg{RProtoBuf} accrue more naturally in applications where
 multiple programming languages are involved, or when a more concise
 application-specific schema has been defined.  The example in the next
 section satisfies both of these conditions.
@@ -1279,7 +1280,7 @@ section satisfies both of these conditions.
 \end{tabular}
 }
 \caption{Serialization sizes for default serialization in \proglang{R} and
-  \CRANpkg{RProtoBuf} for 50 \proglang{R} data sets.}
+  \pkg{RProtoBuf} for 50 \proglang{R} data sets.}
 \label{tab:compression}
 \end{center}
 \end{table}
@@ -1317,7 +1318,7 @@ output to a data store.
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[width=\textwidth]{figures/histogram-mapreduce-diag1.pdf}
+\includegraphics[width=0.9\textwidth]{figures/histogram-mapreduce-diag1.pdf}
 \end{center}
 \caption{Diagram of MapReduce histogram generation pattern.}
 \label{fig:mr-histogram-pattern1}
@@ -1331,8 +1332,8 @@ the pre-processing as well as any downstream data analysis tasks must
 share a schema of the histogram representation to coordinate
 effectively.
 
-The \CRANpkg{HistogramTools} package \citep{histogramtools} enhances
-\CRANpkg{RProtoBuf} by providing a concise schema for \proglang{R} histogram objects:
+The \pkg{HistogramTools} package \citep{histogramtools} enhances
+\pkg{RProtoBuf} by providing a concise schema for \proglang{R} histogram objects:
 
 \begin{example}
 package HistogramTools;
@@ -1439,7 +1440,7 @@ or generate any \proglang{R} code: HTTP requests are automatically mapped to
 function calls, and arguments/return values can be posted/retrieved
 using several data interchange formats, such as Protocol Buffers.  
 OpenCPU uses the \texttt{serialize\_pb} and \texttt{unserialize\_pb} functions
-from the \CRANpkg{RProtoBuf} package to convert between \proglang{R} objects and protobuf
+from the \pkg{RProtoBuf} package to convert between \proglang{R} objects and protobuf
 messages. Therefore, clients need the \texttt{rexp.proto} descriptor mentioned
 earlier to parse and generate protobuf messages when interacting with OpenCPU.
 
@@ -1535,7 +1536,7 @@ OpenCPU works like the \texttt{do.call} function in \proglang{R}, hence all argu
 are contained within a list.
 
 <<eval=FALSE>>=
-library("httr")       #requires httr >= 0.2.99
+library("httr")       
 library("RProtoBuf")
 
 args <- list(n=42, mean=100)
@@ -1576,13 +1577,13 @@ The Protocol Buffers standard and library offer a unique combination of features
 performance, and maturity, that seems particularly well suited for data-driven 
 applications and numerical computing.
 
-The \CRANpkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} library, 
+The \pkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} library, 
 and extends the \proglang{R} system with the ability to create, read,
 write, parse, and manipulate Protocol
-Buffer messages. \CRANpkg{RProtoBuf} has been used extensively inside Google 
+Buffer messages. \pkg{RProtoBuf} has been used extensively inside Google 
 for the past three years by statisticians, analysts, and software engineers.
 At the time of this writing there are over 300 active
-users of \CRANpkg{RProtoBuf} using it to read data from and otherwise interact
+users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{Python}, and 
 other languages. We hope that making Protocol Buffers available to the
 \proglang{R} community will contribute towards better software integration
@@ -1593,11 +1594,11 @@ with \proglang{R}.
 
 \section*{Acknowledgments}
 
-The first versions of \CRANpkg{RProtoBuf} were written during 2009-2010.
+The first versions of \pkg{RProtoBuf} were written during 2009 - 2010.
 Very significant contributions, both in code and design, were made by
 Romain Fran\c{c}ois whose continued influence on design and code is
 greatly appreciated. Several features of the package reflect
-the design of the \CRANpkg{rJava} package by Simon Urbanek.
+the design of the \pkg{rJava} package by Simon Urbanek.
 The user-defined table mechanism, implemented by Duncan Temple Lang for the
 purpose of the \pkg{RObjectTables} package, allows for the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
@@ -1618,7 +1619,7 @@ a specialized pre-defined schema.
 \label{rexp.proto}
 
 Below a print of the \texttt{rexp.proto} schema (originally designed by \cite{rhipe})
-that is included with the \CRANpkg{RProtoBuf} package and used by \texttt{serialize\_pb} and
+that is included with the \pkg{RProtoBuf} package and used by \texttt{serialize\_pb} and
 \texttt{unserialize\_pb}.
 
 \begin{verbatim}
