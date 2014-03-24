@@ -173,19 +173,15 @@ f$Person
 
 
 ###################################################
-### code chunk number 22: article.Rnw:987-994
+### code chunk number 22: article.Rnw:987-990
 ###################################################
-if (!exists("protobuf_unittest.TestAllTypes",
-            "RProtoBuf:DescriptorPool")) {
-    unittest.proto.file <- system.file("unitTests", "data",
-                                       "unittest.proto",
-                                       package="RProtoBuf")
-    readProtoFiles(file=unittest.proto.file)
+if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
+    readProtoFiles(file="int64.proto")
 }
 
 
 ###################################################
-### code chunk number 23: article.Rnw:1016-1020
+### code chunk number 23: article.Rnw:1012-1016
 ###################################################
 as.integer(2^31-1)
 as.integer(2^31 - 1) + as.integer(1)
@@ -194,27 +190,27 @@ class(2^31)
 
 
 ###################################################
-### code chunk number 24: article.Rnw:1031-1032
+### code chunk number 24: article.Rnw:1027-1028
 ###################################################
 2^53 == (2^53 + 1)
 
 
 ###################################################
-### code chunk number 25: article.Rnw:1044-1047
+### code chunk number 25: article.Rnw:1040-1043
 ###################################################
-test <- new(protobuf_unittest.TestAllTypes)
+test <- new(JSSPaper.Example1)
 test$repeated_int64 <- c(2^53, 2^53+1)
 length(unique(test$repeated_int64))
 
 
 ###################################################
-### code chunk number 26: article.Rnw:1054-1055
+### code chunk number 26: article.Rnw:1050-1051
 ###################################################
 test$repeated_int64 <- c("9007199254740992", "9007199254740993")
 
 
 ###################################################
-### code chunk number 27: article.Rnw:1066-1072
+### code chunk number 27: article.Rnw:1062-1068
 ###################################################
 options("RProtoBuf.int64AsString" = FALSE)
 test$repeated_int64
@@ -225,20 +221,20 @@ length(unique(test$repeated_int64))
 
 
 ###################################################
-### code chunk number 28: article.Rnw:1075-1076
+### code chunk number 28: article.Rnw:1071-1072
 ###################################################
 options("RProtoBuf.int64AsString" = FALSE)
 
 
 ###################################################
-### code chunk number 29: article.Rnw:1093-1095
+### code chunk number 29: article.Rnw:1089-1091
 ###################################################
 msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 
 
 ###################################################
-### code chunk number 30: article.Rnw:1126-1129
+### code chunk number 30: article.Rnw:1122-1125
 ###################################################
 datasets <- as.data.frame(data(package="datasets")$results)
 datasets$name <- sub("\\s+.*$", "", datasets$Item)
@@ -246,13 +242,13 @@ n <- nrow(datasets)
 
 
 ###################################################
-### code chunk number 31: article.Rnw:1139-1140
+### code chunk number 31: article.Rnw:1135-1136
 ###################################################
 m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
 
 
 ###################################################
-### code chunk number 32: article.Rnw:1153-1160
+### code chunk number 32: article.Rnw:1149-1156
 ###################################################
 attr(CO2, "formula")
 msg <- serialize_pb(CO2, NULL)
@@ -264,7 +260,7 @@ attr(object, "formula")
 
 
 ###################################################
-### code chunk number 33: article.Rnw:1176-1195
+### code chunk number 33: article.Rnw:1172-1191
 ###################################################
 datasets$object.size <- unname(sapply(datasets$name, function(x) object.size(eval(as.name(x)))))
 
@@ -288,7 +284,7 @@ clean.df <- data.frame(dataset=datasets$name,
 
 
 ###################################################
-### code chunk number 34: article.Rnw:1403-1408
+### code chunk number 34: article.Rnw:1399-1404
 ###################################################
 require(RProtoBuf)
 require(HistogramTools)
@@ -298,7 +294,7 @@ plot(as.histogram(hist))
 
 
 ###################################################
-### code chunk number 35: article.Rnw:1476-1483 (eval = FALSE)
+### code chunk number 35: article.Rnw:1472-1479 (eval = FALSE)
 ###################################################
 ## library("RProtoBuf")
 ## library("httr")
@@ -310,7 +306,7 @@ plot(as.histogram(hist))
 
 
 ###################################################
-### code chunk number 36: article.Rnw:1542-1558 (eval = FALSE)
+### code chunk number 36: article.Rnw:1538-1554 (eval = FALSE)
 ###################################################
 ## library("httr")       
 ## library("RProtoBuf")
@@ -331,7 +327,7 @@ plot(as.histogram(hist))
 
 
 ###################################################
-### code chunk number 37: article.Rnw:1562-1565 (eval = FALSE)
+### code chunk number 37: article.Rnw:1558-1561 (eval = FALSE)
 ###################################################
 ## fnargs <- unserialize_pb(inputmsg)
 ## val <- do.call(stats::rnorm, fnargs)

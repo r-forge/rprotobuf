@@ -984,20 +984,16 @@ possible values as booleans.  The library will refuse to store
 choose another type (such as enum or integer) capable of storing three
 distinct values.
 
-<<echo=FALSE,print=FALSE,eval=FALSE>>=
-if (!exists("protobuf_unittest.TestAllTypes",
-            "RProtoBuf:DescriptorPool")) {
-    unittest.proto.file <- system.file("unitTests", "data",
-                                       "unittest.proto",
-                                       package="RProtoBuf")
-    readProtoFiles(file=unittest.proto.file)
+<<echo=FALSE,print=FALSE>>=
+if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
+    readProtoFiles(file="int64.proto")
 }
 @
 
 % We want a cleaner error message here.
 \begin{CodeChunk}
 \begin{CodeInput}
-R> a <- new(protobuf_unittest.TestAllTypes)
+R> a <- new(JSSPaper.Example1)
 R> a$optional_bool <- TRUE
 R> a$optional_bool <- FALSE
 R> a$optional_bool <- NA
@@ -1041,27 +1037,19 @@ them as character strings.
 If we try to set an int64 field in \proglang{R} to double values, we lose
 precision:
 
-% We want a cleaner error message here.
-\begin{CodeChunk}
-\begin{CodeInput}
-R> test <- new(protobuf_unittest.TestAllTypes)
-R> test$repeated_int64 <- c(2^53, 2^53+1)
-R> length(unique(test$repeated_int64))
-\end{CodeInput}
-\begin{CodeOutput}
-[1] 1
-\end{CodeOutput}
-\end{CodeChunk}
+<<>>=
+test <- new(JSSPaper.Example1)
+test$repeated_int64 <- c(2^53, 2^53+1)
+length(unique(test$repeated_int64))
+@
 
 But when the values are specified as character strings, \pkg{RProtoBuf}
 will automatically coerce them into a true 64-bit integer types 
 before storing them in the Protocol Buffer message:
 
-\begin{CodeChunk}
-\begin{CodeInput}
-R> test$repeated_int64 <- c("9007199254740992", "9007199254740993")
-\end{CodeInput}
-\end{CodeChunk}
+<<>>=
+test$repeated_int64 <- c("9007199254740992", "9007199254740993")
+@
 
 When reading the value back into \proglang{R}, numeric types are returned by
 default, but when the full precision is required a character value
@@ -1071,34 +1059,14 @@ accurately be used as unique identifiers and can easily be passed to \proglang{R
 packages such as \pkg{int64} \citep{int64} or \pkg{bit64}
 \citep{bit64} which represent 64-bit integers in \proglang{R}.
 
-\begin{CodeChunk}
-\begin{CodeInput}
-R> options("RProtoBuf.int64AsString" = FALSE)
-R> test$repeated_int64
-\end{CodeInput}
-\begin{CodeOutput}
-[1] 9.007e+15 9.007e+15
-\end{CodeOutput}
-\begin{CodeInput}
-R> length(unique(test$repeated_int64))
-\end{CodeInput}
-\begin{CodeOutput}
-[1] 1
-\end{CodeOutput}
-\begin{CodeInput}
-R> options("RProtoBuf.int64AsString" = TRUE)
-R> test$repeated_int64
-\end{CodeInput}
-\begin{CodeOutput}
-[1] "9007199254740992" "9007199254740993"
-\end{CodeOutput}
-\begin{CodeInput}
-R> length(unique(test$repeated_int64))
-\end{CodeInput}
-\begin{CodeOutput}
-[1] 2
-\end{CodeOutput}
-\end{CodeChunk}
+<<>>=
+options("RProtoBuf.int64AsString" = FALSE)
+test$repeated_int64
+length(unique(test$repeated_int64))
+options("RProtoBuf.int64AsString" = TRUE)
+test$repeated_int64
+length(unique(test$repeated_int64))
+@
 
 <<echo=FALSE,print=FALSE>>=
 options("RProtoBuf.int64AsString" = FALSE)
