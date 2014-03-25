@@ -190,20 +190,20 @@ class(2^31)
 
 
 ###################################################
-### code chunk number 24: article.Rnw:1027-1028
+### code chunk number 24: article.Rnw:1028-1029
 ###################################################
 2^53 == (2^53 + 1)
 
 
 ###################################################
-### code chunk number 25: article.Rnw:1078-1080
+### code chunk number 25: article.Rnw:1080-1082
 ###################################################
 msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 
 
 ###################################################
-### code chunk number 26: article.Rnw:1111-1114
+### code chunk number 26: article.Rnw:1113-1116
 ###################################################
 datasets <- as.data.frame(data(package="datasets")$results)
 datasets$name <- sub("\\s+.*$", "", datasets$Item)
@@ -211,13 +211,13 @@ n <- nrow(datasets)
 
 
 ###################################################
-### code chunk number 27: article.Rnw:1124-1125
+### code chunk number 27: article.Rnw:1126-1127
 ###################################################
 m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
 
 
 ###################################################
-### code chunk number 28: article.Rnw:1138-1145
+### code chunk number 28: article.Rnw:1140-1147
 ###################################################
 attr(CO2, "formula")
 msg <- serialize_pb(CO2, NULL)
@@ -229,7 +229,7 @@ attr(object, "formula")
 
 
 ###################################################
-### code chunk number 29: article.Rnw:1161-1180
+### code chunk number 29: article.Rnw:1163-1182
 ###################################################
 datasets$object.size <- unname(sapply(datasets$name, function(x) object.size(eval(as.name(x)))))
 
@@ -253,7 +253,7 @@ clean.df <- data.frame(dataset=datasets$name,
 
 
 ###################################################
-### code chunk number 30: article.Rnw:1388-1393
+### code chunk number 30: article.Rnw:1390-1395
 ###################################################
 require(RProtoBuf)
 require(HistogramTools)
@@ -263,7 +263,7 @@ plot(as.histogram(hist))
 
 
 ###################################################
-### code chunk number 31: article.Rnw:1461-1468 (eval = FALSE)
+### code chunk number 31: article.Rnw:1463-1470 (eval = FALSE)
 ###################################################
 ## library("RProtoBuf")
 ## library("httr")
@@ -275,7 +275,7 @@ plot(as.histogram(hist))
 
 
 ###################################################
-### code chunk number 32: article.Rnw:1527-1543 (eval = FALSE)
+### code chunk number 32: article.Rnw:1529-1545 (eval = FALSE)
 ###################################################
 ## library("httr")       
 ## library("RProtoBuf")
@@ -296,7 +296,7 @@ plot(as.histogram(hist))
 
 
 ###################################################
-### code chunk number 33: article.Rnw:1547-1550 (eval = FALSE)
+### code chunk number 33: article.Rnw:1549-1552 (eval = FALSE)
 ###################################################
 ## fnargs <- unserialize_pb(inputmsg)
 ## val <- do.call(stats::rnorm, fnargs)

@@ -1020,29 +1020,31 @@ class(2^31)
 \label{sec:int64}
 
 \proglang{R} also does not support the native 64-bit integer type. Numeric vectors
-with values $\geq 2^{31}$ can only be stored as doubles, which have
-limited precision. Thereby \proglang{R} loses the ability to distinguish some
-distinct integers:
+with integer values greater or equal to $2^{31}$ can only be stored as
+floating-point double precision variables. This conversion incurs a loss of
+precision, and \proglang{R} loses the ability to distinguish between some
+distinct integer variables:
 
 <<>>=
 2^53 == (2^53 + 1)
 @
 
-However, most modern languages do have support for 64-bit integers, 
+Most modern languages do have support for 64-bit integer values, 
 which becomes problematic when \pkg{RProtoBuf} is used to exchange data 
 with a system that requires this integer type. To work around this, 
 \pkg{RProtoBuf} allows users to get and set 64-bit integer values by specifying 
 them as character strings.
 
 On 64-bit platforms, character strings representing large decimal
-numbers will be coerced to int64 during assignment to 64-bit protocol
-buffer types to work around the lack of native 64-bit types in \proglang{R}.  The
-values are stored as distinct int64 values in memory but when accessed
-from \proglang{R} language code they will be coerced into numeric values.  If the
+numbers will be coerced to \code{int64} during assignment to 64-bit Protocol
+Buffer types to work around the lack of native 64-bit types in \proglang{R} itself.  The
+values are stored as distinct \code{int64} values in memory. But when accessed
+from \proglang{R} language code, they will be coerced into numeric
+(floating-point) values.  If the
 full 64-bit precision is required, the \code{RProtoBuf.int64AsString}
-option can be set to \code{TRUE} to return int64 values from messages as character
-strings.  The character values are useful because they can
-accurately be used as unique identifiers and can easily be passed to \proglang{R}
+option can be set to \code{TRUE} to return \code{int64} values from messages as character
+strings.  Such character values are useful because they can
+accurately be used as unique identifiers, and can easily be passed to \proglang{R}
 packages such as \pkg{int64} \citep{int64} or \pkg{bit64}
 \citep{bit64} which represent 64-bit integers in \proglang{R}.
 
