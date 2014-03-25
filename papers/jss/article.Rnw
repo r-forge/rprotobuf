@@ -1034,43 +1034,32 @@ with a system that requires this integer type. To work around this,
 \pkg{RProtoBuf} allows users to get and set 64-bit integer values by specifying 
 them as character strings.
 
-If we try to set an int64 field in \proglang{R} to double values, we lose
-precision:
-
-<<>>=
-test <- new(JSSPaper.Example1)
-test$repeated_int64 <- c(2^53, 2^53+1)
-length(unique(test$repeated_int64))
-@
-
-But when the values are specified as character strings, \pkg{RProtoBuf}
-will automatically coerce them into a true 64-bit integer types 
-before storing them in the Protocol Buffer message:
-
-<<>>=
-test$repeated_int64 <- c("9007199254740992", "9007199254740993")
-@
-
-When reading the value back into \proglang{R}, numeric types are returned by
-default, but when the full precision is required a character value
-will be returned if the \code{RProtoBuf.int64AsString} option is set
-to \code{TRUE}.  The character values are useful because they can
+On 64-bit platforms, character strings representing large decimal
+numbers will be coerced to int64 during assignment to 64-bit protocol
+buffer types to work around the lack of native 64-bit types in \proglang{R}.  The
+values are stored as distinct int64 values in memory but when accessed
+from \proglang{R} language code they will be coerced into numeric values.  If the
+full 64-bit precision is required, the \code{RProtoBuf.int64AsString}
+option can be set to \code{TRUE} to return int64 values from messages as character
+strings.  The character values are useful because they can
 accurately be used as unique identifiers and can easily be passed to \proglang{R}
 packages such as \pkg{int64} \citep{int64} or \pkg{bit64}
 \citep{bit64} which represent 64-bit integers in \proglang{R}.
 
-<<>>=
-options("RProtoBuf.int64AsString" = FALSE)
-test$repeated_int64
-length(unique(test$repeated_int64))
-options("RProtoBuf.int64AsString" = TRUE)
-test$repeated_int64
-length(unique(test$repeated_int64))
-@
+% test <- new(JSSPaper.Example1)
+% test$repeated_int64 <- c(2^53, 2^53+1)
+% length(unique(test$repeated_int64))
 
-<<echo=FALSE,print=FALSE>>=
-options("RProtoBuf.int64AsString" = FALSE)
-@
+% test$repeated_int64 <- c("9007199254740992", "9007199254740993")
+
+% options("RProtoBuf.int64AsString" = FALSE)
+% test$repeated_int64
+% length(unique(test$repeated_int64))
+% options("RProtoBuf.int64AsString" = TRUE)
+% test$repeated_int64
+% length(unique(test$repeated_int64))
+
+% options("RProtoBuf.int64AsString" = FALSE)
 
 \section[Converting R data structures into Protocol Buffers]{Converting \proglang{R} data structures into Protocol Buffers}
 \label{sec:evaluation}
