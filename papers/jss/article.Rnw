@@ -359,8 +359,12 @@ schema for a particular named class of messages.
 \subsection[Importing message descriptors from .proto files]{Importing message descriptors from \code{.proto} files}
 
 To create or parse a Protocol Buffer Message, one must first read in 
-the message type specification from a \code{.proto} file. The 
-\code{.proto} files are imported using the \code{readProtoFiles}
+the message type specification from a \code{.proto} file. 
+A small number of message types are imported when the package is first
+loaded, including the \code{tutorial.Person} type we saw in the last
+section.
+All other types must be imported from
+\code{.proto} files using the \code{readProtoFiles}
 function, which can either import a single file, all files in a directory,
 or every \code{.proto} file provided by a particular \proglang{R} package.
 
@@ -371,7 +375,17 @@ user-defined tables framework from the \pkg{RObjectTables} package
 available from the OmegaHat project \citep{RObjectTables}.  Instead of
 being associated with a static hash table, this environment
 dynamically queries the in-memory database of loaded descriptors
-during normal variable lookup.
+during normal variable lookup.  This allows new descriptors to be
+parsed from \code{.proto} files and added to the global
+namespace.\footnote{Note that there is a significant performance
+  overhead with this RObjectTable implementation.  Because the table
+  is on the search path and isn't cacheable, lookups of symbols that
+  are behind it in the search path can't be added to the global object
+  cache, and R must perform an expensive lookup through all of the
+  attached environments and the protocol buffer definitions to find common
+  symbols (most notably those in base) from the global environment.
+  Fortunately, proper use of namespaces and package imports reduces
+  the impact of this for code in packages.}
 
 <<>>=
 ls("RProtoBuf:DescriptorPool")
