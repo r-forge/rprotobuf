@@ -356,7 +356,11 @@ structured data fields of the type specified in a Message Descriptor.
 Message Descriptors are defined in \code{.proto} files and define a
 schema for a particular named class of messages.
 
-\subsection[Importing message descriptors from .proto files]{Importing message descriptors from \code{.proto} files}
+% Note: We comment out subsections in favor of textbf blocks to save
+% space and shrink down this section a little bit.
+%\subsection[Importing message descriptors from .proto files]{Importing message descriptors from \code{.proto} files}
+
+\textbf{Importing message descriptors from \code{.proto} files}
 
 To create or parse a Protocol Buffer Message, one must first read in 
 the message type specification from a \code{.proto} file. 
@@ -387,11 +391,15 @@ namespace.\footnote{Note that there is a significant performance
   Fortunately, proper use of namespaces and package imports reduces
   the impact of this for code in packages.}
 
-<<>>=
+% Commented out for now because its too detailed.  Lets shorten
+% section 3 per referee feedback.
+
+<<echo=FALSE,print=FALSE>>=
 ls("RProtoBuf:DescriptorPool")
 @
 
-\subsection{Creating a message}
+% \subsection{Creating a message}
+\textbf{Creating, accessing, and modifying a message.}
 
 New messages are created with the \code{new} function which accepts
 a Message Descriptor and optionally a list of ``name = value'' pairs
@@ -403,11 +411,10 @@ to set in the message.
 %function to create messages.
 
 <<>>=
-p1 <- new(tutorial.Person)
 p <- new(tutorial.Person, name = "Murray", id = 1)
 @
 
-\subsection{Access and modify fields of a message}
+%\subsection{Access and modify fields of a message}
 
 Once the message is created, its fields can be queried
 and modified using the dollar operator of \proglang{R}, making Protocol
@@ -434,8 +441,8 @@ Protocol Buffers include a 64-bit integer type, but \proglang{R} lacks native
 64-bit integer support.  A workaround is available and described in
 Section~\ref{sec:int64} for working with large integer values.
 
-
-\subsection{Display messages}
+%\subsection{Display messages}
+\textbf{Printing, Reading, and Writing Messages}
 
 Protocol Buffer messages and descriptors implement \code{show}
 methods that provide basic information about the message:
@@ -452,7 +459,7 @@ representation of the contents of a message.
 writeLines(as.character(p))
 @
 
-\subsection{Serializing messages}
+% \subsection{Serializing messages}
 
 One of the primary benefits of Protocol Buffers is the efficient
 binary wire-format representation.  
@@ -484,20 +491,23 @@ close(con)
 readBin(tf2, raw(0), 500)
 @
 
-\code{serialize} can also be called in a more traditional
-object oriented fashion using the dollar operator.
+% TODO(mstokely): commentd out per referee feedback, but see if this is
+% covered in the package documentation well.
+%
+%\code{serialize} can also be called in a more traditional
+%object oriented fashion using the dollar operator.
+%
+%<<>>=
+%p$serialize(tf1)
+%con <- file(tf2, open = "wb")
+%p$serialize(con)
+%close(con)
+%@
+%
+%Here, we first serialize to a file \code{tf1} before we serialize to a binary
+%connection to file \code{tf2}.
 
-<<>>=
-p$serialize(tf1)
-con <- file(tf2, open = "wb")
-p$serialize(con)
-close(con)
-@
-
-Here, we first serialize to a file \code{tf1} before we serialize to a binary
-connection to file \code{tf2}.
-
-\subsection{Parsing messages}
+%\subsection{Parsing messages}
 
 The \pkg{RProtoBuf} package defines the \code{read} and
 \code{readASCII} functions to read messages from files, raw vectors,
@@ -533,20 +543,23 @@ payload <- readBin(tf1, raw(0), 5000)
 message <- read(tutorial.Person, payload)
 @
 
-
-\code{read} can also be used as a pseudo-method of the descriptor
-object:
-
-<<>>=
-message <- tutorial.Person$read(tf1)
-con <- file(tf2, open = "rb")
-message <- tutorial.Person$read(con)
-close(con)
-message <- tutorial.Person$read(payload)
-@
-
-Here we read first from a file, then from a binary connection and lastly from
-a message payload.
+% TODO(mstokely): comment out and use only one style, not both per
+% referee feedback.  Also avoid using the term 'pseudo-method' which
+% is unclear.
+%
+%\code{read} can also be used as a pseudo-method of the descriptor
+%object:
+%
+%<<>>=
+%message <- tutorial.Person$read(tf1)
+%con <- file(tf2, open = "rb")
+%message <- tutorial.Person$read(con)
+%close(con)
+%message <- tutorial.Person$read(payload)
+%@
+%
+%Here we read first from a file, then from a binary connection and lastly from
+%a message payload.
 
 
 \section{Under the hood: S4 classes, methods, and pseudo methods}
