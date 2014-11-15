@@ -394,12 +394,15 @@ namespace.\footnote{Note that there is a significant performance
 % Commented out for now because its too detailed.  Lets shorten
 % section 3 per referee feedback.
 
-<<echo=FALSE,print=FALSE>>=
-ls("RProtoBuf:DescriptorPool")
-@
+%<<echo=FALSE,print=FALSE>>=
+%ls("RProtoBuf:DescriptorPool")
+%@
 
 % \subsection{Creating a message}
-\textbf{Creating, accessing, and modifying a message.}
+
+\\
+
+\textbf{Creating, accessing, and modifying messages.}
 
 New messages are created with the \code{new} function which accepts
 a Message Descriptor and optionally a list of ``name = value'' pairs
@@ -442,6 +445,9 @@ Protocol Buffers include a 64-bit integer type, but \proglang{R} lacks native
 Section~\ref{sec:int64} for working with large integer values.
 
 %\subsection{Display messages}
+
+\\
+
 \textbf{Printing, Reading, and Writing Messages}
 
 Protocol Buffer messages and descriptors implement \code{show}
@@ -451,8 +457,8 @@ methods that provide basic information about the message:
 p
 @
 
-For additional information, such as for debugging purposes,
-the \code{as.character} method provides a more complete ASCII
+%For additional information, such as for debugging purposes,
+The \code{as.character} method provides a more complete ASCII
 representation of the contents of a message.
 
 <<>>=
@@ -473,7 +479,7 @@ as long as the message type is known and its descriptor is available.
 serialize(p, NULL)
 @
 
-The same method can be used to serialize messages to files:
+The same method can be used to serialize messages to files or arbitrary binary connections:
 
 <<>>=
 tf1 <- tempfile()
@@ -481,15 +487,18 @@ serialize(p, tf1)
 readBin(tf1, raw(0), 500)
 @
 
-Or to arbitrary binary connections:
+% TODO(mstokely): Comment out, combined with last statement. make this
+% shorter, more succinct summary of the key features of RProtoBuf.
 
-<<>>=
-tf2 <- tempfile()
-con <- file(tf2, open = "wb")
-serialize(p, con)
-close(con)
-readBin(tf2, raw(0), 500)
-@
+%Or to arbitrary binary connections:
+%
+%<<>>=
+%tf2 <- tempfile()
+%con <- file(tf2, open = "wb")
+%serialize(p, con)
+%close(con)
+%readBin(tf2, raw(0), 500)
+%@
 
 % TODO(mstokely): commentd out per referee feedback, but see if this is
 % covered in the package documentation well.
@@ -527,21 +536,21 @@ writeLines(as.character(msg))
 @
 
 The \code{input} argument of \code{read} can also be a binary
-readable \proglang{R} connection, such as a binary file connection:
+readable \proglang{R} connection, such as a binary file connection, or a raw vector of serialized bytes.
 
-<<>>=
-con <- file(tf2, open = "rb")
-message <- read(tutorial.Person, con)
-close(con)
-writeLines(as.character(message))
-@
+% <<>>=
+% con <- file(tf2, open = "rb")
+% message <- read(tutorial.Person, con)
+% close(con)
+% writeLines(as.character(message))
+% @
 
-Finally, the raw vector payload of the message can be used:
-
-<<>>=
-payload <- readBin(tf1, raw(0), 5000)
-message <- read(tutorial.Person, payload)
-@
+% Finally, the raw vector payload of the message can be used:
+%
+%<<>>=
+%payload <- readBin(tf1, raw(0), 5000)
+%message <- read(tutorial.Person, payload)
+%@
 
 % TODO(mstokely): comment out and use only one style, not both per
 % referee feedback.  Also avoid using the term 'pseudo-method' which
@@ -560,7 +569,6 @@ message <- read(tutorial.Person, payload)
 %
 %Here we read first from a file, then from a binary connection and lastly from
 %a message payload.
-
 
 \section{Under the hood: S4 classes, methods, and pseudo methods}
 \label{sec:rprotobuf-classes}
