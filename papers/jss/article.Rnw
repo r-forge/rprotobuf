@@ -622,12 +622,12 @@ package that is included with \proglang{R} \citep{r}.
 
 Table~\ref{class-summary-table} lists the six primary Message and
 Descriptor classes in \pkg{RProtoBuf}.
-% Please see the package
-%documentation for a complete description of the slots and methods for
-%each class.
+Please see the package
+documentation for a complete description of the slots and methods for
+each class.
 
-
-\begin{table}[bp]
+% [bp]
+\begin{table}
 \centering
 \begin{tabular}{lccl}
 \toprule
@@ -651,56 +651,11 @@ The \code{Message} S4 class represents Protocol Buffer Messages and
 is the core abstraction of \pkg{RProtoBuf}. Each \code{Message}
 contains a pointer to a \code{Descriptor} which defines the schema
 of the data defined in the Message, as well as a number of
-\code{FieldDescriptors} for the individual fields of the message.  A
-complete list of the slots and methods for \code{Messages}
-is available in Table~\ref{Message-methods-table}.
+\code{FieldDescriptors} for the individual fields of the message.
 
 <<>>=
 new(tutorial.Person)
 @
-
-\begin{table}[tbp]
-\centering
-\begin{small}
-\begin{tabular}{lp{10cm}}
-\toprule
-Slot & Description \\
-\cmidrule(r){2-2}
-\code{pointer} & External pointer to the \code{Message} object of the \proglang{C++} protobuf library. Documentation for the
-\code{Message} class is available from the Protocol Buffer project page. \\
-%(\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.message.html#Message}) \\
-\code{type} & Fully qualified name of the message. For example a \code{Person} message
-has its \code{type} slot set to \code{tutorial.Person} \\[.3cm]
-
-Method & Description \\
-\cmidrule(r){2-2}
-\code{has} & Indicates if a message has a given field.   \\
-\code{clone} & Creates a clone of the message \\
-\code{isInitialized} & Indicates if a message has all its required fields set\\
-\code{serialize} & serialize a message to a file, binary connection, or raw vector\\
-\code{clear} & Clear one or several fields of a message, or the entire message\\
-\code{size} & The number of elements in a message field\\
-\code{bytesize} & The number of bytes the message would take once serialized\\[3mm]
-%
-\code{swap} & swap elements of a repeated field of a message\\
-\code{set} & set elements of a repeated field\\
-\code{fetch} & fetch elements of a repeated field\\
-\code{setExtension} & set an extension of a message\\
-\code{getExtension} & get the value of an extension of a message\\
-\code{add} & add elements to a repeated field \\[3mm]
-%
-\code{str} & the \proglang{R} structure of the message\\
-\code{as.character} & character representation of a message\\
-\code{toString} & character representation of a message (same as \code{as.character}) \\
-\code{as.list} & converts message to a named \proglang{R} list\\
-\code{update} & updates several fields of a message at once\\
-\code{descriptor} & get the descriptor of the message type of this message\\
-\code{fileDescriptor} & get the file descriptor of this message's descriptor\\
-\hline
-\end{tabular}
-\end{small}
-\caption{\label{Message-methods-table}Description of slots and methods for the \code{Message} S4 class.}
-\end{table}
 
 \subsection{Descriptors}
 
@@ -730,101 +685,19 @@ tutorial.Person$PhoneNumber
 tutorial.Person.PhoneNumber
 @
 
-Table~\ref{Descriptor-methods-table} provides a complete list of the
-slots and available methods for Descriptors.
-
-\begin{table}[tbp]
-\centering
-\begin{small}
-\begin{tabular}{lp{10cm}}
-\toprule
-Slot & Description \\
-\cmidrule(r){2-2}
-\code{pointer} & External pointer to the \code{Descriptor} object of the \proglang{C++} proto library. Documentation for the
-\code{Descriptor} class is available from the Protocol Buffer project page.\\
-%\url{http://code.google.com/apis/protocolbuffers/docs/reference/cpp/google.protobuf.descriptor.html#Descriptor} \\
-\code{type} & Fully qualified path of the message type. \\[.3cm]
-%
-
-Method & Description \\
-\cmidrule(r){2-2}
-\code{new} & Creates a prototype of a message described by this descriptor.\\
-\code{read} & Reads a message from a file or binary connection.\\
-\code{readASCII} & Read a message in ASCII format from a file or
-text connection.\\
-\code{name} & Retrieve the name of the message type associated with
-this descriptor.\\
-\code{as.character} & character representation of a descriptor\\
-\code{toString} & character representation of a descriptor (same as \code{as.character}) \\
-\code{as.list} & return a named
-list of the field, enum, and nested descriptors included in this descriptor.\\
-\code{asMessage} & return DescriptorProto message. \\
-\code{fileDescriptor} & Retrieve the file descriptor of this
-descriptor.\\
-\code{containing\_type} & Retrieve the descriptor describing the message type containing this descriptor.\\
-\code{field\_count} & Return the number of fields in this descriptor.\\
-\code{field} & Return the descriptor for the specified field in this descriptor.\\
-\code{nested\_type\_count} & The number of nested types in this descriptor.\\
-\code{nested\_type} & Return the descriptor for the specified nested 
-type in this descriptor.\\
-\code{enum\_type\_count} & The number of enum types in this descriptor.\\
-\code{enum\_type} & Return the descriptor for the specified enum
-type in this descriptor.\\
-\bottomrule
-\end{tabular}
-\end{small}
-\caption{\label{Descriptor-methods-table}Description of slots and methods for the \code{Descriptor} S4 class.}
-\end{table}
-
 \subsection{Field descriptors}
 \label{subsec-field-descriptor}
 
 The class \emph{FieldDescriptor} represents field
 descriptors in \proglang{R}. This is a wrapper S4 class around the
 \code{google::protobuf::FieldDescriptor} \proglang{C++} class.
-Table~\ref{fielddescriptor-methods-table} describes the methods
-defined for the \code{FieldDescriptor} class.
 
-\begin{table}[tbp]
-\centering
-\begin{small}
-\begin{tabular}{lp{10cm}}
-\toprule
-Slot & Description \\
-\cmidrule(r){2-2}
-\code{pointer} & External pointer to the \code{FieldDescriptor} \proglang{C++} variable \\
-\code{name} & Simple name of the field \\
-\code{full\_name} & Fully qualified name of the field \\
-\code{type} & Name of the message type where the field is declared \\[.3cm]
-%
-
-Method & Description \\
-\cmidrule(r){2-2}
-\code{as.character} & Character representation of a descriptor\\
-\code{toString} & Character representation of a descriptor (same as \code{as.character}) \\
-\code{asMessage} & Return FieldDescriptorProto message. \\
-\code{name} & Return the name of the field descriptor.\\
-\code{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
-\code{containing\_type} & Return the containing descriptor of this field.\\
-\code{is\_extension} & Return TRUE if this field is an extension.\\
-\code{number} & Gets the declared tag number of the field.\\
-\code{type} & Gets the type of the field.\\
-\code{cpp\_type} & Gets the \proglang{C++} type of the field.\\
-\code{label} & Gets the label of a field (optional, required, or repeated).\\
-\code{is\_repeated} & Return TRUE if this field is repeated.\\
-\code{is\_required} & Return TRUE if this field is required.\\
-\code{is\_optional} & Return TRUE if this field is optional.\\
-\code{has\_default\_value} & Return TRUE if this field has a default value.\\
-\code{default\_value} & Return the default value.\\
-\code{message\_type} & Return the message type if this is a message type field.\\
-\code{enum\_type} & Return the enum type if this is an enum type field.\\
-\bottomrule
-\end{tabular}
-\end{small}
-\caption{\label{fielddescriptor-methods-table}Description of slots and
-  methods for the \code{FieldDescriptor} S4 class.}
-\end{table}
-
+<<>>=
+tutorial.Person$email
+tutorial.Person$email$is_required()
+tutorial.Person$email$type()
+tutorial.Person$email$as.character()
+@
 
 \subsection{Enum descriptors}
 \label{subsec-enum-descriptor}
@@ -832,8 +705,6 @@ Method & Description \\
 The class \emph{EnumDescriptor} represents enum descriptors in \proglang{R}.
 This is a wrapper S4 class around the
 \code{google::protobuf::EnumDescriptor} \proglang{C++} class.
-Table~\ref{enumdescriptor-methods-table} describes the methods
-defined for the \code{EnumDescriptor} class.
 
 The \verb|$| operator can be used to retrieve the value of enum
 constants contained in the EnumDescriptor, or to invoke
@@ -848,49 +719,12 @@ tutorial.Person$PhoneType
 tutorial.Person$PhoneType$WORK
 @
 
-\begin{table}[tbp]
-\centering
-\begin{small}
-\begin{tabular}{lp{10cm}}
-\toprule
-Slot & Description \\
-\cmidrule(r){2-2}
-\code{pointer} & External pointer to the \code{EnumDescriptor} \proglang{C++} variable \\
-\code{name} & Simple name of the enum \\
-\code{full\_name} & Fully qualified name of the enum \\
-\code{type} & Name of the message type where the enum is declared \\[.3cm]
-%
-
-Method & Description \\
-\cmidrule(r){2-2}
-\code{as.list} & return a named
-integer vector with the values of the enum and their names.\\
-\code{as.character} & character representation of a descriptor\\
-\code{toString} & character
-representation of a descriptor (same as \code{as.character}) \\
-\code{asMessage} & return EnumDescriptorProto message. \\
-\code{name} & Return the name of the enum descriptor.\\
-\code{fileDescriptor} & Return the fileDescriptor where this field is defined.\\
-\code{containing\_type} & Return the containing descriptor of this field.\\
-\code{length} & Return the number of constants in this enum.\\
-\code{has} & Return TRUE if this enum contains the specified named constant string.\\
-\code{value\_count} & Return the number of constants in this enum (same as \code{length}).\\
-\code{value} & Return the EnumValueDescriptor of an enum value of specified index, name, or number.\\
-\bottomrule
-\end{tabular}
-\end{small}
-\caption{\label{enumdescriptor-methods-table}Description of slots and methods
-  for the \code{EnumDescriptor} S4 class.} 
-\end{table}
-
 \subsection{Enum value descriptors}
 \label{subsec-enumvalue-descriptor}
 
 The class \emph{EnumValueDescriptor} represents enumeration value
 descriptors in \proglang{R}.  This is a wrapper S4 class around the
 \code{google::protobuf::EnumValueDescriptor} \proglang{C++} class.
-Table~\ref{EnumValueDescriptor-methods-table} describes the methods
-defined for the \code{EnumValueDescriptor} class.
 
 The \verb|$| operator can be used to invoke methods.
 
@@ -900,68 +734,13 @@ tutorial.Person$PhoneType$value(name="HOME")
 tutorial.Person$PhoneType$value(number=1)
 @
 
-\begin{table}[tbp]
-\centering
-\begin{small}
-\begin{tabular}{lp{10cm}}
-\toprule
-Slot & Description \\
-\cmidrule(r){2-2}
-\code{pointer} & External pointer to the \code{EnumValueDescriptor} \proglang{C++} variable \\
-\code{name} & simple name of the enum value \\
-\code{full\_name} & fully qualified name of the enum value \\[.3cm]
-%
-
-Method & Description \\
-\cmidrule(r){2-2}
-\code{number} & return the number of this EnumValueDescriptor. \\
-\code{name} & Return the name of the enum value descriptor.\\
-\code{enum\_type} & return the EnumDescriptor type of this EnumValueDescriptor. \\
-\code{as.character} & character representation of a descriptor. \\
-\code{toString} & character representation of a descriptor (same as \code{as.character}). \\
-\code{asMessage} & return EnumValueDescriptorProto message. \\
-\bottomrule
-\end{tabular}
-\end{small}
-\caption{\label{EnumValueDescriptor-methods-table}Description of slots
-  and methods for the \code{EnumValueDescriptor} S4 class.}
-\end{table}
 
 \subsection{File descriptors}
 \label{subsec-file-descriptor}
 
-\begin{table}[tbp]
-\centering
-\begin{small}
-\begin{tabular}{lp{10cm}}
-\toprule
-Slot & Description \\
-\cmidrule(r){2-2}
-\code{pointer} & external pointer to the \code{FileDescriptor} object of the \proglang{C++} proto library. Documentation for the
-\code{FileDescriptor} class is available from the Protocol Buffer project page:
-\url{http://developers.google.com/protocol-buffers/docs/reference/cpp/google.protobuf.descriptor.html#FileDescriptor} \\
-\code{filename} & fully qualified pathname of the \code{.proto} file.\\
-\code{package} & package name defined in this \code{.proto} file.\\[.3cm]
-
-Method & Description \\
-\cmidrule(r){2-2}
-\code{name} & Return the filename for this FileDescriptorProto.\\
-\code{package} & Return the file-level package name specified in this FileDescriptorProto.\\
-\code{as.character} & character representation of a descriptor. \\
-\code{toString} & character representation of a descriptor (same as \code{as.character}). \\
-\code{asMessage} & return FileDescriptorProto message. \\
-\code{as.list} & return named list of descriptors defined in this file descriptor.\\
-\bottomrule
-\end{tabular}
-\end{small}
-\caption{\label{filedescriptor-methods-table}Description of slots and methods for the \code{FileDescriptor} S4 class.}
-\end{table}
-
 The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
 This is a wrapper S4 class around the
 \code{google::protobuf::FileDescriptor} \proglang{C++} class.
-Table~\ref{filedescriptor-methods-table} describes the methods
-defined for the \code{FileDescriptor} class.
 
 The \verb|$| operator can be used to retrieve named fields defined in
 the FileDescriptor, or to invoke methods.
