@@ -360,7 +360,7 @@ schema for a particular named class of messages.
 % space and shrink down this section a little bit.
 %\subsection[Importing message descriptors from .proto files]{Importing message descriptors from \code{.proto} files}
 
-\textbf{Importing message descriptors from \code{.proto} files}
+\subsection*{Importing message descriptors from \code{.proto} files}
 
 To create or parse a Protocol Buffer Message, one must first read in 
 the message type specification from a \code{.proto} file. 
@@ -400,9 +400,9 @@ namespace.\footnote{Note that there is a significant performance
 
 % \subsection{Creating a message}
 
-\\
+% \\
 
-\textbf{Creating, accessing, and modifying messages.}
+\subsection*{Creating, accessing, and modifying messages.}
 
 New messages are created with the \code{new} function which accepts
 a Message Descriptor and optionally a list of ``name = value'' pairs
@@ -417,7 +417,7 @@ to set in the message.
 p <- new(tutorial.Person, name = "Murray", id = 1)
 @
 
-%\subsection{Access and modify fields of a message}
+% \subsection*{Access and modify fields of a message}
 
 Once the message is created, its fields can be queried
 and modified using the dollar operator of \proglang{R}, making Protocol
@@ -444,11 +444,11 @@ Protocol Buffers include a 64-bit integer type, but \proglang{R} lacks native
 64-bit integer support.  A workaround is available and described in
 Section~\ref{sec:int64} for working with large integer values.
 
-%\subsection{Display messages}
+\subsection*{Printing, reading, and writing Messages}
 
-\\
+%\\
 
-\textbf{Printing, Reading, and Writing Messages}
+% \textbf{Printing, Reading, and Writing Messages}
 
 Protocol Buffer messages and descriptors implement \code{show}
 methods that provide basic information about the message:
@@ -556,7 +556,7 @@ readable \proglang{R} connection, such as a binary file connection, or a raw vec
 % referee feedback.  Also avoid using the term 'pseudo-method' which
 % is unclear.
 %
-%\code{read} can also be used as a pseudo-method of the descriptor
+%\code{read} can also be used as a method of the descriptor
 %object:
 %
 %<<>>=
@@ -570,21 +570,62 @@ readable \proglang{R} connection, such as a binary file connection, or a raw vec
 %Here we read first from a file, then from a binary connection and lastly from
 %a message payload.
 
-\section{Under the hood: S4 classes, methods, and pseudo methods}
+\section{Under the hood: S4 classes and methods}
 \label{sec:rprotobuf-classes}
 
 The \pkg{RProtoBuf} package uses the S4 system to store
-information about descriptors and messages.  Using the S4 system
-allows the package to dispatch methods that are not
-generic in the S3 sense, such as \code{new} and
-\code{serialize}.
-Table~\ref{class-summary-table} lists the six
-primary Message and Descriptor classes in \pkg{RProtoBuf}.  Each \proglang{R} object
+information about descriptors and messages.
+Each \proglang{R} object
 contains an external pointer to an object managed by the
 \code{protobuf} \proglang{C++} library, and the \proglang{R} objects make calls into more
 than 100 \proglang{C++} functions that provide the
 glue code between the \proglang{R} language classes and the underlying \proglang{C++}
 classes.
+S4 objects are immutable, and so the methods that modify field values of a message return a new copy of the object with R's usual functional copy on modify semantics\footnote{RProtoBuf was designed and implemented before Reference Classes were introduced to offer a new class system with mutable objects.  If RProtoBuf were
+implemented today Reference Classes would almost certainly be a better
+design choice than S4 classes.}.
+Using the S4 system
+allows the package to dispatch methods that are not
+generic in the S3 sense, such as \code{new} and
+\code{serialize}.
+
+The \pkg{Rcpp} package
+\citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
+facilitate this integration of the \proglang{R} and \proglang{C++} code for these objects.
+Each method is wrapped individually which allows us to add 
+user-friendly custom error handling, type coercion, and performance
+improvements at the cost of a more verbose implementation.
+The \pkg{RProtoBuf} package in many ways motivated
+the development of \pkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
+which provide a more concise way of wrapping \proglang{C++} functions and classes
+in a single entity.
+
+Since \pkg{RProtoBuf} users are most often switching between two or
+more different languages as part of a larger data analysis pipeline,
+both generic function and message passing OO style calling conventions
+are supported:
+
+\begin{itemize}
+\item The functional dispatch mechanism of the the form
+  \verb|method(object, arguments)| (common to \proglang{R}), and
+\item The traditional object oriented notation
+  \verb|object$method(arguments)|.
+\end{itemize}
+
+Additionally, \pkg{RProtoBuf} supports tab completion for all
+classes.  Completion possibilities include method names for all
+classes, plus \emph{dynamic dispatch} on names or types specific to a given
+object.  This functionality is implemented with the
+\code{.DollarNames} S3 generic function defined in the \pkg{utils}
+package that is included with \proglang{R} \citep{r}.
+
+
+Table~\ref{class-summary-table} lists the six primary Message and
+Descriptor classes in \pkg{RProtoBuf}.
+% Please see the package
+%documentation for a complete description of the slots and methods for
+%each class.
+
 
 \begin{table}[bp]
 \centering
@@ -603,34 +644,6 @@ FileDescriptor      & 3 & \phantom{1}6 & yes (message/field definitions)\\
 \caption{\label{class-summary-table}Overview of class, slot, method and
   dispatch relationships.}
 \end{table}
-
-The \pkg{Rcpp} package
-\citep{eddelbuettel2011rcpp,eddelbuettel2013seamless} is used to 
-facilitate this integration of the \proglang{R} and \proglang{C++} code for these objects.
-Each method is wrapped individually which allows us to add 
-user-friendly custom error handling, type coercion, and performance
-improvements at the cost of a more verbose implementation.
-The \pkg{RProtoBuf} package in many ways motivated
-the development of \pkg{Rcpp} Modules \citep{eddelbuettel2013exposing},
-which provide a more concise way of wrapping \proglang{C++} functions and classes
-in a single entity.
-
-
-The \pkg{RProtoBuf} package supports two forms for calling
-functions with these S4 classes:
-\begin{itemize}
-\item The functional dispatch mechanism of the the form
-  \verb|method(object, arguments)| (common to \proglang{R}), and
-\item The traditional object oriented notation
-  \verb|object$method(arguments)|.
-\end{itemize}
-
-Additionally, \pkg{RProtoBuf} supports tab completion for all
-classes.  Completion possibilities include pseudo-method names for all
-classes, plus \emph{dynamic dispatch} on names or types specific to a given
-object.  This functionality is implemented with the
-\code{.DollarNames} S3 generic function defined in the \pkg{utils}
-package that is included with \proglang{R} \citep{r}.
 
 \subsection{Messages}
 
@@ -697,7 +710,7 @@ descriptors are represented in \proglang{R} by the \emph{Descriptor} S4
 class. The class contains the slots \code{pointer} and
 \code{type}.  Similarly to messages, the \verb|$| operator can be
 used to retrieve descriptors that are contained in the descriptor, or
-invoke pseudo-methods.
+invoke methods.
 
 When \pkg{RProtoBuf} is first loaded it calls
 \code{readProtoFiles} to read in the example \code{addressbook.proto} file
@@ -824,7 +837,7 @@ defined for the \code{EnumDescriptor} class.
 
 The \verb|$| operator can be used to retrieve the value of enum
 constants contained in the EnumDescriptor, or to invoke
-pseudo-methods.
+methods.
 
 The \code{EnumDescriptor} contains information about what values this type
 defines, while the \code{EnumValueDescriptor} describes an
@@ -879,7 +892,7 @@ descriptors in \proglang{R}.  This is a wrapper S4 class around the
 Table~\ref{EnumValueDescriptor-methods-table} describes the methods
 defined for the \code{EnumValueDescriptor} class.
 
-The \verb|$| operator can be used to invoke pseudo-methods.
+The \verb|$| operator can be used to invoke methods.
 
 <<>>=
 tutorial.Person$PhoneType$value(1)
@@ -951,7 +964,7 @@ Table~\ref{filedescriptor-methods-table} describes the methods
 defined for the \code{FileDescriptor} class.
 
 The \verb|$| operator can be used to retrieve named fields defined in
-the FileDescriptor, or to invoke pseudo-methods.
+the FileDescriptor, or to invoke methods.
 
 <<>>=
 f <- tutorial.Person$fileDescriptor()
