@@ -675,73 +675,40 @@ then available on the search path\footnote{This explains why the example in
 Table~\ref{tab:proto} lacked an explicit call to
 \code{readProtoFiles}.}.
 
-<<>>=
-tutorial.Person$email 
-
-tutorial.Person$PhoneType 
-
-tutorial.Person$PhoneNumber 
-
-tutorial.Person.PhoneNumber
-@
-
-\subsection{Field descriptors}
+\subsubsection*{Field descriptors}
 \label{subsec-field-descriptor}
 
-The class \emph{FieldDescriptor} represents field
-descriptors in \proglang{R}. This is a wrapper S4 class around the
-\code{google::protobuf::FieldDescriptor} \proglang{C++} class.
-
 <<>>=
-tutorial.Person$email
+tutorial.Person$email 
 tutorial.Person$email$is_required()
 tutorial.Person$email$type()
 tutorial.Person$email$as.character()
+class(tutorial.Person$email)
 @
 
-\subsection{Enum descriptors}
+\subsubsection*{Enum and EnumValue descriptors}
 \label{subsec-enum-descriptor}
 
-The class \emph{EnumDescriptor} represents enum descriptors in \proglang{R}.
-This is a wrapper S4 class around the
-\code{google::protobuf::EnumDescriptor} \proglang{C++} class.
-
-The \verb|$| operator can be used to retrieve the value of enum
-constants contained in the EnumDescriptor, or to invoke
-methods.
-
-The \code{EnumDescriptor} contains information about what values this type
-defines, while the \code{EnumValueDescriptor} describes an
-individual enum constant of a particular type.
+The \code{EnumDescriptor} contains information about what values a
+type defines, while the \code{EnumValueDescriptor} describes an
+individual enum constant of a particular type.  The \verb|$| operator
+can be used to retrieve the value of enum constants contained in the
+EnumDescriptor, or to invoke methods.
 
 <<>>=
 tutorial.Person$PhoneType
 tutorial.Person$PhoneType$WORK
-@
-
-\subsection{Enum value descriptors}
-\label{subsec-enumvalue-descriptor}
-
-The class \emph{EnumValueDescriptor} represents enumeration value
-descriptors in \proglang{R}.  This is a wrapper S4 class around the
-\code{google::protobuf::EnumValueDescriptor} \proglang{C++} class.
-
-The \verb|$| operator can be used to invoke methods.
-
-<<>>=
+class(tutorial.Person$PhoneType)
 tutorial.Person$PhoneType$value(1)
 tutorial.Person$PhoneType$value(name="HOME")
 tutorial.Person$PhoneType$value(number=1)
+class(tutorial.Person$PhoneType$value(1))
 @
 
-
-\subsection{File descriptors}
+\subsubsection*{File descriptors}
 \label{subsec-file-descriptor}
 
 The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
-This is a wrapper S4 class around the
-\code{google::protobuf::FileDescriptor} \proglang{C++} class.
-
 The \verb|$| operator can be used to retrieve named fields defined in
 the FileDescriptor, or to invoke methods.
 
