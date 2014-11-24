@@ -215,7 +215,7 @@ motivation for their use.
 Section~\ref{sec:rprotobuf-basic} describes the interactive \proglang{R} interface
 provided by the \pkg{RProtoBuf} package, and introduces the two main abstractions:
 \emph{Messages} and \emph{Descriptors}.  Section~\ref{sec:rprotobuf-classes}
-details the implementation details of the main S4 classes and methods.  
+details the implementation of the main S4 classes and methods.  
 Section~\ref{sec:types} describes the challenges of type coercion
 between \proglang{R} and other languages.  Section~\ref{sec:evaluation} introduces a
 general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and evaluates
@@ -689,7 +689,7 @@ class(tutorial.Person$email)
 \subsubsection*{Enum and EnumValue descriptors}
 \label{subsec-enum-descriptor}
 
-The \code{EnumDescriptor} contains information about what values a
+The \code{EnumDescriptor} type contains information about what values a
 type defines, while the \code{EnumValueDescriptor} describes an
 individual enum constant of a particular type.  The \verb|$| operator
 can be used to retrieve the value of enum constants contained in the
@@ -1073,6 +1073,12 @@ section satisfies both of these conditions.
 
 \section{Application: Distributed data collection with MapReduce}
 \label{sec:mapreduce}
+
+Protocol Buffers have been used extensively at Google for almost all
+RPC protocols, and for storing structured information in a variety of
+persistent storage systems since 2000 \citep{dean2009designs}.  The
+\pkg{RProtoBuf} package has been in widespread use by hundreds of
+analysts at Google since 2010.
 
 Many large data sets in fields such as particle physics and information
 processing are stored in binned or histogram form in order to reduce
