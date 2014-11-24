@@ -1078,7 +1078,10 @@ Protocol Buffers have been used extensively at Google for almost all
 RPC protocols, and for storing structured information in a variety of
 persistent storage systems since 2000 \citep{dean2009designs}.  The
 \pkg{RProtoBuf} package has been in widespread use by hundreds of
-analysts at Google since 2010.
+statisticians and software engineers at Google since 2010.  This
+section describes a simplified example of a common design pattern of
+collecting a large structured data set in one language for later
+analysis in \proglang{R}.
 
 Many large data sets in fields such as particle physics and information
 processing are stored in binned or histogram form in order to reduce
@@ -1196,8 +1199,9 @@ plot(as.histogram(hist))
 @
 \end{center}
 
-One of the authors has used this design pattern for several
-large-scale studies of distributed storage systems
+One of the authors has used this design pattern with large-scale \proglang{C++}
+MapReduces over very large data sets to write out histogram protocol
+buffers for several large-scale studies of distributed storage systems
 \citep{sciencecloud,janus}.
 
 \section{Application: Data interchange in web services}
@@ -1372,7 +1376,7 @@ The \pkg{RProtoBuf} package builds on the Protocol Buffers \proglang{C++} librar
 and extends the \proglang{R} system with the ability to create, read,
 write, parse, and manipulate Protocol
 Buffer messages. \pkg{RProtoBuf} has been used extensively inside Google 
-for the past three years by statisticians, analysts, and software engineers.
+for the past five years by statisticians, analysts, and software engineers.
 At the time of this writing there are over 300 active
 users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{Python}, and 
