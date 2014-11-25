@@ -1209,7 +1209,7 @@ plot(as.histogram(hist))
 @
 \end{center}
 
-This simple example uses a constant histogram generated in
+ This simple example uses a constant histogram generated in
 \proglang{Python} to illustrate the serialization concepts without
 requiring the reader to be familiar with the interface of any
 particular MapReduce implementation.  In practice, using Protocol
@@ -1228,8 +1228,12 @@ buffers for several large-scale studies of distributed storage systems
 \section{Application: Data interchange in web services}
 \label{sec:opencpu}
 
-As described earlier, the primary application of Protocol Buffers is data
-interchange in the context of inter-system communications.  Network protocols
+The previous section described an application where data from a
+program written in another language was output to persistent storage
+and then read into \proglang{R} for further analysis.  This section
+describes another common use case where Protocol Buffers are used as
+the interchange format for client-server communication.
+Network protocols
 such as HTTP provide mechanisms for client-server communication, i.e., how to
 initiate requests, authenticate, send messages, etc.  However, network
 protocols generally do not regulate the \emph{content} of messages: they
@@ -1240,47 +1244,51 @@ protocol that prescribes how these structures are to be represented in
 messages (buffers) on the network. Protocol Buffers solve exactly this
 problem by providing a cross-platform method for serializing arbitrary
 structures into well defined messages, which can then be exchanged using any
-protocol. The descriptors (\code{.proto} files) are used to formally define
-the interface of a remote API or network application. Libraries to parse and
-generate protobuf messages are available for many programming languages,
-making it relatively straightforward to implement clients and servers.
+protocol.
+%The descriptors (\code{.proto} files) are used to formally define
+%the interface of a remote API or network application.
+%Libraries to parse and
+%generate protobuf messages are available for many programming languages,
+%making it relatively straightforward to implement clients and servers.
 
 \subsection[Interacting with R through HTTPS and Protocol Buffers]{Interacting with \proglang{R} through HTTPS and Protocol Buffers}
 
 One example of a system that supports Protocol Buffers to interact
-with \proglang{R} is OpenCPU \citep{opencpu}. OpenCPU is a framework for embedded statistical 
-computation and reproducible research based on \proglang{R} and \LaTeX. It exposes a 
-HTTP(S) API to access and manipulate \proglang{R} objects and allows for performing 
-remote \proglang{R} function calls. Clients do not need to understand 
-or generate any \proglang{R} code: HTTP requests are automatically mapped to 
-function calls, and arguments/return values can be posted/retrieved
-using several data interchange formats, such as Protocol Buffers.  
-OpenCPU uses the \code{serialize\_pb} and \code{unserialize\_pb} functions
-from the \pkg{RProtoBuf} package to convert between \proglang{R} objects and protobuf
-messages. Therefore, clients need the \code{rexp.proto} descriptor mentioned
-earlier to parse and generate protobuf messages when interacting with OpenCPU.
+with \proglang{R} is OpenCPU \citep{opencpu}. OpenCPU is a framework
+for embedded statistical computation and reproducible research based
+on \proglang{R} and \LaTeX. It exposes a HTTP(S) API to access and
+manipulate \proglang{R} objects and execute remote \proglang{R}
+function calls. Clients do not need to understand or generate any
+\proglang{R} code: HTTP requests are automatically mapped to function
+calls, and arguments/return values can be posted/retrieved using
+several data interchange formats, such as Protocol Buffers.  OpenCPU
+uses the \code{rexp.proto} descriptor and the \code{serialize\_pb} and
+\code{unserialize\_pb} functions described in
+Section~\ref{sec:evaluation} to convert between \proglang{R} objects
+and protocol buffer messages.
 
 \subsection[HTTP GET: Retrieving an R object]{HTTP GET: Retrieving an \proglang{R} object}
 
 The \code{HTTP GET} method is used to read a resource from OpenCPU. For example,
-to access the data set \code{Animals} from the package \code{MASS}, a 
+to access the data set \code{Animals} from the package \code{MASS}, a
 client performs the following HTTP request:
 
 \begin{verbatim}
   GET https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb
 \end{verbatim}
 The postfix \code{/pb} in the URL tells the server to send this
-object in the form of a protobuf message. Alternative formats include 
-\code{/json}, \code{/csv}, \code{/rds} and others. If the request
-is successful, OpenCPU returns the serialized object with HTTP status 
-code 200 and HTTP response header \code{Content-Type: application/x-protobuf}. 
+object in the form of a protocol buffer message.
+% Alternative formats include \code{/json}, \code{/csv}, \code{/rds} and others.
+If the request
+is successful, OpenCPU returns the serialized object with HTTP status
+code 200 and HTTP response header \code{Content-Type: application/x-protobuf}.
 The latter is the conventional MIME type that formally notifies the client to
-interpret the response as a protobuf message. 
+interpret the response as a protocol buffer.
 
-Because both HTTP and Protocol Buffers have libraries available for many 
+Because both HTTP and Protocol Buffers have libraries available for many
 languages, clients can be implemented in just a few lines of code. Below
-is example code for both \proglang{R} and Python that retrieves a data set from \proglang{R} with 
-OpenCPU using a protobuf message. In \proglang{R}, we use the HTTP client from 
+is example code for both \proglang{R} and Python that retrieves an \proglang{R} data set encoded as a protocol buffer message from OpenCPU.
+In \proglang{R}, we use the HTTP client from
 the \code{httr} package \citep{httr}. In this example we
 download a data set which is part of the base \proglang{R} distribution, so we can
 verify that the object was transferred without loss of information.
@@ -1295,20 +1303,20 @@ output <- unserialize_pb(req$content)
 identical(output, MASS::Animals)
 @
 
-This code suggests a method for exchanging objects between \proglang{R} servers, however this might as 
-well be done without Protocol Buffers. The main advantage of using an inter-operable format 
-is that we can actually access \proglang{R} objects from within another
-programming language. For example, in a very similar fashion we can retrieve the same
-data set in a Python client. To parse messages in Python, we first compile the 
-\code{rexp.proto} descriptor into a python module using the \code{protoc} compiler:
+Similarly, to retrieve the same data set in a Python client, we first
+compile the \code{rexp.proto} descriptor into a python module
+using the \code{protoc} compiler:
 
 \begin{verbatim}
   protoc rexp.proto --python_out=.
 \end{verbatim}
-This generates Python module called \code{rexp\_pb2.py}, containing both the 
-descriptor information as well as methods to read and manipulate the \proglang{R} object 
-message. In the example below we use the HTTP client from the \code{urllib2}
-module. 
+
+This generates Python module called \code{rexp\_pb2.py}, containing
+both the descriptor information as well as methods to read and
+manipulate the \proglang{R} object message. We use the
+HTTP client from the \code{urllib2} module in our example to retrieve the
+encoded protocol buffer from the remote server then parse and print it
+from Python.
 
 \begin{verbatim}
 import urllib2
@@ -1316,7 +1324,7 @@ from rexp_pb2 import REXP
 
 req = urllib2.Request('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
 res = urllib2.urlopen(req)
-        
+
 msg = REXP()
 msg.ParseFromString(res.read())
 print(msg)
@@ -1324,35 +1332,28 @@ print(msg)
 The \code{msg} object contains all data from the Animals data set. From here we
 can easily extract the desired fields for further use in Python.
 
-
 \subsection[HTTP POST: Calling an R function]{HTTP POST: Calling an \proglang{R} function}
 
-The example above shows how the \code{HTTP GET} method retrieves a 
-resource from OpenCPU, for example an \proglang{R} object. The \code{HTTP POST} 
-method on the other hand is used for calling functions and running scripts, 
-which is the primary purpose of the framework. As before, the \code{/pb} 
-postfix requests to retrieve the output as a protobuf message, in this
-case the function return value. However, OpenCPU allows us to supply the
-arguments of the function call in the form of protobuf messages as well.
-This is a bit more work, because clients needs to both generate messages 
-containing \proglang{R} objects to post to the server, as well as retrieve and parse
-protobuf messages returned by the server. Using Protocol Buffers to post
-function arguments is not required, and for simple (scalar) arguments 
-the standard \code{application/x-www-form-urlencoded} format might be sufficient.
-However, with Protocol Buffers the client can perform function calls with
-more complex arguments such as \proglang{R} vectors or lists. The result is a complete
-RPC system to do arbitrary \proglang{R} function calls from within 
-any programming language.
+The previous example used a simple \code{HTTP GET} method to retrieve
+an \proglang{R} object from a remote service (OpenCPU) encoded as a
+protocol buffer.
+In many cases simple \code{HTTP GET} methods are insufficient, and a
+more complete RPC system may need to create compact protocol buffers
+for each request to send to the remote server in addition to parsing
+the response protocol buffers.
 
-The following example \proglang{R} client code performs the remote function call 
-\code{stats::rnorm(n=42, mean=100)}. The function arguments (in this
-case \code{n} and \code{mean}) as well as the return value (a vector
-with 42 random numbers) are transferred using a protobuf message. RPC in
-OpenCPU works like the \code{do.call} function in \proglang{R}, hence all arguments
-are contained within a list.
+The OpenCPU framework allows us to do arbitrary \proglang{R} function
+calls from within any programming language by encoding the arguments
+in the request protocol buffer.  The following example \proglang{R}
+client code performs the remote function call \code{stats::rnorm(n=42,
+mean=100)}. The function arguments (in this case \code{n} and
+\code{mean}) as well as the return value (a vector with 42 random
+numbers) are transferred using protocol buffer messages. RPC in OpenCPU
+works like the \code{do.call} function in \proglang{R}, hence all
+arguments are contained within a list.
 
 <<eval=FALSE>>=
-library("httr")       
+library("httr")
 library("RProtoBuf")
 
 args <- list(n=42, mean=100)
@@ -1369,7 +1370,7 @@ req <- POST (
 output <- unserialize_pb(req$content)
 print(output)
 @
-The OpenCPU server basically performs the following steps to process the above RPC request:  
+The OpenCPU server basically performs the following steps to process the above RPC request:
 
 <<eval=FALSE>>=
 fnargs <- unserialize_pb(inputmsg)
