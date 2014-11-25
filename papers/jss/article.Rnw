@@ -1,5 +1,6 @@
 \documentclass[article]{jss}
 \usepackage{booktabs}
+\usepackage{listings}
 \usepackage[toc,page]{appendix}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -504,7 +505,7 @@ readBin(tf1, raw(0), 500)
 % covered in the package documentation well.
 %
 %\code{serialize} can also be called in a more traditional
-%object oriented fashion using the dollar operator.
+%object-oriented fashion using the dollar operator.
 %
 %<<>>=
 %p$serialize(tf1)
@@ -608,7 +609,7 @@ are supported:
 \begin{itemize}
 \item The functional dispatch mechanism of the the form
   \verb|method(object, arguments)| (common to \proglang{R}), and
-\item The traditional object oriented notation
+\item The message passing object-oriented notation of the form
   \verb|object$method(arguments)|.
 \end{itemize}
 
@@ -1171,27 +1172,33 @@ outfile.write(hist.SerializeToString())
 outfile.close()
 \end{Code}
 
-The Protocol Buffer can then be read into \proglang{R} and converted to a native
-\proglang{R} histogram object for plotting. Here, the schema is read first,
-then the (serialized) histogram is read into the variable \code{hist} which
-is then converted a histogram object which is display as a plot.
+The Protocol Buffer created from this \proglang{Python} script can then be read into \proglang{R} and converted to a native
+\proglang{R} histogram object for plotting.  Line~1 in the listing below attaches the \pkg{HistogramTools} package which imports \pkg{RProtoBuf}.  Line~2 then reads all of the \code{.proto} descriptor definitions provided by \pkg{HistogramTools} and adds them to the environment as described in Section~\ref{sec:rprotobuf-basic}.  Line~3 parses the serialized protocol buffer using the \code{HistogramTools.HistogramState} schema.  Line~8 converts the protocol buffer representation of the histogram to a native \proglang{R} histogram object with \code{as.histogram} and passes the result to \code{plot}.
 
-\begin{Code}
-library("RProtoBuf")
-library("HistogramTools")
+% Here, the schema is read first,
+%then the (serialized) histogram is read into the variable \code{hist} which
+%is then converted a histogram object which is display as a plot.
 
-readProtoFiles(package="HistogramTools")
+\lstdefinelanguage{jss}
+  {sensitive=false,
+   morecomment=[l]{R>}}
 
-hist <- HistogramTools.HistogramState$read("/tmp/hist.pb")
-hist
+\lstset{language=jss, basicstyle=\ttfamily, numbers=left, numberstyle=\tiny, stepnumber=2, numbersep=5pt, columns=fullflexible, keepspaces=true, showstringspaces=false, commentstyle=\textsl}
+%\begin{Code}
+\begin{lstlisting}
+R> library("HistogramTools")
+R> readProtoFiles(package="HistogramTools")
+R> hist <- HistogramTools.HistogramState$read("/tmp/hist.pb")
+R> hist
+
 [1] "message of type 'HistogramTools.HistogramState' with 3 fields set"
 
-plot(as.histogram(hist))
-\end{Code}
+R> plot(as.histogram(hist))
+\end{lstlisting}
+%\end{Code}
 
 \begin{center}
 <<echo=FALSE,fig=TRUE,width=8,height=4>>=
-require(RProtoBuf)
 require(HistogramTools)
 readProtoFiles(package="HistogramTools")
 hist <- HistogramTools.HistogramState$read("hist.pb")
