@@ -230,7 +230,7 @@ Section~\ref{sec:summary} concludes.
 
 Protocol Buffers are a modern, language-neutral, platform-neutral,
 extensible mechanism for sharing and storing structured data.  Some of
-the key features provided by Protocol Buffers for data analysis include:
+the key features provided by Protocol Buffers for data analysis are:
 
 \begin{itemize}
 \item \emph{Portable}:  Enable users to send and receive data between
@@ -385,7 +385,7 @@ parsed from \code{.proto} files and added to the global
 namespace.\footnote{Note that there is a significant performance
   overhead with this RObjectTable implementation.  Because the table
   is on the search path and isn't cacheable, lookups of symbols that
-  are behind it in the search path can't be added to the global object
+  are behind it in the search path cannot be added to the global object
   cache, and R must perform an expensive lookup through all of the
   attached environments and the protocol buffer definitions to find common
   symbols (most notably those in base) from the global environment.
@@ -623,8 +623,7 @@ package that is included with \proglang{R} \citep{r}.
 
 Table~\ref{class-summary-table} lists the six primary Message and
 Descriptor classes in \pkg{RProtoBuf}.
-Please see the package
-documentation for a complete description of the slots and methods for
+The package documentation provides a complete description of the slots and methods for
 each class.
 
 % [bp]
