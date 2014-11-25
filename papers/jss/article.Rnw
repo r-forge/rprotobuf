@@ -1142,7 +1142,11 @@ message HistogramState {
 This HistogramState message type is designed to be helpful if some of
 the Map or Reduce tasks are written in \proglang{R}, or if those components are
 written in other languages and only the resulting output histograms
-need to be manipulated in \proglang{R}.  For example, to create HistogramState
+need to be manipulated in \proglang{R}.
+
+\subsection*{A trivial single-machine example for Python to R serialization}
+
+To create HistogramState
 messages in Python for later consumption by \proglang{R}, we first compile the 
 \code{histogram.proto} descriptor into a python module using the
 \code{protoc} compiler:
@@ -1205,7 +1209,18 @@ plot(as.histogram(hist))
 @
 \end{center}
 
-One of the authors has used this design pattern with large-scale \proglang{C++}
+This simple example uses a constant histogram generated in
+\proglang{Python} to illustrate the serialization concepts without
+requiring the reader to be familiar with the interface of any
+particular MapReduce implementation.  In practice, using Protocol
+Buffers to pass histograms between another programming language and R
+would provide a much greater benefit in a distributed context.
+For example, a first-class data type to represent histograms would
+prevent individual histograms from being split up and would allow the
+use of combiners on Map workers to process large data sets more
+efficiently than simply passing around lists of counts and buckets.
+
+One of the authors has used this design pattern with \proglang{C++}
 MapReduces over very large data sets to write out histogram protocol
 buffers for several large-scale studies of distributed storage systems
 \citep{sciencecloud,janus}.
