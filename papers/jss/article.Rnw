@@ -1418,12 +1418,14 @@ the design of the \pkg{rJava} package by Simon Urbanek.
 The user-defined table mechanism, implemented by Duncan Temple Lang for the
 purpose of the \pkg{RObjectTables} package, allows for the dynamic symbol lookup.
 Kenton Varda was generous with his time in reviewing code and explaining
-obscure Protocol Buffer semantics.  Karl Millar was very
+obscure Protocol Buffer semantics.  Karl Millar and Tim Hesterberg were very
 helpful in reviewing code and offering suggestions.  Saptarshi Guha's
 work on RHIPE and implementation of a universal message type for \proglang{R}
 language objects allowed us to add the \code{serialize_pb} and \code{unserialize_pb}
 methods for turning arbitrary R objects into Protocol Buffers without
-a specialized pre-defined schema.
+a specialized pre-defined schema.  Feedback from two anonymous
+referees greatly improved both the presentation of this paper and the
+package contents.
 
 \newpage
 \appendix
