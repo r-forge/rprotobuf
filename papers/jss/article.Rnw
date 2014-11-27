@@ -941,21 +941,61 @@ clean.df <- data.frame(dataset=datasets$name,
                        "gzipped serialized"=datasets$R.serialize.size.gz,
                        "RProtoBuf"=datasets$RProtoBuf.serialize.size,
                        "gzipped RProtoBuf"=datasets$RProtoBuf.serialize.size.gz,
+		       "ratio.serialized" = datasets$R.serialize.size / datasets$object.size,
+		       "ratio.rprotobuf" = datasets$RProtoBuf.serialize.size / datasets$object.size,
+		       "ratio.serialized.gz" = datasets$R.serialize.size.gz / datasets$object.size,
+		       "ratio.rprotobuf.gz" = datasets$RProtoBuf.serialize.size.gz / datasets$object.size,
+		       "savings.serialized" = 1-(datasets$R.serialize.size / datasets$object.size),
+		       "savings.rprotobuf" = 1-(datasets$RProtoBuf.serialize.size / datasets$object.size),
+		       "savings.serialized.gz" = 1-(datasets$R.serialize.size.gz / datasets$object.size),
+		       "savings.rprotobuf.gz" = 1-(datasets$RProtoBuf.serialize.size.gz / datasets$object.size),
                        check.names=FALSE)
+
+all.df<-data.frame(dataset="TOTAL", object.size=sum(datasets$object.size),
+				    "serialized"=sum(datasets$R.serialize.size),
+                       "gzipped serialized"=sum(datasets$R.serialize.size.gz),
+                       "RProtoBuf"=sum(datasets$RProtoBuf.serialize.size),
+                       "gzipped RProtoBuf"=sum(datasets$RProtoBuf.serialize.size.gz),
+		       "ratio.serialized" = sum(datasets$R.serialize.size) / sum(datasets$object.size),
+		       "ratio.rprotobuf" = sum(datasets$RProtoBuf.serialize.size) / sum(datasets$object.size),
+		       "ratio.serialized.gz" = sum(datasets$R.serialize.size.gz) / sum(datasets$object.size),
+		       "ratio.rprotobuf.gz" = sum(datasets$RProtoBuf.serialize.size.gz) / sum(datasets$object.size),
+		       "savings.serialized" = 1-(sum(datasets$R.serialize.size) / sum(datasets$object.size)),
+		       "savings.rprotobuf" = 1-(sum(datasets$RProtoBuf.serialize.size) / sum(datasets$object.size)),
+		       "savings.serialized.gz" = 1-(sum(datasets$R.serialize.size.gz) / sum(datasets$object.size)),
+		       "savings.rprotobuf.gz" = 1-(sum(datasets$RProtoBuf.serialize.size.gz) / sum(datasets$object.size)),
+                       check.names=FALSE)
+clean.df<-rbind(clean.df, all.df)
 @
 
-Table~\ref{tab:compression} shows the sizes of 50 sample \proglang{R} data sets as
-returned by \code{object.size()} compared to the serialized sizes.
-%The summary compression sizes are listed below, and a full table for a
-%sample of 50 data sets is included on the next page.
+Figure~\ref{fig:compression} shows the space savings $\left(1 - \frac{\textrm{Uncompressed Size}}{\textrm{Compressed Size}}\right)$ for each of the data sets using each of these four methods.  The associated table shows the exact data sizes for two outliers and the aggregate of all \Sexpr{n} data sets.
 Note that Protocol Buffer serialization results in slightly
 smaller byte streams compared to native \proglang{R} serialization in most cases,
 but this difference disappears if the results are compressed with gzip.
 %Sizes are comparable but Protocol Buffers provide simple getters and setters
 %in multiple languages instead of requiring other programs to parse the \proglang{R}
 %serialization format. % \citep{serialization}.
-One takeaway from this table is that the universal \proglang{R} object schema
-included in \pkg{RProtoBuf} does not in general provide
+
+The \code{crimtab} dataset of anthropometry measurements of British
+prisoners \citep{garson1900metric}
+shows the greatest difference in the space savings when
+using Protocol Buffers compared to \proglang{R} native serialization.
+This dataset is a 42x22 table of integers, most equal to 0.  Small
+integer values like this can be very efficiently encoded by the
+\emph{Varint} integer encoding scheme used by Protocol Buffers which
+use a variable number of bytes for each value.
+
+The other extreme is represented by the \code{faithful} dataset of
+waiting time and eruptions of the Old Faithful geyser in Yellowstone
+National Park, Wyoming, USA \citep{azzalini1990look}.  This dataset is
+a data frame with 272 observations of 2 numeric variables.  The
+\proglang{R} native serialization of repeated numeric values is more
+space-efficient, resulting in a slightly smaller object size compared
+to the serialized Protocol Buffer equivalent.
+
+This evaluation shows that the \code{rexp.proto} universal
+\proglang{R} object schema included in \pkg{RProtoBuf} does not in
+general provide
 any significant saving in file size compared to the normal serialization
 mechanism in \proglang{R}.
 % redundant: which is seen as equally compact.
@@ -964,80 +1004,61 @@ multiple programming languages are involved, or when a more concise
 application-specific schema has been defined.  The example in the next
 section satisfies both of these conditions.
 
-% latex table generated in \proglang{R} 3.0.2 by xtable 1.7-0 package
-% Fri Dec 27 17:00:03 2013
-\begin{table}[h!]
+\begin{figure}[t!]
 \begin{center}
-  \small
-\scalebox{0.9}{
-\begin{tabular}{lrrrrr}
+<<echo=FALSE,fig=TRUE,width=8,height=4>>=
+plot(clean.df$savings.serialized, clean.df$savings.rprotobuf, pch=1, col="red", las=1, xlab="Serialization Space Savings", ylab="Protocol Buffer Space Savings")
+points(clean.df$savings.serialized.gz, clean.df$savings.rprotobuf.gz,pch=2, col="blue")
+# grey dotted diagonal
+abline(a=0,b=1, col="grey",lty=3)
+
+# find point furthest off the X axis.
+clean.df$savings.diff <- clean.df$savings.serialized - clean.df$savings.rprotobuf
+clean.df$savings.diff.gz <- clean.df$savings.serialized.gz - clean.df$savings.rprotobuf.gz
+
+# The one to label.
+tmp.df <- clean.df[which(clean.df$savings.diff == min(clean.df$savings.diff)),]
+# This minimum means most to the left of our line, so pos=2 is label to the left
+text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=2)
+text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=2)
+
+tmp.df <- clean.df[which(clean.df$savings.diff == max(clean.df$savings.diff)),]
+# This minimum means most to the right of the diagonal, so pos=4 is label to the right
+text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=4)
+text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=4)
+
+#outlier.dfs <- clean.df[c(which(clean.df$savings.diff == min(clean.df$savings.diff)),
+
+legend("topleft", c("Raw", "Gzip Compressed"), pch=1:2, col=c("red", "blue"))
+
+interesting.df <- clean.df[unique(c(which(clean.df$savings.diff == min(clean.df$savings.diff)),
+                             which(clean.df$savings.diff == max(clean.df$savings.diff)),
+                             which(clean.df$savings.diff.gz == max(clean.df$savings.diff.gz)),
+			     which(clean.df$dataset == "TOTAL"))),c("dataset", "object.size", "serialized", "gzipped serialized", "RProtoBuf", "gzipped RProtoBuf", "savings.serialized", "savings.serialized.gz", "savings.rprotobuf", "savings.rprotobuf.gz")]
+# Print without .00 in xtable
+interesting.df$object.size <- as.integer(interesting.df$object.size)
+@
+
+% latex table generated in R 3.0.2 by xtable 1.7-0 package
+% Wed Nov 26 15:31:30 2014
+%\begin{table}[ht]
+%\begin{center}
+\begin{tabular}{rlrrrrr}
   \toprule
   Data Set & object.size & \multicolumn{2}{c}{\proglang{R} Serialization} &
-  \multicolumn{2}{c}{RProtoBuf Serial.} \\
+  \multicolumn{2}{c}{RProtoBuf Serialization} \\
   & & default & gzipped & default & gzipped \\
   \cmidrule(r){2-6}
-  uspop & 584 & 268 & 172 & 211 & 148 \\
-  Titanic & 1960 & 633 & 257 & 481 & 249 \\
-  volcano & 42656 & 42517 & 5226 & 42476 & 4232 \\
-  euro.cross & 2728 & 1319 & 910 & 1207 & 891 \\
-  attenu & 14568 & 8234 & 2165 & 7771 & 2336 \\
-  ToothGrowth & 2568 & 1486 & 349 & 1239 & 391 \\
-  lynx & 1344 & 1028 & 429 & 971 & 404 \\
-  nottem & 2352 & 2036 & 627 & 1979 & 641 \\
-  sleep & 2752 & 746 & 282 & 483 & 260 \\
-  co2 & 4176 & 3860 & 1473 & 3803 & 1453 \\
-  austres & 1144 & 828 & 439 & 771 & 410 \\
-  ability.cov & 1944 & 716 & 357 & 589 & 341 \\
-  EuStockMarkets & 60664 & 59785 & 21232 & 59674 & 19882 \\
-  treering & 64272 & 63956 & 17647 & 63900 & 17758 \\
-  freeny.x & 1944 & 1445 & 1311 & 1372 & 1289 \\
-  Puromycin & 2088 & 813 & 306 & 620 & 320 \\
-  warpbreaks & 2768 & 1231 & 310 & 811 & 343 \\
-  BOD & 1088 & 334 & 182 & 226 & 168 \\
-  sunspots & 22992 & 22676 & 6482 & 22620 & 6742 \\
-  beaver2 & 4184 & 3423 & 751 & 3468 & 840 \\
-  anscombe & 2424 & 991 & 375 & 884 & 352 \\
-  esoph & 5624 & 3111 & 548 & 2240 & 665 \\
-  PlantGrowth & 1680 & 646 & 303 & 459 & 314 \\
-  infert & 15848 & 14328 & 1172 & 13197 & 1404 \\
-  BJsales & 1632 & 1316 & 496 & 1259 & 465 \\
-  stackloss & 1688 & 917 & 293 & 844 & 283 \\
-  crimtab & 7936 & 4641 & 713 & 1655 & 576 \\
-  LifeCycleSavings & 6048 & 3014 & 1420 & 2825 & 1407 \\
-  Harman74.cor & 9144 & 6056 & 2045 & 5861 & 2070 \\
-  nhtemp & 912 & 596 & 240 & 539 & 223 \\
-  faithful & 5136 & 4543 & 1339 & 4936 & 1776 \\
-  freeny & 5296 & 2465 & 1518 & 2271 & 1507 \\
-  discoveries & 1232 & 916 & 199 & 859 & 180 \\
-  state.x77 & 7168 & 4251 & 1754 & 4068 & 1756 \\
-  pressure & 1096 & 498 & 277 & 427 & 273 \\
-  fdeaths & 1008 & 692 & 291 & 635 & 272 \\
-  euro & 976 & 264 & 186 & 202 & 161 \\
-  LakeHuron & 1216 & 900 & 420 & 843 & 404 \\
-  mtcars & 6736 & 3798 & 1204 & 3633 & 1206 \\
-  precip & 4992 & 1793 & 813 & 1615 & 815 \\
-  state.area & 440 & 422 & 246 & 405 & 235 \\
-  attitude & 3024 & 1990 & 544 & 1920 & 561 \\
-  randu & 10496 & 9794 & 8859 & 10441 & 9558 \\
-  state.name & 3088 & 844 & 408 & 724 & 415 \\
-  airquality & 5496 & 4551 & 1241 & 2874 & 1294 \\
-  airmiles & 624 & 308 & 170 & 251 & 148 \\
-  quakes & 33112 & 32246 & 9898 & 29063 & 11595 \\
-  islands & 3496 & 1232 & 563 & 1098 & 561 \\
-  OrchardSprays & 3600 & 2164 & 445 & 1897 & 483 \\
-  WWWusage & 1232 & 916 & 274 & 859 & 251 \\
-  \bottomrule
-%  Total & 391176 & 327537 & 99161 & 313456 & 100308 \\
-  Relative Size & 100\% & 83.7\% & 25.3\% & 80.1\% & 25.6\%\\
-  \bottomrule
+ crimtab & 7,936 & 4,641 (41.5\%) & 713 (91.0\%) & 1,655 (79.2\%) & 576 (92.7\%)\\
+ faithful & 5,136 & 4,543 (11.5\%) & 1,339 (73.9\%) & 4,936 (3.9\%) & 1,776 (65.5\%)\\
+   \hline
+ All & 605,256 & 461,667 (24\%) & 138,937 (77\%) & 435,360 (28\%) & 142,134 (77\%)\\
+\hline
 \end{tabular}
-}
-\caption{Serialization sizes for default serialization in \proglang{R} and
-  \pkg{RProtoBuf} for 50 \proglang{R} data sets.}
-\label{tab:compression}
 \end{center}
-\end{table}
-
+\caption{(Top) Relative space savings of Protocol Buffers and native \proglang{R} serialization over the raw object sizes of each of the \Sexpr{n} data sets in the \pkg{datasets} package. Points to the left of the dotted $y=x$ line represent datasets that are more efficiently encoded with Protocol Buffers. (Bottom) Absolute space savings of two outlier datasets and the aggregate performance of all datasets.}
+\label{fig:compression}
+\end{figure}
 
 \section{Application: Distributed data collection with MapReduce}
 \label{sec:mapreduce}
@@ -1164,7 +1185,7 @@ R> hist
 
 [1] "message of type 'HistogramTools.HistogramState' with 3 fields set"
 
-R> plot(as.histogram(hist))
+R> plot(as.histogram(hist), main="")
 \end{lstlisting}
 %\end{Code}
 
@@ -1173,7 +1194,7 @@ R> plot(as.histogram(hist))
 require(HistogramTools)
 readProtoFiles(package="HistogramTools")
 hist <- HistogramTools.HistogramState$read("hist.pb")
-plot(as.histogram(hist))
+plot(as.histogram(hist), main="")
 @
 \end{center}
 
