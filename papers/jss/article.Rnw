@@ -91,7 +91,7 @@
   University of California\\
   Los Angeles, CA, USA\\
   E-mail: \email{jeroen.ooms@stat.ucla.edu}\\
-  URL: \url{http://jeroenooms.github.io}
+  URL: \url{https://jeroenooms.github.io}
 }
 %% It is also possible to add a telephone and fax number
 %% before the e-mail in the following format:
