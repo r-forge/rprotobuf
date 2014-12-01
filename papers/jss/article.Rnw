@@ -1263,7 +1263,7 @@ to access the data set \code{Animals} from the package \code{MASS}, a
 client performs the following HTTP request:
 
 \begin{verbatim}
-  GET https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb
+  GET https://demo.ocpu.io/MASS/data/Animals/pb
 \end{verbatim}
 The postfix \code{/pb} in the URL tells the server to send this
 object in the form of a Protocol Buffer message.
@@ -1286,7 +1286,7 @@ verify that the object was transferred without loss of information.
 library("RProtoBuf")
 library("httr")
 
-req <- GET('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
+req <- GET('https://demo.ocpu.io/MASS/data/Animals/pb')
 output <- unserialize_pb(req$content)
 
 identical(output, MASS::Animals)
@@ -1311,7 +1311,7 @@ from Python.
 import urllib2
 from rexp_pb2 import REXP
 
-req = urllib2.Request('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
+req = urllib2.Request('https://demo.ocpu.io/MASS/data/Animals/pb')
 res = urllib2.urlopen(req)
 
 msg = REXP()
@@ -1349,7 +1349,7 @@ args <- list(n=42, mean=100)
 payload <- serialize_pb(args, NULL)
 
 req <- POST (
-  url = "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb",
+  url = "https://demo.ocpu.io/stats/R/rnorm/pb",
   body = payload,
   add_headers (
     "Content-Type" = "application/x-protobuf"
