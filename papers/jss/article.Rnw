@@ -3,6 +3,10 @@
 \usepackage{listings}
 \usepackage[toc,page]{appendix}
 
+% Line numbers for drafts.
+%\usepackage[switch, modulo]{lineno}
+%\linenumbers
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Spelling Standardization:
 % Protocol Buffers, not protocol buffers
@@ -1010,7 +1014,7 @@ section satisfies both of these conditions.
 plot(clean.df$savings.serialized, clean.df$savings.rprotobuf, pch=1, col="red", las=1, xlab="Serialization Space Savings", ylab="Protocol Buffer Space Savings")
 points(clean.df$savings.serialized.gz, clean.df$savings.rprotobuf.gz,pch=2, col="blue")
 # grey dotted diagonal
-abline(a=0,b=1, col="grey",lty=3)
+abline(a=0,b=1, col="grey",lty=2,lwd=3)
 
 # find point furthest off the X axis.
 clean.df$savings.diff <- clean.df$savings.serialized - clean.df$savings.rprotobuf
@@ -1056,7 +1060,7 @@ interesting.df$object.size <- as.integer(interesting.df$object.size)
 \hline
 \end{tabular}
 \end{center}
-\caption{(Top) Relative space savings of Protocol Buffers and native \proglang{R} serialization over the raw object sizes of each of the \Sexpr{n} data sets in the \pkg{datasets} package. Points to the left of the dotted $y=x$ line represent datasets that are more efficiently encoded with Protocol Buffers. (Bottom) Absolute space savings of two outlier datasets and the aggregate performance of all datasets.}
+\caption{(Top) Relative space savings of Protocol Buffers and native \proglang{R} serialization over the raw object sizes of each of the \Sexpr{n} data sets in the \pkg{datasets} package. Points to the left of the dashed $y=x$ line represent datasets that are more efficiently encoded with Protocol Buffers. (Bottom) Absolute space savings of two outlier datasets and the aggregate performance of all datasets.}
 \label{fig:compression}
 \end{figure}
 
