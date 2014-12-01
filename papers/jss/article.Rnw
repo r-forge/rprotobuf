@@ -1069,9 +1069,9 @@ interesting.df$object.size <- as.integer(interesting.df$object.size)
 
 Protocol Buffers are used extensively at Google for almost all
 RPC protocols, and to store structured information on a variety of
-persistent storage systems \citep{dean2009designs}. Since the 
+persistent storage systems \citep{dean2009designs}. Since the
 initial release in 2010, hundreds of Google's statisticians and
-software engineers use the \pkg{RProtoBuf} package on daily basis 
+software engineers use the \pkg{RProtoBuf} package on a daily basis
 to interact with these systems from within \proglang{R}.
 The current section illustrates the power of Protocol Buffers to
 collect and manage large structured data in one language 
