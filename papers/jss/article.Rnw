@@ -1063,37 +1063,35 @@ interesting.df$object.size <- as.integer(interesting.df$object.size)
 \section{Application: Distributed data collection with MapReduce}
 \label{sec:mapreduce}
 
-Protocol Buffers have been used extensively at Google for almost all
-RPC protocols, and for storing structured information in a variety of
-persistent storage systems since 2000 \citep{dean2009designs}.  The
-\pkg{RProtoBuf} package has been in widespread use by hundreds of
-statisticians and software engineers at Google since 2010.  This
-section describes a simplified example of a common design pattern of
-collecting a large structured data set in one language for later
-analysis in \proglang{R}.
+Protocol Buffers are used extensively at Google for almost all
+RPC protocols, and to store structured information on a variety of
+persistent storage systems \citep{dean2009designs}. Since the 
+initial release in 2010, hundreds of Google's statisticians and
+software engineers use the \pkg{RProtoBuf} package on daily basis 
+to interact with these systems from within \proglang{R}.
+The current section illustrates the power of Protocol Buffers to
+collect and manage large structured data in one language 
+before analyzing it in \proglang{R}. Our example uses MapReduce
+\citep{dean2008mapreduce}, which has emerged in the last
+decade as a popular design pattern to facilitate parallel 
+processing of big data using distributed computing clusters.
 
-Many large data sets in fields such as particle physics and information
-processing are stored in binned or histogram form in order to reduce
-the data storage requirements \citep{scott2009multivariate}.  In the
-last decade, the MapReduce programming model \citep{dean2008mapreduce}
-has emerged as a popular design pattern that enables the processing of
-very large data sets on large compute clusters.
-
-Many types of data analysis over large data sets may involve very rare
+Big data sets in fields such as particle physics and information
+processing are often stored in binned (histogram) form in order 
+to reduce storage requirements \citep{scott2009multivariate}. 
+Because analysis over such large data sets may involve very rare
 phenomenon or deal with highly skewed data sets or inflexible
-raw data storage systems from which unbiased sampling is not feasible.
-In such situations, MapReduce and binning may be combined as a
+raw data storage systems, unbiased sampling is often not feasible.
+In these situations, MapReduce and binning may be combined as a
 pre-processing step for a wide range of statistical and scientific
 analyses \citep{blocker2013}.
 
 There are two common patterns for generating histograms of large data
-sets in a single pass with MapReduce.  In the first method, each
+sets in a single pass with MapReduce. In the first method, each
 mapper task generates a histogram over a subset of the data that it
 has been assigned, serializes this histogram and sends it to one or
 more reducer tasks which merge the intermediate histograms from the
-mappers.
-
-In the second method, illustrated in
+mappers. In the second method, illustrated in
 Figure~\ref{fig:mr-histogram-pattern1}, each mapper rounds a data
 point to a bucket width and outputs that bucket as a key and '1' as a
 value.  Reducers then sum up all of the values with the same key and
