@@ -172,20 +172,20 @@ that this method has many limitations: it is restricted to tabular data,
 lacks type-safety, and has limited precision for numeric values.  Moreover,
 ambiguities in the format itself frequently cause problems.  For example,
 conventions on which characters is used as separator or decimal point vary by
-country.  \emph{Extensible Markup Language} (\code{XML}) is another
+country.  \emph{Extensible Markup Language} (\code{XML}) is a
 well-established and widely-supported format with the ability to define just
 about any arbitrarily complex schema \citep{nolan2013xml}. However, it pays
 for this complexity with comparatively large and verbose messages, and added
-complexity at the parsing side (which are somewhat mitigated by the
-availability of mature libraries and parsers). Because \code{XML} is 
+complexity at the parsing side (these problems are somewhat mitigated by the
+availability of mature libraries and parsers). Because \code{XML} is
 text-based and has no native notion of numeric types or arrays, it usually not a
 very practical format to store numeric data sets as they appear in statistical
 applications.
 
 
-A more modern format is \emph{JavaScript ObjectNotation} 
+A more modern format is \emph{JavaScript ObjectNotation}
 (\code{JSON}), which is derived from the object literals of
-\proglang{JavaScript}, and already widely-used on the world wide web. 
+\proglang{JavaScript}, and already widely-used on the world wide web.
 Several \proglang{R} packages implement functions to parse and generate
 \code{JSON} data from \proglang{R} objects \citep{rjson,RJSONIO,jsonlite}.
 \code{JSON} natively supports arrays and four primitive types: numbers, strings,
@@ -220,11 +220,11 @@ motivation for their use.
 Section~\ref{sec:rprotobuf-basic} describes the interactive \proglang{R} interface
 provided by the \pkg{RProtoBuf} package, and introduces the two main abstractions:
 \emph{Messages} and \emph{Descriptors}.  Section~\ref{sec:rprotobuf-classes}
-details the implementation of the main S4 classes and methods.  
+details the implementation of the main S4 classes and methods.
 Section~\ref{sec:types} describes the challenges of type coercion
 between \proglang{R} and other languages.  Section~\ref{sec:evaluation} introduces a
-general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and evaluates
-it against the serialization capabilities built directly into \proglang{R}.  Sections~\ref{sec:mapreduce}
+general \proglang{R} language schema for serializing arbitrary \proglang{R} objects and compares it to
+the serialization capabilities built directly into \proglang{R}.  Sections~\ref{sec:mapreduce}
 and \ref{sec:opencpu} provide real-world use cases of \pkg{RProtoBuf}
 in MapReduce and web service environments, respectively, before
 Section~\ref{sec:summary} concludes.
@@ -233,8 +233,8 @@ Section~\ref{sec:summary} concludes.
 \label{sec:protobuf}
 
 Protocol Buffers are a modern, language-neutral, platform-neutral,
-extensible mechanism for sharing and storing structured data.  Some of
-the key features provided by Protocol Buffers for data analysis are:
+extensible mechanism for sharing and storing structured data.  Key
+features provided by Protocol Buffers for data analysis include:
 
 \begin{itemize}
 \item \emph{Portable}:  Enable users to send and receive data between
@@ -260,9 +260,9 @@ Figure~\ref{fig:protobuf-distributed-usecase} illustrates an example
 communication work flow with Protocol Buffers and an interactive \proglang{R} session.
 Common use cases include populating a request remote-procedure call (RPC)
 Protocol Buffer in \proglang{R} that is then serialized and sent over the network to a
-remote server.  The server would then deserialize the message, act on the
-request, and respond with a new Protocol Buffer over the network. 
-The key difference to, say, a request to an \pkg{Rserve} 
+remote server.  The server deserializes the message, acts on the
+request, and responds with a new Protocol Buffer over the network.
+The key difference to, say, a request to an \pkg{Rserve}
 \citep{Urbanek:2003:Rserve,CRAN:Rserve} instance is that
 the remote server may be implemented in any language.
 %, with no dependence on \proglang{R}.
@@ -367,8 +367,8 @@ schema for a particular named class of messages.
 
 \subsection*{Importing message descriptors from \code{.proto} files}
 
-To create or parse a Protocol Buffer Message, one must first read in 
-the message type specification from a \code{.proto} file. 
+To create or parse a Protocol Buffer Message, one must first read in
+the message descriptor (\emph{message type}) from a \code{.proto} file.
 A small number of message types are imported when the package is first
 loaded, including the \code{tutorial.Person} type we saw in the last
 section.
@@ -472,8 +472,8 @@ writeLines(as.character(p))
 
 % \subsection{Serializing messages}
 
-One of the primary benefits of Protocol Buffers is the efficient
-binary wire-format representation.  
+A primary benefit of Protocol Buffers is an efficient
+binary wire-format representation.
 The \code{serialize} method is implemented for
 Protocol Buffer messages to serialize a message into a sequence of
 bytes (raw vector) that represents the message.
@@ -1098,8 +1098,8 @@ more reducer tasks which merge the intermediate histograms from the
 mappers. In the second method, illustrated in
 Figure~\ref{fig:mr-histogram-pattern1}, each mapper rounds a data
 point to a bucket width and outputs that bucket as a key and '1' as a
-value.  Reducers then sum up all of the values with the same key and
-output to a data store.
+value.  Reducers count how many times each key occurs and outputs a
+histogram to a data store.
 
 \begin{figure}[h!]
 \begin{center}
@@ -1154,20 +1154,17 @@ representation to a file:
 
 \begin{Code}
 from histogram_pb2 import HistogramState;
-
 hist = HistogramState()
-
 hist.counts.extend([2, 6, 2, 4, 6])
 hist.breaks.extend(range(6))
 hist.name="Example Histogram Created in Python"
-
 outfile = open("/tmp/hist.pb", "wb")
 outfile.write(hist.SerializeToString())
 outfile.close()
 \end{Code}
 
 The Protocol Buffer created from this \proglang{Python} script can then be read into \proglang{R} and converted to a native
-\proglang{R} histogram object for plotting.  Line~1 in the listing below attaches the \pkg{HistogramTools} package which imports \pkg{RProtoBuf}.  Line~2 then reads all of the \code{.proto} descriptor definitions provided by \pkg{HistogramTools} and adds them to the environment as described in Section~\ref{sec:rprotobuf-basic}.  Line~3 parses the serialized protocol buffer using the \code{HistogramTools.HistogramState} schema.  Line~8 converts the protocol buffer representation of the histogram to a native \proglang{R} histogram object with \code{as.histogram} and passes the result to \code{plot}.
+\proglang{R} histogram object for plotting.  Line~1 in the listing below attaches the \pkg{HistogramTools} package which imports \pkg{RProtoBuf}.  Line~2 then reads all of the \code{.proto} descriptor definitions provided by \pkg{HistogramTools} and adds them to the environment as described in Section~\ref{sec:rprotobuf-basic}.  Line~3 parses the serialized protocol buffer using the \code{HistogramTools.HistogramState} schema.  The last line converts the protocol buffer representation of the histogram to a native \proglang{R} histogram object with \code{as.histogram} and passes the result to \code{plot}.
 
 % Here, the schema is read first,
 %then the (serialized) histogram is read into the variable \code{hist} which
@@ -1220,7 +1217,7 @@ buffers for several large-scale studies of distributed storage systems
 \label{sec:opencpu}
 
 The previous section described an application where data from a
-program written in another language was output to persistent storage
+program written in another language was saved to persistent storage
 and then read into \proglang{R} for further analysis.  This section
 describes another common use case where Protocol Buffers are used as
 the interchange format for client-server communication.
@@ -1232,7 +1229,7 @@ allow transfer of any media type, such as web pages, static files or
 multimedia content.  When designing systems where various components require
 exchange of specific data structures, we need something on top of the network
 protocol that prescribes how these structures are to be represented in
-messages (buffers) on the network. Protocol Buffers solve exactly this
+messages (buffers) on the network. Protocol Buffers solve this
 problem by providing a cross-platform method for serializing arbitrary
 structures into well defined messages, which can then be exchanged using any
 protocol.
@@ -1312,10 +1309,8 @@ from Python.
 \begin{verbatim}
 import urllib2
 from rexp_pb2 import REXP
-
 req = urllib2.Request('https://demo.ocpu.io/MASS/data/Animals/pb')
 res = urllib2.urlopen(req)
-
 msg = REXP()
 msg.ParseFromString(res.read())
 print(msg)
@@ -1394,7 +1389,7 @@ At the time of this writing there are over 300 active
 users of \pkg{RProtoBuf} using it to read data from and otherwise interact
 with distributed systems written in \proglang{C++}, \proglang{Java}, \proglang{Python}, and 
 other languages. We hope that making Protocol Buffers available to the
-\proglang{R} community will contribute towards better software integration
+\proglang{R} community will contribute to better software integration
 and allow for building even more advanced applications and analysis pipelines 
 with \proglang{R}.
 
@@ -1465,7 +1460,7 @@ message REXP {
   repeated REXP attrValue = 12;
   optional bytes languageValue = 13;
   optional bytes environmentValue = 14;
-  optional bytes functionValue = 14;
+  optional bytes functionValue = 15;
 }
 message STRING {
   optional string strval = 1;
