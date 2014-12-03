@@ -972,20 +972,20 @@ all.df<-data.frame(dataset="TOTAL", object.size=sum(datasets$object.size),
 clean.df<-rbind(clean.df, all.df)
 @
 
-Figure~\ref{fig:compression} shows the space savings $\left(1 - \frac{\textrm{Uncompressed Size}}{\textrm{Compressed Size}}\right)$ for each of the data sets using each of these four methods.  The associated table shows the exact data sizes for two outliers and the aggregate of all \Sexpr{n} data sets.
+Figure~\ref{fig:compression} shows the space savings $\left(1 - \frac{\textrm{Compressed Size}}{\textrm{Uncompressed Size}}\right)$ for each of the data sets using each of these four methods.  The associated table shows the exact data sizes for some outliers and the aggregate of all \Sexpr{n} data sets.
 Note that Protocol Buffer serialization results in slightly
-smaller byte streams compared to native \proglang{R} serialization in most cases,
-but this difference disappears if the results are compressed with gzip.
+smaller byte streams compared to native \proglang{R} serialization in most cases (red dots),
+but this difference disappears if the results are compressed with gzip (blue triangles).
 %Sizes are comparable but Protocol Buffers provide simple getters and setters
 %in multiple languages instead of requiring other programs to parse the \proglang{R}
 %serialization format. % \citep{serialization}.
 
 The \code{crimtab} dataset of anthropometry measurements of British
-prisoners \citep{garson1900metric}
-shows the greatest difference in the space savings when
+prisoners \citep{garson1900metric} and the \code{airquality} dataset of air quality measurements in New York show the
+greatest difference in the space savings when
 using Protocol Buffers compared to \proglang{R} native serialization.
-This dataset is a 42x22 table of integers, most equal to 0.  Small
-integer values like this can be very efficiently encoded by the
+The \code{crimtab} dataset is a 42x22 table of integers, most equal to 0, and the \code{airquality} dataset is a data frame of 154 observations of 1 numeric and 5 integer variables.  In both data sets, the large number of small
+integer values can be very efficiently encoded by the
 \emph{Varint} integer encoding scheme used by Protocol Buffers which
 use a variable number of bytes for each value.
 
@@ -1008,10 +1008,16 @@ multiple programming languages are involved, or when a more concise
 application-specific schema has been defined.  The example in the next
 section satisfies both of these conditions.
 
-\begin{figure}[t!]
+\begin{figure}[hbt!]
 \begin{center}
-<<echo=FALSE,fig=TRUE,width=8,height=4>>=
-plot(clean.df$savings.serialized, clean.df$savings.rprotobuf, pch=1, col="red", las=1, xlab="Serialization Space Savings", ylab="Protocol Buffer Space Savings")
+<<label=SER,echo=FALSE,include=FALSE,fig=TRUE>>=
+old.mar<-par("mar")
+new.mar<-old.mar
+new.mar[3]<-0
+new.mar[4]<-0
+my.cex<-1.3
+par("mar"=new.mar)
+plot(clean.df$savings.serialized, clean.df$savings.rprotobuf, pch=1, col="red", las=1, xlab="Serialization Space Savings", ylab="Protocol Buffer Space Savings", xlim=c(0,1),ylim=c(0,1),cex.lab=my.cex, cex.axis=my.cex)
 points(clean.df$savings.serialized.gz, clean.df$savings.rprotobuf.gz,pch=2, col="blue")
 # grey dotted diagonal
 abline(a=0,b=1, col="grey",lty=2,lwd=3)
@@ -1023,17 +1029,27 @@ clean.df$savings.diff.gz <- clean.df$savings.serialized.gz - clean.df$savings.rp
 # The one to label.
 tmp.df <- clean.df[which(clean.df$savings.diff == min(clean.df$savings.diff)),]
 # This minimum means most to the left of our line, so pos=2 is label to the left
-text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=2)
-text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=2)
+text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=2, cex=my.cex)
+
+# Some gziped version
+# text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=2, cex=my.cex)
+
+# Second one is also an outlier
+tmp.df <- clean.df[which(clean.df$savings.diff == sort(clean.df$savings.diff)[2]),]
+# This minimum means most to the left of our line, so pos=2 is label to the left
+text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=2, cex=my.cex)
+#text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=my.cex)
+
 
 tmp.df <- clean.df[which(clean.df$savings.diff == max(clean.df$savings.diff)),]
 # This minimum means most to the right of the diagonal, so pos=4 is label to the right
-text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=4)
-text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=4)
+# Only show the gziped one.
+#text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=4, cex=my.cex)
+text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=4, cex=my.cex)
 
 #outlier.dfs <- clean.df[c(which(clean.df$savings.diff == min(clean.df$savings.diff)),
 
-legend("topleft", c("Raw", "Gzip Compressed"), pch=1:2, col=c("red", "blue"))
+legend("topleft", c("Raw", "Gzip Compressed"), pch=1:2, col=c("red", "blue"), cex=my.cex)
 
 interesting.df <- clean.df[unique(c(which(clean.df$savings.diff == min(clean.df$savings.diff)),
                              which(clean.df$savings.diff == max(clean.df$savings.diff)),
@@ -1041,7 +1057,9 @@ interesting.df <- clean.df[unique(c(which(clean.df$savings.diff == min(clean.df$
 			     which(clean.df$dataset == "TOTAL"))),c("dataset", "object.size", "serialized", "gzipped serialized", "RProtoBuf", "gzipped RProtoBuf", "savings.serialized", "savings.serialized.gz", "savings.rprotobuf", "savings.rprotobuf.gz")]
 # Print without .00 in xtable
 interesting.df$object.size <- as.integer(interesting.df$object.size)
+par("mar"=old.mar)
 @
+\includegraphics[width=0.45\textwidth]{figures/fig-SER}
 
 % latex table generated in R 3.0.2 by xtable 1.7-0 package
 % Wed Nov 26 15:31:30 2014
@@ -1054,13 +1072,14 @@ interesting.df$object.size <- as.integer(interesting.df$object.size)
   & & default & gzipped & default & gzipped \\
   \cmidrule(r){2-6}
  crimtab & 7,936 & 4,641 (41.5\%) & 713 (91.0\%) & 1,655 (79.2\%) & 576 (92.7\%)\\
+ airquality & 5,496 & 4,551 (17.2\%) & 1,241 (77.4\%) & 2,874 (47.7\%) & 1,294 (76.5\%)\\
  faithful & 5,136 & 4,543 (11.5\%) & 1,339 (73.9\%) & 4,936 (3.9\%) & 1,776 (65.5\%)\\
    \hline
  All & 605,256 & 461,667 (24\%) & 138,937 (77\%) & 435,360 (28\%) & 142,134 (77\%)\\
 \hline
 \end{tabular}
 \end{center}
-\caption{(Top) Relative space savings of Protocol Buffers and native \proglang{R} serialization over the raw object sizes of each of the \Sexpr{n} data sets in the \pkg{datasets} package. Points to the left of the dashed $y=x$ line represent datasets that are more efficiently encoded with Protocol Buffers. (Bottom) Absolute space savings of two outlier datasets and the aggregate performance of all datasets.}
+\caption{(Top) Relative space savings of Protocol Buffers and native \proglang{R} serialization over the raw object sizes of each of the \Sexpr{n} data sets in the \pkg{datasets} package. Points to the left of the dashed $y=x$ line represent datasets that are more efficiently encoded with Protocol Buffers. (Bottom) Absolute space savings of three outlier datasets and the aggregate performance of all datasets.}
 \label{fig:compression}
 \end{figure}
 
@@ -1135,7 +1154,7 @@ the Map or Reduce tasks are written in \proglang{R}, or if those components are
 written in other languages and only the resulting output histograms
 need to be manipulated in \proglang{R}.
 
-\subsection*{A trivial single-machine example for Python to R serialization}
+\subsection*{A simple single-machine example for Python to R serialization}
 
 To create HistogramState
 messages in Python for later consumption by \proglang{R}, we first compile the 
