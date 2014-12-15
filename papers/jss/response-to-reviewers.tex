@@ -158,7 +158,8 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
 \reply{We followed this recommendation and added explanation for how
 \texttt{tutorial.Person} is loaded, specifically : \emph{A small number of message types are imported when the
 package is first loaded, including the tutorial.Person type we saw in
-the last section.}  We removed the superfluous attach of \texttt{RProtoBuf}.}
+the last section.}  Thank you also for spotting the superfluous attach
+of \texttt{RProtoBuf}, it has been removed from the example.}
 
 \pointRaised{Comment 11}{
   I'd prefer you eliminate this magic from the magic, but failing that,
@@ -175,20 +176,25 @@ the last section.}  We removed the superfluous attach of \texttt{RProtoBuf}.}
 \subsubsection*{Minor niggles}
 
 \pointRaised{Comment 13}{Don't refer to the message passing style of OO as traditional.}
-\reply{TBD}
+\reply{Done, we don't refer to this style as traditional anywhere in
+  the manuscript anymore.}
 
 \pointRaised{Comment 14}{In Section 3.4, if messages isn't a vectorised class, the default
    print method should use \texttt{cat()} to eliminate the confusing \texttt{[1]}.}
-\reply{TBD}
+\reply{Done}
 
 \pointRaised{Comment 15}{The REXP definition would have been better defined using an enum that
    matches R's SEXPTYPE "enum". But I guess that ship has sailed.}
-\reply{TBD}
+\reply{Acknowledged.  We chose to maintain compatibility with RHIPE here.  The main
+use of RProtoBuf is not with rexp.proto however -- it with
+application-specific schemas in .proto files for sending data between
+applications.  Users that want to do something very R-specific are
+welcome to use their own \texttt{.proto} files with an enum to represent R SEXPTYPEs.}
 
 \pointRaised{Comment 16}{Why does \texttt{serialize\_pb(CO2, NULL)} fail silently? Shouldn't it at least
    warn that the serialization is partial?}
-\reply{TBD}
-
+\reply{Fixed, \texttt{serialize\_pb} now works for all built-in datatypes in R
+  and no longer fails silently if it encounters something it can't serialize.}
 
 \section*{Response to Reviewer \#2}
 
@@ -203,7 +209,8 @@ the last section.}  We removed the superfluous attach of \texttt{RProtoBuf}.}
 \pointRaised{Comment 2}{There are, however, a few inconsistencies in the implementation and some 
   issues with specific sections in the paper. In the following both issues 
   will be addressed sequentially by their occurrence in the paper.}
-\reply{TBD}
+\reply{These and others have been identified and addressed.  Thank you
+  for taking the time to enumerate these issues.}
 
 \pointRaised{Comment 3}{p.4 illustrates the use of messages. The class implements list-like 
   access via \texttt{[[} and \$, but strangely \texttt{names()} return NULL and \texttt{length() }
@@ -218,7 +225,21 @@ the following:}
  > p[[3]]
 [1] ""
 \end{verbatim}
-\reply{TBD}
+\reply{We've corrected the list-like accessor, fixed \texttt{length()} to
+  correspond to the number of set fields, and added \texttt{names()}:}
+\begin{verbatim}
+> p
+message of type 'tutorial.Person' with 0 fields set
+> length(p)
+[1] 0
+> p[[3]]
+[1] ""
+> p$id <- 1
+> length(p)
+[1] 1
+> names(p)
+[1] "name"  "id"    "email" "phone"
+\end{verbatim}
 
 \pointRaised{Comment 3 cont.}{The inconsistencies get even more bizarre with descriptors (p.9):}
 
@@ -232,13 +253,31 @@ NULL
  > length(tutorial.Person)
 [1] 1
 \end{verbatim}
-\reply{TBD}
+\reply{We agree, and have addressed this inconsistency.  Thank you:}
+\begin{verbatim}
+> tutorial.Person$email
+descriptor for field 'email' of type 'tutorial.Person' 
+> tutorial.Person[["email"]]
+descriptor for field 'email' of type 'tutorial.Person' 
+> names(tutorial.Person)
+[1] "name"        "id"          "email"       "phone"       "PhoneNumber"
+[6] "PhoneType"  
+> length(tutorial.Person)
+[1] 6
+\end{verbatim}
 
 \pointRaised{Comment 3 cont.}{It appears that there is no way to find out the fields of a descriptor 
   directly (although the low-level object methods seem to be exposed as 
   \texttt{\$field\_count()} and \texttt{\$fields()} - but that seems extremely cumbersome). 
   Again, implementing names() and subsetting may help here.}
-\reply{TBD}
+\reply{\texttt{names} and subsetting implemented.  Thank you for the
+  suggestion.:}
+\begin{verbatim}
+> tutorial.Person[[1]]
+descriptor for field 'name' of type 'tutorial.Person' 
+> tutorial.Person[[2]]
+descriptor for field 'id' of type 'tutorial.Person' 
+\end{verbatim}
 
 \pointRaised{Comment 4}{Another inconsistency concerns the \texttt{as.list()} method which by design 
   coerces objects to lists (see \texttt{?as.list}), but the implementation for 
@@ -252,18 +291,36 @@ NULL
   - attr(*, "names")= chr [1:3] "MOBILE" "HOME" "WORK"
 \end{verbatim}
 
+\reply{Fixed, thank you. New output:}
+\begin{verbatim}
+> is.list(as.list(tutorial.Person$PhoneType))
+[1] TRUE
+> str(as.list(tutorial.Person$PhoneType))
+List of 3
+ $ MOBILE: int 0
+ $ HOME  : int 1
+ $ WORK  : int 2
+\end{verbatim}
+
 \pointRaised{Comment 4 cont}{As with the other interfaces, names() returns NULL so it is again quite
   difficult to perform even simple operations such as finding out the 
   values. It may be natural use some of the standard methods like names(), 
   levels() or similar. As with the previous cases, the lack of [[ support
   makes it impossible to map named enum values to codes and vice-versa.}
-\reply{TBD}
+\reply{Fixed, thank you.  New output:}
+\begin{verbatim}
+> names(tutorial.Person$PhoneType)
+[1] "MOBILE" "HOME"   "WORK"  
+> tutorial.Person$PhoneType[["HOME"]]
+[1] 1
+\end{verbatim}
 
 \pointRaised{Comment 5}{In general, the package would benefit from one pass of checks to assess
   the consistency of the API. Since the authors intend direct interaction
   with the objects via basic standard R methods, the classes should behave 
   consistently.}
-\reply{TBD}
+\reply{We made several passes, correcting issues as documented in
+  \texttt{ChangeLog} and now present in our latest 0.4.2 release on CRAN.}
 
 \pointRaised{Comment 6}{Finally, most classes implement coercion to characters, which is not 
   mentioned and is not quite intuitive for some objects. For example, one
@@ -280,13 +337,29 @@ option java_package = "com.example.tutorial";
 option java_outer_classname = "AddressBookProtos";
 [...]
 \end{verbatim}
-\reply{TBD}
+\reply{In choosing the debug output for a file descriptor we agree
+  that \texttt{filename} is a reasonable thing to expect, but we also
+  think that the contents of the \texttt{.proto} file is also
+  reasonable, and also more useful.  We document this in
+  ``FileDescriptor-class'', the vignette, and other sources.
+  \texttt{@filename} is one of the slots of the FileDescriptor class
+  and so very easy to find.  The contents of the \texttt{.proto} are
+  not as easily accessible in a slot, however, and so we find it much
+  more useful to be output with \texttt{as.character()}.}
 
 \pointRaised{Comment 7}{It is not necessary clear what java\_package has to do with a file 
   descriptor in R. Depending on the intention here, it may be useful to 
   explain this feature.
 }
-\reply{TBD}
+\reply{This snippet has been removed as part of the general move of
+  less relevant details to the package documentation, but for
+  reference the \texttt{.proto} file syntax is defined in the Protocol Buffers
+  language guide which is referenced earlier. It is a cross platform
+  library and so this syntax specifies some parameters when Java code
+  is used to access the structures defined in this file.  No such
+  special syntax is required in the \texttt{.proto} files for R
+  language code and so this line about java\_package was not relevant
+  or needed in any way for RProtoBuf and is documented elsewhere.}
 
 \subsubsection*{Other comments:}
 
@@ -298,7 +371,14 @@ option java_outer_classname = "AddressBookProtos";
   no reason to not include them - they can be useful to store expressions
   that may not be necessary specific to R. Further on p. 18 your run into
   the same problem that could be fixed so easily.}
-\reply{TBD}
+\reply{You are right.  Environments are more than just hash
+  tables because they include other configuration parameters that are
+  necessary to serialize as well to make sure
+  serialization/unserialization is indempotent, but we agree it is
+  cleaner and the package and the exposition in the paper to just make
+  sure we serialize everything.  We can now fall back to
+  \texttt{base::serialize} and storing the bits in a rawString type of
+  RProtoBuf to make the R schema-less serialization more complete.}
 
 \pointRaised{Comment 9}{The examples in sections 7 and 8 are somewhat weak. It does not seem 
   clear why one would wish to unleash the power of PB just to transfer 
