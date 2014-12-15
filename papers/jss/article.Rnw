@@ -233,8 +233,8 @@ Section~\ref{sec:summary} concludes.
 \label{sec:protobuf}
 
 Protocol Buffers are a modern, language-neutral, platform-neutral,
-extensible mechanism for sharing and storing structured data.  Key
-features provided by Protocol Buffers for data analysis include:
+extensible mechanism for sharing and storing structured data. Some of their
+features, particularly in the context of data analysis, are:
 
 \begin{itemize}
 \item \emph{Portable}:  Enable users to send and receive data between
@@ -388,7 +388,7 @@ during normal variable lookup.  This allows new descriptors to be
 parsed from \code{.proto} files and added to the global
 namespace.\footnote{Note that there is a significant performance
   overhead with this RObjectTable implementation.  Because the table
-  is on the search path and isn't cacheable, lookups of symbols that
+  is on the search path and is not cacheable, lookups of symbols that
   are behind it in the search path cannot be added to the global object
   cache, and R must perform an expensive lookup through all of the
   attached environments and the protocol buffer definitions to find common

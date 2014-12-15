@@ -1,7 +1,7 @@
-### R code from vignette source 'article.Rnw'
+### R code from vignette source '/home/edd/svn/rprotobuf/papers/jss/article.Rnw'
 
 ###################################################
-### code chunk number 1: article.Rnw:125-131
+### code chunk number 1: article.Rnw:130-136
 ###################################################
 ## cf http://www.jstatsoft.org/style#q12
 options(prompt = "R> ", 
@@ -12,7 +12,7 @@ options(prompt = "R> ",
 
 
 ###################################################
-### code chunk number 2: article.Rnw:313-321
+### code chunk number 2: article.Rnw:318-326
 ###################################################
 library("RProtoBuf")
 p <- new(tutorial.Person, id=1,
@@ -25,20 +25,13 @@ class(p)
 
 
 ###################################################
-### code chunk number 3: article.Rnw:376-377
+### code chunk number 3: article.Rnw:421-422
 ###################################################
-ls("RProtoBuf:DescriptorPool")
-
-
-###################################################
-### code chunk number 4: article.Rnw:391-393
-###################################################
-p1 <- new(tutorial.Person)
 p <- new(tutorial.Person, name = "Murray", id = 1)
 
 
 ###################################################
-### code chunk number 5: article.Rnw:402-405
+### code chunk number 4: article.Rnw:431-434
 ###################################################
 p$name
 p$id
@@ -46,7 +39,7 @@ p$email <- "murray@stokely.org"
 
 
 ###################################################
-### code chunk number 6: article.Rnw:413-416
+### code chunk number 5: article.Rnw:442-445
 ###################################################
 p[["name"]] <- "Murray Stokely"
 p[[ 2 ]] <- 3
@@ -54,25 +47,25 @@ p[["email"]]
 
 
 ###################################################
-### code chunk number 7: article.Rnw:429-430
+### code chunk number 6: article.Rnw:461-462
 ###################################################
 p
 
 
 ###################################################
-### code chunk number 8: article.Rnw:437-438
+### code chunk number 7: article.Rnw:469-470
 ###################################################
 writeLines(as.character(p))
 
 
 ###################################################
-### code chunk number 9: article.Rnw:451-452
+### code chunk number 8: article.Rnw:483-484
 ###################################################
 serialize(p, NULL)
 
 
 ###################################################
-### code chunk number 10: article.Rnw:457-460
+### code chunk number 9: article.Rnw:489-492
 ###################################################
 tf1 <- tempfile()
 serialize(p, tf1)
@@ -80,92 +73,42 @@ readBin(tf1, raw(0), 500)
 
 
 ###################################################
-### code chunk number 11: article.Rnw:465-470
-###################################################
-tf2 <- tempfile()
-con <- file(tf2, open = "wb")
-serialize(p, con)
-close(con)
-readBin(tf2, raw(0), 500)
-
-
-###################################################
-### code chunk number 12: article.Rnw:476-480
-###################################################
-p$serialize(tf1)
-con <- file(tf2, open = "wb")
-p$serialize(con)
-close(con)
-
-
-###################################################
-### code chunk number 13: article.Rnw:500-502
+### code chunk number 10: article.Rnw:538-540
 ###################################################
 msg <- read(tutorial.Person, tf1)
 writeLines(as.character(msg))
 
 
 ###################################################
-### code chunk number 14: article.Rnw:508-512
-###################################################
-con <- file(tf2, open = "rb")
-message <- read(tutorial.Person, con)
-close(con)
-writeLines(as.character(message))
-
-
-###################################################
-### code chunk number 15: article.Rnw:517-519
-###################################################
-payload <- readBin(tf1, raw(0), 5000)
-message <- read(tutorial.Person, payload)
-
-
-###################################################
-### code chunk number 16: article.Rnw:526-531
-###################################################
-message <- tutorial.Person$read(tf1)
-con <- file(tf2, open = "rb")
-message <- tutorial.Person$read(con)
-close(con)
-message <- tutorial.Person$read(payload)
-
-
-###################################################
-### code chunk number 17: article.Rnw:610-611
+### code chunk number 11: article.Rnw:660-661
 ###################################################
 new(tutorial.Person)
 
 
 ###################################################
-### code chunk number 18: article.Rnw:675-682
+### code chunk number 12: article.Rnw:685-690
 ###################################################
 tutorial.Person$email 
-
-tutorial.Person$PhoneType 
-
-tutorial.Person$PhoneNumber 
-
-tutorial.Person.PhoneNumber
+tutorial.Person$email$is_required()
+tutorial.Person$email$type()
+tutorial.Person$email$as.character()
+class(tutorial.Person$email)
 
 
 ###################################################
-### code chunk number 19: article.Rnw:798-800
+### code chunk number 13: article.Rnw:702-709
 ###################################################
 tutorial.Person$PhoneType
 tutorial.Person$PhoneType$WORK
-
-
-###################################################
-### code chunk number 20: article.Rnw:849-852
-###################################################
+class(tutorial.Person$PhoneType)
 tutorial.Person$PhoneType$value(1)
 tutorial.Person$PhoneType$value(name="HOME")
 tutorial.Person$PhoneType$value(number=1)
+class(tutorial.Person$PhoneType$value(1))
 
 
 ###################################################
-### code chunk number 21: article.Rnw:921-924
+### code chunk number 14: article.Rnw:719-722
 ###################################################
 f <- tutorial.Person$fileDescriptor()
 f
@@ -173,7 +116,7 @@ f$Person
 
 
 ###################################################
-### code chunk number 22: article.Rnw:987-990
+### code chunk number 15: article.Rnw:785-788
 ###################################################
 if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
     readProtoFiles(file="int64.proto")
@@ -181,7 +124,7 @@ if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
 
 
 ###################################################
-### code chunk number 23: article.Rnw:1012-1016
+### code chunk number 16: article.Rnw:810-814
 ###################################################
 as.integer(2^31-1)
 as.integer(2^31 - 1) + as.integer(1)
@@ -190,20 +133,20 @@ class(2^31)
 
 
 ###################################################
-### code chunk number 24: article.Rnw:1028-1029
+### code chunk number 17: article.Rnw:826-827
 ###################################################
 2^53 == (2^53 + 1)
 
 
 ###################################################
-### code chunk number 25: article.Rnw:1080-1082
+### code chunk number 18: article.Rnw:878-880
 ###################################################
 msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 
 
 ###################################################
-### code chunk number 26: article.Rnw:1113-1116
+### code chunk number 19: article.Rnw:908-911
 ###################################################
 datasets <- as.data.frame(data(package="datasets")$results)
 datasets$name <- sub("\\s+.*$", "", datasets$Item)
@@ -211,25 +154,7 @@ n <- nrow(datasets)
 
 
 ###################################################
-### code chunk number 27: article.Rnw:1126-1127
-###################################################
-m <- sum(sapply(datasets$name, function(x) can_serialize_pb(get(x))))
-
-
-###################################################
-### code chunk number 28: article.Rnw:1140-1147
-###################################################
-attr(CO2, "formula")
-msg <- serialize_pb(CO2, NULL)
-object <- unserialize_pb(msg)
-identical(CO2, object)
-identical(class(CO2), class(object))
-identical(dim(CO2), dim(object))
-attr(object, "formula")
-
-
-###################################################
-### code chunk number 29: article.Rnw:1163-1182
+### code chunk number 20: article.Rnw:929-972
 ###################################################
 datasets$object.size <- unname(sapply(datasets$name, function(x) object.size(eval(as.name(x)))))
 
@@ -249,42 +174,117 @@ clean.df <- data.frame(dataset=datasets$name,
                        "gzipped serialized"=datasets$R.serialize.size.gz,
                        "RProtoBuf"=datasets$RProtoBuf.serialize.size,
                        "gzipped RProtoBuf"=datasets$RProtoBuf.serialize.size.gz,
+		       "ratio.serialized" = datasets$R.serialize.size / datasets$object.size,
+		       "ratio.rprotobuf" = datasets$RProtoBuf.serialize.size / datasets$object.size,
+		       "ratio.serialized.gz" = datasets$R.serialize.size.gz / datasets$object.size,
+		       "ratio.rprotobuf.gz" = datasets$RProtoBuf.serialize.size.gz / datasets$object.size,
+		       "savings.serialized" = 1-(datasets$R.serialize.size / datasets$object.size),
+		       "savings.rprotobuf" = 1-(datasets$RProtoBuf.serialize.size / datasets$object.size),
+		       "savings.serialized.gz" = 1-(datasets$R.serialize.size.gz / datasets$object.size),
+		       "savings.rprotobuf.gz" = 1-(datasets$RProtoBuf.serialize.size.gz / datasets$object.size),
                        check.names=FALSE)
 
+all.df<-data.frame(dataset="TOTAL", object.size=sum(datasets$object.size),
+				    "serialized"=sum(datasets$R.serialize.size),
+                       "gzipped serialized"=sum(datasets$R.serialize.size.gz),
+                       "RProtoBuf"=sum(datasets$RProtoBuf.serialize.size),
+                       "gzipped RProtoBuf"=sum(datasets$RProtoBuf.serialize.size.gz),
+		       "ratio.serialized" = sum(datasets$R.serialize.size) / sum(datasets$object.size),
+		       "ratio.rprotobuf" = sum(datasets$RProtoBuf.serialize.size) / sum(datasets$object.size),
+		       "ratio.serialized.gz" = sum(datasets$R.serialize.size.gz) / sum(datasets$object.size),
+		       "ratio.rprotobuf.gz" = sum(datasets$RProtoBuf.serialize.size.gz) / sum(datasets$object.size),
+		       "savings.serialized" = 1-(sum(datasets$R.serialize.size) / sum(datasets$object.size)),
+		       "savings.rprotobuf" = 1-(sum(datasets$RProtoBuf.serialize.size) / sum(datasets$object.size)),
+		       "savings.serialized.gz" = 1-(sum(datasets$R.serialize.size.gz) / sum(datasets$object.size)),
+		       "savings.rprotobuf.gz" = 1-(sum(datasets$RProtoBuf.serialize.size.gz) / sum(datasets$object.size)),
+                       check.names=FALSE)
+clean.df<-rbind(clean.df, all.df)
+
 
 ###################################################
-### code chunk number 30: article.Rnw:1390-1395
+### code chunk number 21: SER
 ###################################################
-require(RProtoBuf)
+old.mar<-par("mar")
+new.mar<-old.mar
+new.mar[3]<-0
+new.mar[4]<-0
+my.cex<-1.3
+par("mar"=new.mar)
+plot(clean.df$savings.serialized, clean.df$savings.rprotobuf, pch=1, col="red", las=1, xlab="Serialization Space Savings", ylab="Protocol Buffer Space Savings", xlim=c(0,1),ylim=c(0,1),cex.lab=my.cex, cex.axis=my.cex)
+points(clean.df$savings.serialized.gz, clean.df$savings.rprotobuf.gz,pch=2, col="blue")
+# grey dotted diagonal
+abline(a=0,b=1, col="grey",lty=2,lwd=3)
+
+# find point furthest off the X axis.
+clean.df$savings.diff <- clean.df$savings.serialized - clean.df$savings.rprotobuf
+clean.df$savings.diff.gz <- clean.df$savings.serialized.gz - clean.df$savings.rprotobuf.gz
+
+# The one to label.
+tmp.df <- clean.df[which(clean.df$savings.diff == min(clean.df$savings.diff)),]
+# This minimum means most to the left of our line, so pos=2 is label to the left
+text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=2, cex=my.cex)
+
+# Some gziped version
+# text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=2, cex=my.cex)
+
+# Second one is also an outlier
+tmp.df <- clean.df[which(clean.df$savings.diff == sort(clean.df$savings.diff)[2]),]
+# This minimum means most to the left of our line, so pos=2 is label to the left
+text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=2, cex=my.cex)
+#text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=my.cex)
+
+
+tmp.df <- clean.df[which(clean.df$savings.diff == max(clean.df$savings.diff)),]
+# This minimum means most to the right of the diagonal, so pos=4 is label to the right
+# Only show the gziped one.
+#text(tmp.df$savings.serialized, tmp.df$savings.rprotobuf, labels=tmp.df$dataset, pos=4, cex=my.cex)
+text(tmp.df$savings.serialized.gz, tmp.df$savings.rprotobuf.gz, labels=tmp.df$dataset, pos=4, cex=my.cex)
+
+#outlier.dfs <- clean.df[c(which(clean.df$savings.diff == min(clean.df$savings.diff)),
+
+legend("topleft", c("Raw", "Gzip Compressed"), pch=1:2, col=c("red", "blue"), cex=my.cex)
+
+interesting.df <- clean.df[unique(c(which(clean.df$savings.diff == min(clean.df$savings.diff)),
+                             which(clean.df$savings.diff == max(clean.df$savings.diff)),
+                             which(clean.df$savings.diff.gz == max(clean.df$savings.diff.gz)),
+			     which(clean.df$dataset == "TOTAL"))),c("dataset", "object.size", "serialized", "gzipped serialized", "RProtoBuf", "gzipped RProtoBuf", "savings.serialized", "savings.serialized.gz", "savings.rprotobuf", "savings.rprotobuf.gz")]
+# Print without .00 in xtable
+interesting.df$object.size <- as.integer(interesting.df$object.size)
+par("mar"=old.mar)
+
+
+###################################################
+### code chunk number 22: article.Rnw:1211-1215
+###################################################
 require(HistogramTools)
 readProtoFiles(package="HistogramTools")
 hist <- HistogramTools.HistogramState$read("hist.pb")
-plot(as.histogram(hist))
+plot(as.histogram(hist), main="")
 
 
 ###################################################
-### code chunk number 31: article.Rnw:1463-1470 (eval = FALSE)
+### code chunk number 23: article.Rnw:1303-1310 (eval = FALSE)
 ###################################################
 ## library("RProtoBuf")
 ## library("httr")
 ## 
-## req <- GET('https://public.opencpu.org/ocpu/library/MASS/data/Animals/pb')
+## req <- GET('https://demo.ocpu.io/MASS/data/Animals/pb')
 ## output <- unserialize_pb(req$content)
 ## 
 ## identical(output, MASS::Animals)
 
 
 ###################################################
-### code chunk number 32: article.Rnw:1529-1545 (eval = FALSE)
+### code chunk number 24: article.Rnw:1360-1376 (eval = FALSE)
 ###################################################
-## library("httr")       
+## library("httr")
 ## library("RProtoBuf")
 ## 
 ## args <- list(n=42, mean=100)
 ## payload <- serialize_pb(args, NULL)
 ## 
 ## req <- POST (
-##   url = "https://public.opencpu.org/ocpu/library/stats/R/rnorm/pb",
+##   url = "https://demo.ocpu.io/stats/R/rnorm/pb",
 ##   body = payload,
 ##   add_headers (
 ##     "Content-Type" = "application/x-protobuf"
@@ -296,7 +296,7 @@ plot(as.histogram(hist))
 
 
 ###################################################
-### code chunk number 33: article.Rnw:1549-1552 (eval = FALSE)
+### code chunk number 25: article.Rnw:1380-1383 (eval = FALSE)
 ###################################################
 ## fnargs <- unserialize_pb(inputmsg)
 ## val <- do.call(stats::rnorm, fnargs)
