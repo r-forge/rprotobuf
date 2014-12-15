@@ -72,14 +72,20 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   bulleted list giving a high-level overview, then encourage the reader
   to refer to the documentation for further details. Similarly, Tables
   3-5 belong in the documentation, not in a vignette/paper.}
-\reply{Done. TO BE EXPANDED}
+\reply{Done. RProtoBuf was designed and implemented before RC were
+  available, and this is noted in a footnote now.  Explanation of how
+  they are made mutable haas been added.  Better explanation of the
+  two styles and '\$' as been added, while no longer using the
+  confusing term
+  'pseudo-method' anywhere.  Moved Tables 3-5 into the documentation
+  and out of the paper, as suggested.}
 
 \pointRaised{Comment 4}{Section 7 is weak. I think the important message is that RProtobuf is
   being used in practice at large scale for for large data, and is
   useful for communicating between R and Python. How can you make that
   message stronger while avoiding (for the purposes of this paper) the
   relatively unimportant details of the map-reduce setup?}
-\reply{TBD}
+\reply{Done.  Rewritten with more motivation taking into account this feedback.}
 
 \subsubsection*{R to/from Protobuf translation}
 
@@ -87,14 +93,28 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   much simpler if instead of Message, you provided a "vectorised"
   Messages class (this would also make the interface more consistent and
   hence the package easier to use).}
-\reply{TBD}
+\reply{This is an area for future work and is a space explored in
+  another package called Motobuf by other authors.}
 
 \pointRaised{Comment 6}{Along these lines, I think it would make sense to combine sections 5
   and 6 and discuss translation challenges in both direction
   simultaneously. At the minimum, add the equivalent for Table 9 that
   shows how important R classes are converted to their protobuf
   equivalents.}
-\reply{TBD}
+
+\reply{We have updated these sections to make it clearer that the main
+  distinction is between schema-based datastructures (section 5) and
+  schema-less use where a catch-all .proto is used (section 6).
+  Neither section is meant to focus on only a single direction of the
+  conversion, but how conversion works when you have a schema or not.
+  How important R classes are converted to their protobuf equivalents
+  isn't super useful as a C++, Java, or Python program is unlikely to
+  want to read in an R data.frame exactly as it is defined.  Much more
+  likely is an application-specific message format is defined between the
+  two services, such as the HistogramTools example in the next section.
+  Much more detail has been added to an interesting part of section 6 --
+  which datasets exactly are better served with RProtoBuf than
+  base::serialize and why?}
 
 \pointRaised{Comment 7}{You should discuss how missing values are handled for strings and
   integers, and why enums are not equivalent to factors. I think you
@@ -108,7 +128,16 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   show how long it takes to serialise data frames using both RProtoBuf
   and R's native serialisation. Is there a performance penalty to using
   protobufs?}
-\reply{TBD}
+\reply{Table 10 has been replaced with a plot, the outliers are
+  labeled, and the text now includes some interesting explanation
+  about the outliers.  Page 4 explains that the R implementation of
+  protocol buffers uses reflection to make operations slower but makes
+  it more convenient for interactive data analysis.  None of the
+  built-in datasets are large enough for performance to really come up
+  as an issue, and for any serialization method examples could be
+  found that significantly favor one over another, so we don't think
+  there will be benefit to adding anything here.
+}
 
 \subsubsection*{RObjectTables magic}
 
@@ -116,7 +145,8 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   good fit for an infrastructure package and it's not clear what
   advantages it has over explicitly loading a protobuf definition into
   an object.}
-\reply{TBD}
+\reply{More information about the advantages and disadvantages of this
+  approach have been added.}
 
 \pointRaised{Comment 10}{Using global state makes understanding code much harder. In Table 1,
   it's not obvious where \texttt{tutorial.Person} comes from. Is it loaded by
@@ -125,18 +155,22 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   as well as \texttt{HistogramTools}? This needs more explanation, and a
   comment on the implications of this approach on CRAN packages and
   namespaces.}
-\reply{TBD}
+\reply{We followed this recommendation and added explanation for how
+\texttt{tutorial.Person} is loaded, specifically : \emph{A small number of message types are imported when the
+package is first loaded, including the tutorial.Person type we saw in
+the last section.}  We removed the superfluous attach of \texttt{RProtoBuf}.}
 
 \pointRaised{Comment 11}{
   I'd prefer you eliminate this magic from the magic, but failing that,
   you need a good explanation of why.}
-\reply{TBD}
+\reply{We've added more explanation about this.}
 
 \subsubsection*{Code comments}
 
 \pointRaised{Comment 12}{Using \texttt{file.create()} to determine the absolute path seems like a bad idea.}
-\reply{TBD}
-
+\reply{We followed this recommendation and removed two instances of
+  \texttt{file.create()} for this purpose with calls to
+  \texttt{normalizePath} with \texttt{mustWork=FALSE}.}
 
 \subsubsection*{Minor niggles}
 
