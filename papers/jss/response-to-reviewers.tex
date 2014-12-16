@@ -54,14 +54,17 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   important design decisions. I think you could comfortably reduce the paper
   by 5-10 pages, referring the interested reader to the documentation for
   more detail.}
-\reply{The paper was rewritten throughout and is now much tighter at just 23 pages.}
+\reply{The paper is now 6-pages much tighter at just 23 pages.
+  Sections 3 - 8 (all but sec 1 introduction, sec 2 protocol buffers,
+  and sec 9 conclusion have been rewritten to address the specific and
+  general feedback in these reviews)}
 
 \pointRaised{Comment 3}{I'd recommend shrinking section 3 to ~2 pages, and removing the
   subheadings. This section should quickly orient the reader to the
   RProtobuf API so they understand the big picture before learning more
   details in the subsequent sections. I'd recommend picking one OO style
   and sticking to it in this section - two is confusing.}
-\reply{We followed this recommendation and reduced section 3 to about 2 1/2 pages.}
+\reply{We followed this recommendation and reduced section 3 to about $2\frac{1}{2}$ pages.}
 
 \pointRaised{Comment 3}{Section 4 dives into the details without giving a good overview and
   motivation. Why use S4 and not RC? How are the objects made mutable?
@@ -74,10 +77,10 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   3-5 belong in the documentation, not in a vignette/paper.}
 \reply{Done. RProtoBuf was designed and implemented before RC were
   available, and this is noted in a footnote now.  Explanation of how
-  they are made mutable haas been added.  Better explanation of the
-  two styles and '\$' as been added, while no longer using the
+  they are made mutable has been added.  Better explanation of the
+  two styles and '\$' as been added.  We are no longer using the
   confusing term
-  'pseudo-method' anywhere.  Moved Tables 3-5 into the documentation
+  'pseudo-method' anywhere.  We moved Tables 3-5 into the documentation
   and out of the paper, as suggested.}
 
 \pointRaised{Comment 4}{Section 7 is weak. I think the important message is that RProtobuf is
@@ -93,15 +96,27 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   much simpler if instead of Message, you provided a "vectorised"
   Messages class (this would also make the interface more consistent and
   hence the package easier to use).}
-\reply{This is an area for future work and is a space explored in
-  another package called Motobuf by other authors.}
+\reply{This is a good observation that only became clear to us after
+  significant usage of \texttt{RProtoBuf}.  Providing a full ``vectorized'' Messages class would require slicing
+  operators that let you quickly extract a given field from each
+  element of the message vector in order to be really useful.  This
+  would require significant amounts of C++ code for efficient
+  manipulation on the order of data.table or other similar large C++ R
+  packages on CRAN.  There is another package called Motobuf by other authors
+  that takes this approach but in practice, at Google at least, the
+  ease-of-use provided by the simple Message interface of RProtoBuf
+  has won with users.  It is still future work to keep the simple
+  interactive interface of RProtoBuf with the vectorized efficiency of
+  Motobuf.  For now, users typically do their slicing of vectors like
+  this through a distributed database (NewSQL is the term of the day?)
+  like Dremel or other system and then just get the response Protocol
+  Buffers in return to the request.}
 
 \pointRaised{Comment 6}{Along these lines, I think it would make sense to combine sections 5
   and 6 and discuss translation challenges in both direction
   simultaneously. At the minimum, add the equivalent for Table 9 that
   shows how important R classes are converted to their protobuf
   equivalents.}
-
 \reply{We have updated these sections to make it clearer that the main
   distinction is between schema-based datastructures (section 5) and
   schema-less use where a catch-all .proto is used (section 6).
@@ -122,7 +137,13 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   occurs, and the implications of this on sharing data structures
   between programming languages. For example, how do you share date/time
   data between R and python using RProtoBuf?}
-\reply{TBD}
+\reply{All of these details are application-specific, whereas
+  RProtoBuf is an infrastructure package.  Distributed systems define
+  their own interfaces, with their own date/time fields, usually as
+  int64s of fractional seconds since the unix epoch for the systems I
+  have worked on.  An example is given for Histograms in the next
+  section.  Factors could be represented as repeated enums in protocol
+  buffers, certainly, if that is how one wanted to define a schema.}
 
 \pointRaised{Comment 8}{Table 10 is dying to be a plot, and a natural companion would be to
   show how long it takes to serialise data frames using both RProtoBuf
@@ -135,9 +156,8 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   it more convenient for interactive data analysis.  None of the
   built-in datasets are large enough for performance to really come up
   as an issue, and for any serialization method examples could be
-  found that significantly favor one over another, so we don't think
-  there will be benefit to adding anything here.
-}
+  found that significantly favor one over another in runtime, so we
+  don't think there will be benefit to adding anything here.  }
 
 \subsubsection*{RObjectTables magic}
 
@@ -181,13 +201,13 @@ of \texttt{RProtoBuf}, it has been removed from the example.}
 
 \pointRaised{Comment 14}{In Section 3.4, if messages isn't a vectorised class, the default
    print method should use \texttt{cat()} to eliminate the confusing \texttt{[1]}.}
-\reply{Done}
+\reply{Done, thanks.}
 
 \pointRaised{Comment 15}{The REXP definition would have been better defined using an enum that
    matches R's SEXPTYPE "enum". But I guess that ship has sailed.}
 \reply{Acknowledged.  We chose to maintain compatibility with RHIPE here.  The main
-use of RProtoBuf is not with rexp.proto however -- it with
-application-specific schemas in .proto files for sending data between
+use of RProtoBuf is not with \texttt{rexp.proto} however -- it with
+application-specific schemas in \texttt{.proto} files for sending data between
 applications.  Users that want to do something very R-specific are
 welcome to use their own \texttt{.proto} files with an enum to represent R SEXPTYPEs.}
 
@@ -324,7 +344,7 @@ List of 3
 
 \pointRaised{Comment 6}{Finally, most classes implement coercion to characters, which is not 
   mentioned and is not quite intuitive for some objects. For example, one
-  may think that as.character() on a file descriptor returns let's say the 
+  may think that \texttt{as.character()} on a file descriptor returns let's say the 
   filename, but we get:}
 
 \begin{verbatim}
@@ -337,10 +357,12 @@ option java_package = "com.example.tutorial";
 option java_outer_classname = "AddressBookProtos";
 [...]
 \end{verbatim}
-\reply{In choosing the debug output for a file descriptor we agree
+\reply{The behavior is documented in the package documentation but
+  seemed like a minor detail not important for an already-long paper.
+  In choosing the debug output for a file descriptor we agree
   that \texttt{filename} is a reasonable thing to expect, but we also
   think that the contents of the \texttt{.proto} file is also
-  reasonable, and also more useful.  We document this in
+  reasonable, but more useful.  We document this in
   ``FileDescriptor-class'', the vignette, and other sources.
   \texttt{@filename} is one of the slots of the FileDescriptor class
   and so very easy to find.  The contents of the \texttt{.proto} are
@@ -394,8 +416,16 @@ option java_outer_classname = "AddressBookProtos";
   reader is not able to replicate the illustrated process. Possibly 
   explaining the benefits and providing more details on how one would 
   write such a job would make it much more relevant.}
-\reply{TBD}
-
+\reply{Yes, we added more detail about the advantages of using a
+  proper data type for the histograms in this example that you mentioned here -- the
+  ability to write combiners, prevent arbitrary splitting of the
+  records, etc that can greatly improve performance.  We agree with
+  the other reviewer that we don't want to get bogged down in details
+  about a particular MapReduce implementation (such as Hadoop) and so
+  now we specifically mention that goal here.
+  I think we make a better connection now between the
+  abstract MapReduce example given, and then the simpler Python
+  example code with a static example.}
 
 \pointRaised{Comment 10}{Section 8 is not very well motivated. It is much easier to use other 
   formats for HTTP exchange - JSON is probably the most popular, but even
@@ -405,7 +435,17 @@ option java_outer_classname = "AddressBookProtos";
   would sacrifice interoperability by using PB (they are still more hassle 
   and require special installations)? It would be useful if the reason 
   could be made explicit here or a better example chosen.}
-\reply{TBD}
+\reply{This section has been reworded to make it shorter and more
+  crisp, with fewer extraneous details about OpenCPU.
+Protocol
+  Buffers is an efficient protocol used between distributed systems at
+  many of the world's largest internet companies (Twitter, Sony,
+  Google, etc.) but the design and implementation of a large
+  enterprise-scale distributed system with a complex RPC system and
+  serialization needs is well beyond the scope of what we can add to a
+  paper about RProtoBuf.  We chose this example because it is a much
+  more accessible example that any reader can use to easily
+  send/receive RPCs and parse the results with RProtoBuf.}
 
 \end{document}
 
