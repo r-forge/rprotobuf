@@ -229,7 +229,7 @@ welcome to use their own \texttt{.proto} files with an enum to represent R SEXPT
 \pointRaised{Comment 2}{There are, however, a few inconsistencies in the implementation and some 
   issues with specific sections in the paper. In the following both issues 
   will be addressed sequentially by their occurrence in the paper.}
-\reply{These and others have been identified and addressed.  Thank you
+\reply{Done. These and others have been identified and addressed.  Thank you
   for taking the time to enumerate these issues.}
 
 \pointRaised{Comment 3}{p.4 illustrates the use of messages. The class implements list-like 
@@ -245,7 +245,7 @@ the following:}
  > p[[3]]
 [1] ""
 \end{verbatim}
-\reply{We've corrected the list-like accessor, fixed \texttt{length()} to
+\reply{Done. We have corrected the list-like accessor, fixed \texttt{length()} to
   correspond to the number of set fields, and added \texttt{names()}:}
 \begin{verbatim}
 > p
@@ -273,7 +273,8 @@ NULL
  > length(tutorial.Person)
 [1] 1
 \end{verbatim}
-\reply{We agree, and have addressed this inconsistency.  Thank you:}
+\reply{Done. We agree, and have addressed this inconsistency.  Thank you for
+  catching this.}
 \begin{verbatim}
 > tutorial.Person$email
 descriptor for field 'email' of type 'tutorial.Person' 
@@ -290,8 +291,8 @@ descriptor for field 'email' of type 'tutorial.Person'
   directly (although the low-level object methods seem to be exposed as 
   \texttt{\$field\_count()} and \texttt{\$fields()} - but that seems extremely cumbersome). 
   Again, implementing names() and subsetting may help here.}
-\reply{\texttt{names} and subsetting implemented.  Thank you for the
-  suggestion.:}
+\reply{Done. We have implemented \texttt{names} and subsetting.  Thank you for the
+  suggestion.}
 \begin{verbatim}
 > tutorial.Person[[1]]
 descriptor for field 'name' of type 'tutorial.Person' 
@@ -311,7 +312,7 @@ descriptor for field 'id' of type 'tutorial.Person'
   - attr(*, "names")= chr [1:3] "MOBILE" "HOME" "WORK"
 \end{verbatim}
 
-\reply{Fixed, thank you. New output:}
+\reply{Done, thank you. New output below:}
 \begin{verbatim}
 > is.list(as.list(tutorial.Person$PhoneType))
 [1] TRUE
@@ -327,7 +328,7 @@ List of 3
   values. It may be natural use some of the standard methods like names(), 
   levels() or similar. As with the previous cases, the lack of [[ support
   makes it impossible to map named enum values to codes and vice-versa.}
-\reply{Fixed, thank you.  New output:}
+\reply{Done, thank you.  New output:}
 \begin{verbatim}
 > names(tutorial.Person$PhoneType)
 [1] "MOBILE" "HOME"   "WORK"  
@@ -339,7 +340,7 @@ List of 3
   the consistency of the API. Since the authors intend direct interaction
   with the objects via basic standard R methods, the classes should behave 
   consistently.}
-\reply{We made several passes, correcting issues as documented in
+\reply{We made several passes, correcting issues as documented in the
   \texttt{ChangeLog} and now present in our latest 0.4.2 release on CRAN.}
 
 \pointRaised{Comment 6}{Finally, most classes implement coercion to characters, which is not 
@@ -362,7 +363,7 @@ option java_outer_classname = "AddressBookProtos";
   In choosing the debug output for a file descriptor we agree
   that \texttt{filename} is a reasonable thing to expect, but we also
   think that the contents of the \texttt{.proto} file is also
-  reasonable, but more useful.  We document this in
+  reasonable, but more useful.  We document this in the help for
   ``FileDescriptor-class'', the vignette, and other sources.
   \texttt{@filename} is one of the slots of the FileDescriptor class
   and so very easy to find.  The contents of the \texttt{.proto} are
@@ -373,7 +374,7 @@ option java_outer_classname = "AddressBookProtos";
   descriptor in R. Depending on the intention here, it may be useful to 
   explain this feature.
 }
-\reply{This snippet has been removed as part of the general move of
+\reply{Done. This snippet has been removed as part of the general move of
   less relevant details to the package documentation, but for
   reference the \texttt{.proto} file syntax is defined in the Protocol Buffers
   language guide which is referenced earlier. It is a cross platform
@@ -393,13 +394,13 @@ option java_outer_classname = "AddressBookProtos";
   no reason to not include them - they can be useful to store expressions
   that may not be necessary specific to R. Further on p. 18 your run into
   the same problem that could be fixed so easily.}
-\reply{You are right.  Environments are more than just hash
+\reply{Acknowledged.  Environments are more than just hash
   tables because they include other configuration parameters that are
   necessary to serialize as well to make sure
   serialization/unserialization is indempotent, but we agree it is
   cleaner and the package and the exposition in the paper to just make
   sure we serialize everything.  We can now fall back to
-  \texttt{base::serialize} and storing the bits in a rawString type of
+  \texttt{base::serialize()} and storing the bits in a rawString type of
   RProtoBuf to make the R schema-less serialization more complete.}
 
 \pointRaised{Comment 9}{The examples in sections 7 and 8 are somewhat weak. It does not seem 
@@ -435,9 +436,8 @@ option java_outer_classname = "AddressBookProtos";
   would sacrifice interoperability by using PB (they are still more hassle 
   and require special installations)? It would be useful if the reason 
   could be made explicit here or a better example chosen.}
-\reply{This section has been reworded to make it shorter and more
-  crisp, with fewer extraneous details about OpenCPU.
-Protocol
+\reply{Done. This section has been reworded to make it shorter and more
+  crisp, with fewer extraneous details about OpenCPU. Protocol
   Buffers is an efficient protocol used between distributed systems at
   many of the world's largest internet companies (Twitter, Sony,
   Google, etc.) but the design and implementation of a large
