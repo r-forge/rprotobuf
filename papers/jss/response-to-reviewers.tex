@@ -54,17 +54,18 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   important design decisions. I think you could comfortably reduce the paper
   by 5-10 pages, referring the interested reader to the documentation for
   more detail.}
-\reply{The paper is now 6-pages much tighter at just 23 pages.
-  Sections 3 - 8 (all but sec 1 introduction, sec 2 protocol buffers,
-  and sec 9 conclusion have been rewritten to address the specific and
-  general feedback in these reviews)}
+\reply{The paper is now six pages shorter at just 23 pages.
+  Sections 3 - 8 (all but Section 1 (``Introduction''), Section 2 (``Protocol Buffers''),
+  and Section 9 (``Conclusion'') have been thoroughly rewritten to address the specific and
+  general feedback in these reviews.}
 
 \pointRaised{Comment 3}{I'd recommend shrinking section 3 to ~2 pages, and removing the
   subheadings. This section should quickly orient the reader to the
   RProtobuf API so they understand the big picture before learning more
   details in the subsequent sections. I'd recommend picking one OO style
   and sticking to it in this section - two is confusing.}
-\reply{We followed this recommendation and reduced section 3 to about $2\frac{1}{2}$ pages.}
+\reply{We followed this recommendation, reduced section 3 to about
+  $2\frac{1}{2}$ pages, removed the subheadings and tightened the exposition.}
 
 \pointRaised{Comment 3}{Section 4 dives into the details without giving a good overview and
   motivation. Why use S4 and not RC? How are the objects made mutable?
@@ -76,12 +77,11 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   to refer to the documentation for further details. Similarly, Tables
   3-5 belong in the documentation, not in a vignette/paper.}
 \reply{Done. RProtoBuf was designed and implemented before RC were
-  available, and this is noted in a footnote now.  Explanation of how
+  available, and this is now noted explicitly in a new footnote.  Explanation of how
   they are made mutable has been added.  Better explanation of the
   two styles and '\$' as been added.  We are no longer using the
-  confusing term
-  'pseudo-method' anywhere.  We moved Tables 3-5 into the documentation
-  and out of the paper, as suggested.}
+  confusing term 'pseudo-method' anywhere.  We also moved Tables 3-5 into the
+  documentation and out of the paper, as suggested.}
 
 \pointRaised{Comment 4}{Section 7 is weak. I think the important message is that RProtobuf is
   being used in practice at large scale for for large data, and is
@@ -103,8 +103,8 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   would require significant amounts of C++ code for efficient
   manipulation on the order of data.table or other similar large C++ R
   packages on CRAN.  There is another package called Motobuf by other authors
-  that takes this approach but in practice, at Google at least, the
-  ease-of-use provided by the simple Message interface of RProtoBuf
+  that takes this approach but in practice (at least for the several hundred
+  users at Google), the ease-of-use provided by the simple Message interface of RProtoBuf
   has won with users.  It is still future work to keep the simple
   interactive interface of RProtoBuf with the vectorized efficiency of
   Motobuf.  For now, users typically do their slicing of vectors like
@@ -117,9 +117,9 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   simultaneously. At the minimum, add the equivalent for Table 9 that
   shows how important R classes are converted to their protobuf
   equivalents.}
-\reply{We have updated these sections to make it clearer that the main
-  distinction is between schema-based datastructures (section 5) and
-  schema-less use where a catch-all .proto is used (section 6).
+\reply{Done. We have updated these sections to make it clearer that the main
+  distinction is between schema-based datastructures (Section 5) and
+  schema-less use where a catch-all \texttt{.proto} is used (Section 6).
   Neither section is meant to focus on only a single direction of the
   conversion, but how conversion works when you have a schema or not.
   How important R classes are converted to their protobuf equivalents
@@ -129,7 +129,7 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   two services, such as the HistogramTools example in the next section.
   Much more detail has been added to an interesting part of section 6 --
   which datasets exactly are better served with RProtoBuf than
-  base::serialize and why?}
+  \texttt{base::serialize} and why?}
 
 \pointRaised{Comment 7}{You should discuss how missing values are handled for strings and
   integers, and why enums are not equivalent to factors. I think you
@@ -140,19 +140,19 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
 \reply{All of these details are application-specific, whereas
   RProtoBuf is an infrastructure package.  Distributed systems define
   their own interfaces, with their own date/time fields, usually as
-  int64s of fractional seconds since the unix epoch for the systems I
+  a double of fractional seconds since the unix epoch for the systems I
   have worked on.  An example is given for Histograms in the next
-  section.  Factors could be represented as repeated enums in protocol
-  buffers, certainly, if that is how one wanted to define a schema.}
+  section.  Factors could be represented as repeated enums in Protocol
+  Buffers, certainly, if that is how one wanted to define a schema.}
 
 \pointRaised{Comment 8}{Table 10 is dying to be a plot, and a natural companion would be to
   show how long it takes to serialise data frames using both RProtoBuf
   and R's native serialisation. Is there a performance penalty to using
   protobufs?}
-\reply{Table 10 has been replaced with a plot, the outliers are
+\reply{Done. Table 10 has been replaced with a plot, the outliers are
   labeled, and the text now includes some interesting explanation
   about the outliers.  Page 4 explains that the R implementation of
-  protocol buffers uses reflection to make operations slower but makes
+  Protocol Buffers uses reflection to make operations slower but makes
   it more convenient for interactive data analysis.  None of the
   built-in datasets are large enough for performance to really come up
   as an issue, and for any serialization method examples could be
@@ -165,7 +165,7 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   good fit for an infrastructure package and it's not clear what
   advantages it has over explicitly loading a protobuf definition into
   an object.}
-\reply{More information about the advantages and disadvantages of this
+\reply{Done. More information about the advantages and disadvantages of this
   approach have been added.}
 
 \pointRaised{Comment 10}{Using global state makes understanding code much harder. In Table 1,
@@ -175,28 +175,28 @@ and updated package (which was recently resubmitted to CRAN as version 0.4.2).
   as well as \texttt{HistogramTools}? This needs more explanation, and a
   comment on the implications of this approach on CRAN packages and
   namespaces.}
-\reply{We followed this recommendation and added explanation for how
-\texttt{tutorial.Person} is loaded, specifically : \emph{A small number of message types are imported when the
-package is first loaded, including the tutorial.Person type we saw in
-the last section.}  Thank you also for spotting the superfluous attach
-of \texttt{RProtoBuf}, it has been removed from the example.}
+\reply{Done. We followed this recommendation and added explanation for how
+  \texttt{tutorial.Person} is loaded, specifically : \emph{A small number of message types are imported when the
+    package is first loaded, including the tutorial.Person type we saw in
+    the last section.}  Thank you also for spotting the superfluous attach
+  of \texttt{RProtoBuf}, it has been removed from the example.}
 
 \pointRaised{Comment 11}{
   I'd prefer you eliminate this magic from the magic, but failing that,
   you need a good explanation of why.}
-\reply{We've added more explanation about this.}
+\reply{Done. We've added more explanation about this.}
 
 \subsubsection*{Code comments}
 
 \pointRaised{Comment 12}{Using \texttt{file.create()} to determine the absolute path seems like a bad idea.}
-\reply{We followed this recommendation and removed two instances of
+\reply{Done. We followed this recommendation and removed two instances of
   \texttt{file.create()} for this purpose with calls to
   \texttt{normalizePath} with \texttt{mustWork=FALSE}.}
 
 \subsubsection*{Minor niggles}
 
 \pointRaised{Comment 13}{Don't refer to the message passing style of OO as traditional.}
-\reply{Done, we don't refer to this style as traditional anywhere in
+\reply{Done. We don't refer to this style as traditional anywhere in
   the manuscript anymore.}
 
 \pointRaised{Comment 14}{In Section 3.4, if messages isn't a vectorised class, the default
@@ -213,7 +213,7 @@ welcome to use their own \texttt{.proto} files with an enum to represent R SEXPT
 
 \pointRaised{Comment 16}{Why does \texttt{serialize\_pb(CO2, NULL)} fail silently? Shouldn't it at least
    warn that the serialization is partial?}
-\reply{Fixed, \texttt{serialize\_pb} now works for all built-in datatypes in R
+\reply{Done. We fixed this and \texttt{serialize\_pb} now works for all built-in datatypes in R
   and no longer fails silently if it encounters something it can't serialize.}
 
 \section*{Response to Reviewer \#2}
