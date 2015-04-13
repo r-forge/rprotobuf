@@ -14,4 +14,4 @@ ${article}.pdf: ${article}.Rnw
 	R CMD Stangle ${article}.Rnw
 
 jssarchive:
-	(cd .. && zip -r jssarchive.zip jss/)
+	(cd .. && zip -r jss1313_submission_$$(date "+%Y-%m-%d").zip jss/ -x "jss/JSSstyle/*" -x "jss/JSSemails/*")
