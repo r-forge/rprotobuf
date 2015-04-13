@@ -1,0 +1,85 @@
+JSS 1313: Eddelbuettel, Stokely, Ooms
+
+RProtoBuf: Efficient Cross-Language Data Serialization in R
+
+---------------------------------------------------------
+For further instruction on JSS style requirements please see the JSS style manual (in particular section 2.1 Style Checklist) at http://www.jstatsoft.org/downloads/JSSstyle.zip
+
+  ## START DEdd:  Inserted per copy/paste from jss.pdf: 
+  
+    2.1 Style checklist
+  
+    A quick check for the most important aspects of the JSS style is given
+    below. Authors should make sure that all of them are addressed in the ﬁnal
+    version. More details can be found in the remainder of this manual.
+    • The manuscript can be compiled by pdfLATEX.
+    • \proglang, \pkg and \code have been used for highlighting throughout the paper
+      (including titles and references), except where explicitly escaped.
+    • References are provided in a .bib BibTEX database and included in the text by \cite,
+      \citep, \citet, etc.
+    • Titles and headers are formatted properly:
+      – \title in title style,
+      – \section etc. in sentence style,
+      – all titles in the BibTEX ﬁle in title style.
+    • Figures, tables and equations are marked with a \label and referred to by \ref, e.g.,
+      “Figure~\ref{...}”.
+    • Software packages are \cite{}d properly.
+
+  ## END DEdd:  Inserted per copy/paste from jss.pdf: 
+
+Also see FAQ at: http://www.jstatsoft.org/style
+
+For further references please see RECENT JSS papers for detailed documentation and examples.
+---------------------------------------------------------
+
+
+From the editorial team:
+
+o From one reviewer: As far as I can see there's only one difference between
+the two columns of Table 3. It would be nice to highlight this.
+
+  ## DEdd: Done, added a sentence below table and tightened wording in that
+  Table note.
+
+
+Manuscript style comments:
+
+o Code should have enough spaces to facilitate reading.  Please include spaces before and after operators and after commas (unless spaces have syntactical meaning).
+
+  ## DEdd: No change, we were good already
+
+o The table in Figure 2 should have row/column labels in sentence
+style. (Only the first word of a label should be capitalized).
+
+  ## DEdd: Done (not sure I like it better)
+
+o In all cases, code input/output must fit within the normal text width of the manuscript.  Thus, code input should have appropriate line breaks and code output should preferably be generated with a suitable width (or otherwise edited). E.g., see p. 9.
+
+  ## DEdd: Replaces the Sweave code with its latex output and manually broke the long line
+ 
+o For bullet lists/itemized lists please use either a comma, semi-colon, or period at the end of each item.
+
+  ## DEdd: Done; one small change
+
+o As a reminder, please make sure that:
+	- \proglang, \pkg and \code have been used for highlighting throughout the paper (including titles and references), except where explicitly escaped.
+
+
+References:
+
+o John Wiley & Sons (not: Wiley, John Wiley & Sons Inc.)
+
+  ## DEdd We only had one 'Wiley' where I removed a stray ".com"
+
+o As a reminder,
+	- Please make sure that all software packages are \cite{}'d properly.
+
+	- All references should be in title style.
+
+	- See FAQ for specific reference instructions.
+
+  ## DEdd Update bibliography to current version numbers, and title styled
+
+Code:
+
+o As a reminder, please make sure that the files needed to replicate all code/examples within the manuscript are included in a standalone replication script.

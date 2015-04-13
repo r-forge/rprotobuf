@@ -1,0 +1,61 @@
+From: Editor of the Journal of Statistical Software <editor@jstatsoft.org>
+To: "edd@debian.org" <edd@debian.org>
+Subject: JSS 1313 Conditional Acceptance 
+Date: Mon, 6 Apr 2015 19:30:32 +0000
+
+Dear author,
+
+Your submission
+
+  JSS 1313
+
+is conditionally accepted for publication in JSS. 
+
+Your manuscript has just finished the post-processing stage. In order to
+continue in the process there are a few changes that need to be made. Attached
+to this email is a comments file where you can find all the necessary changes.
+
+For further questions please see FAQ at http://www.jstatsoft.org/style.
+
+
+Please send the full sources for your submission to the technical editor (
+editor@jstatsoft.org). It should contain:
+
+
+ 1. The full sources of the latest version of the software. (Binary versions
+    can be provided in addition.)
+ 2. The .tex, .bib, and all graphics for the manuscript: where the names of
+    your files should be - your .tex file should be called jssxxx.tex and your
+    .bib file should be called jssxxx.bib. As well as a complied .pdf version
+    of your manuscript.
+ 3. Information on how to replicate the examples in the manuscript. (Typically,
+    this is a self-contained standalone script file that loads/calls/sources
+    the software package from (1). If data or other external files are needed,
+    that are not yet provided with the software package, include these as
+    well.) Please use subdirectories for Figures/ and Code/
+ 4. Please wrap all these files into a single .zip (or .tar.gz) file.
+ 5. Please make sure the .zip files only contains the necessary files. That is,
+    please do not include .aux, .log, etc. files and any unused files such
+    as jss.cls, jss.bst, jsslogo.jpg, etc.
+
+
+Note for R authors: If you have prepared your manuscript using Sweave, the
+files in (2) can be produced by Sweave, those in (3) by Stangle (possibly
+enhancing the comments). Also indicate in your e-mail that Sweave was used and
+the technical editor will provide you with further Sweave-specific information.
+
+Thanks for choosing JSS and contributing to free statistical software.
+
+Best regards,
+
+Jan de Leeuw
+Bettina Grün
+Achim Zeileis
+
+
+
+
+
+
+----------------------------------------------------------------------
+xplain text (us-ascii): JSS 1313 post comments.txt, JSS 1313   [display]
