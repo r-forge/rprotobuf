@@ -108,15 +108,7 @@ class(tutorial.Person$PhoneType$value(1))
 
 
 ###################################################
-### code chunk number 14: article.Rnw:719-722
-###################################################
-f <- tutorial.Person$fileDescriptor()
-f
-f$Person
-
-
-###################################################
-### code chunk number 15: article.Rnw:785-788
+### code chunk number 14: article.Rnw:805-808
 ###################################################
 if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
     readProtoFiles(file="int64.proto")
@@ -124,7 +116,7 @@ if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
 
 
 ###################################################
-### code chunk number 16: article.Rnw:810-814
+### code chunk number 15: article.Rnw:830-834
 ###################################################
 as.integer(2^31-1)
 as.integer(2^31 - 1) + as.integer(1)
@@ -133,20 +125,20 @@ class(2^31)
 
 
 ###################################################
-### code chunk number 17: article.Rnw:826-827
+### code chunk number 16: article.Rnw:846-847
 ###################################################
 2^53 == (2^53 + 1)
 
 
 ###################################################
-### code chunk number 18: article.Rnw:878-880
+### code chunk number 17: article.Rnw:898-900
 ###################################################
 msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 
 
 ###################################################
-### code chunk number 19: article.Rnw:908-911
+### code chunk number 18: article.Rnw:928-931
 ###################################################
 datasets <- as.data.frame(data(package="datasets")$results)
 datasets$name <- sub("\\s+.*$", "", datasets$Item)
@@ -154,7 +146,7 @@ n <- nrow(datasets)
 
 
 ###################################################
-### code chunk number 20: article.Rnw:929-972
+### code chunk number 19: article.Rnw:949-992
 ###################################################
 datasets$object.size <- unname(sapply(datasets$name, function(x) object.size(eval(as.name(x)))))
 
@@ -202,7 +194,7 @@ clean.df<-rbind(clean.df, all.df)
 
 
 ###################################################
-### code chunk number 21: SER
+### code chunk number 20: SER
 ###################################################
 old.mar<-par("mar")
 new.mar<-old.mar
@@ -254,7 +246,7 @@ par("mar"=old.mar)
 
 
 ###################################################
-### code chunk number 22: article.Rnw:1211-1215
+### code chunk number 21: article.Rnw:1231-1235
 ###################################################
 require(HistogramTools)
 readProtoFiles(package="HistogramTools")
@@ -263,7 +255,7 @@ plot(as.histogram(hist), main="")
 
 
 ###################################################
-### code chunk number 23: article.Rnw:1303-1310 (eval = FALSE)
+### code chunk number 22: article.Rnw:1323-1330 (eval = FALSE)
 ###################################################
 ## library("RProtoBuf")
 ## library("httr")
@@ -275,7 +267,7 @@ plot(as.histogram(hist), main="")
 
 
 ###################################################
-### code chunk number 24: article.Rnw:1360-1376 (eval = FALSE)
+### code chunk number 23: article.Rnw:1380-1396 (eval = FALSE)
 ###################################################
 ## library("httr")
 ## library("RProtoBuf")
@@ -296,7 +288,7 @@ plot(as.histogram(hist), main="")
 
 
 ###################################################
-### code chunk number 25: article.Rnw:1380-1383 (eval = FALSE)
+### code chunk number 24: article.Rnw:1400-1403 (eval = FALSE)
 ###################################################
 ## fnargs <- unserialize_pb(inputmsg)
 ## val <- do.call(stats::rnorm, fnargs)

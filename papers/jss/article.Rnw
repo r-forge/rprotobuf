@@ -612,7 +612,7 @@ are supported:
 
 \begin{itemize}
 \item The functional dispatch mechanism of the the form
-  \verb|method(object, arguments)| (common to \proglang{R}), and
+  \verb|method(object, arguments)| (common to \proglang{R}).
 \item The message passing object-oriented notation of the form
   \verb|object$method(arguments)|.
 \end{itemize}
@@ -716,11 +716,29 @@ The class \emph{FileDescriptor} represents file descriptors in \proglang{R}.
 The \verb|$| operator can be used to retrieve named fields defined in
 the FileDescriptor, or to invoke methods.
 
-<<>>=
-f <- tutorial.Person$fileDescriptor()
-f
-f$Person
-@
+% < < > > =
+% f <- tutorial.Person$fileDescriptor()
+% f
+% f$Person
+% @
+
+\begin{Schunk}
+\begin{Sinput}
+R> f <- tutorial.Person$fileDescriptor()
+R> f
+\end{Sinput}
+\begin{Soutput}
+file descriptor for package tutorial \
+    (/usr/local/lib/R/site-library/RProtoBuf/proto/addressbook.proto)
+\end{Soutput}
+\begin{Sinput}
+R> f$Person
+\end{Sinput}
+\begin{Soutput}
+descriptor for type 'tutorial.Person' 
+\end{Soutput}
+\end{Schunk}
+
 
 \section{Type coercion}
 \label{sec:types}
@@ -739,7 +757,7 @@ integers, and 64-bit integers.
 \begin{table}[h]
 \centering
 \begin{small}
-\begin{tabular}{lp{5cm}p{5cm}}
+\begin{tabular}{lp{5cm}p{5.5cm}}
 \toprule
 Field type & \proglang{R} type (non repeated) & \proglang{R} type (repeated) \\
 \cmidrule(r){2-3}
@@ -765,10 +783,12 @@ message & \code{S4} object of class \code{Message} & \code{list} of \code{S4} ob
 \end{tabular}
 \end{small}
 \caption{\label{table-get-types}Correspondence between field type and
-  \proglang{R} type retrieved by the extractors. Note that \proglang{R} lacks native
+  \proglang{R} type retrieved by the extractors. \proglang{R} lacks native
   64-bit integers, so the \code{RProtoBuf.int64AsString} option is
   available to return large integers as characters to avoid losing
-  precision.  This option is described in Section~\ref{sec:int64}.}
+  precision; see Section~\ref{sec:int64} below. 
+  All but the \code{Message} type can be represented in vectors of one or
+  more elements; for the latter a list is used.}
 \end{table}
 
 \subsection{Booleans}
@@ -1067,8 +1087,8 @@ par("mar"=old.mar)
 %\begin{center}
 \begin{tabular}{rlrrrrr}
   \toprule
-  Data Set & object.size & \multicolumn{2}{c}{\proglang{R} Serialization} &
-  \multicolumn{2}{c}{RProtoBuf Serialization} \\
+  Data set & object.size & \multicolumn{2}{c}{\proglang{R} serialization} &
+  \multicolumn{2}{c}{RProtoBuf serialization} \\
   & & default & gzipped & default & gzipped \\
   \cmidrule(r){2-6}
  crimtab & 7,936 & 4,641 (41.5\%) & 713 (91.0\%) & 1,655 (79.2\%) & 576 (92.7\%)\\
