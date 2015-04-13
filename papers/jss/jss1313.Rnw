@@ -1512,7 +1512,7 @@ message CMPLX {
 \end{verbatim}
 % \end{appendices}
 \newpage
-\bibliography{article}
+\bibliography{jss1313}
 
 
 \end{document}
