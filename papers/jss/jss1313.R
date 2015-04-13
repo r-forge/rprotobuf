@@ -1,7 +1,7 @@
-### R code from vignette source '/home/edd/svn/rprotobuf/papers/jss/article.Rnw'
+### R code from vignette source '/home/edd/svn/rprotobuf/papers/jss/jss1313.Rnw'
 
 ###################################################
-### code chunk number 1: article.Rnw:130-136
+### code chunk number 1: jss1313.Rnw:130-136
 ###################################################
 ## cf http://www.jstatsoft.org/style#q12
 options(prompt = "R> ", 
@@ -12,7 +12,7 @@ options(prompt = "R> ",
 
 
 ###################################################
-### code chunk number 2: article.Rnw:318-326
+### code chunk number 2: jss1313.Rnw:318-326
 ###################################################
 library("RProtoBuf")
 p <- new(tutorial.Person, id=1,
@@ -25,13 +25,13 @@ class(p)
 
 
 ###################################################
-### code chunk number 3: article.Rnw:421-422
+### code chunk number 3: jss1313.Rnw:421-422
 ###################################################
 p <- new(tutorial.Person, name = "Murray", id = 1)
 
 
 ###################################################
-### code chunk number 4: article.Rnw:431-434
+### code chunk number 4: jss1313.Rnw:431-434
 ###################################################
 p$name
 p$id
@@ -39,7 +39,7 @@ p$email <- "murray@stokely.org"
 
 
 ###################################################
-### code chunk number 5: article.Rnw:442-445
+### code chunk number 5: jss1313.Rnw:442-445
 ###################################################
 p[["name"]] <- "Murray Stokely"
 p[[ 2 ]] <- 3
@@ -47,25 +47,25 @@ p[["email"]]
 
 
 ###################################################
-### code chunk number 6: article.Rnw:461-462
+### code chunk number 6: jss1313.Rnw:461-462
 ###################################################
 p
 
 
 ###################################################
-### code chunk number 7: article.Rnw:469-470
+### code chunk number 7: jss1313.Rnw:469-470
 ###################################################
 writeLines(as.character(p))
 
 
 ###################################################
-### code chunk number 8: article.Rnw:483-484
+### code chunk number 8: jss1313.Rnw:483-484
 ###################################################
 serialize(p, NULL)
 
 
 ###################################################
-### code chunk number 9: article.Rnw:489-492
+### code chunk number 9: jss1313.Rnw:489-492
 ###################################################
 tf1 <- tempfile()
 serialize(p, tf1)
@@ -73,20 +73,20 @@ readBin(tf1, raw(0), 500)
 
 
 ###################################################
-### code chunk number 10: article.Rnw:538-540
+### code chunk number 10: jss1313.Rnw:538-540
 ###################################################
 msg <- read(tutorial.Person, tf1)
 writeLines(as.character(msg))
 
 
 ###################################################
-### code chunk number 11: article.Rnw:660-661
+### code chunk number 11: jss1313.Rnw:660-661
 ###################################################
 new(tutorial.Person)
 
 
 ###################################################
-### code chunk number 12: article.Rnw:685-690
+### code chunk number 12: jss1313.Rnw:685-690
 ###################################################
 tutorial.Person$email 
 tutorial.Person$email$is_required()
@@ -96,7 +96,7 @@ class(tutorial.Person$email)
 
 
 ###################################################
-### code chunk number 13: article.Rnw:702-709
+### code chunk number 13: jss1313.Rnw:702-709
 ###################################################
 tutorial.Person$PhoneType
 tutorial.Person$PhoneType$WORK
@@ -108,7 +108,7 @@ class(tutorial.Person$PhoneType$value(1))
 
 
 ###################################################
-### code chunk number 14: article.Rnw:805-808
+### code chunk number 14: jss1313.Rnw:805-808
 ###################################################
 if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
     readProtoFiles(file="int64.proto")
@@ -116,7 +116,7 @@ if (!exists("JSSPaper.Example1", "RProtoBuf:DescriptorPool")) {
 
 
 ###################################################
-### code chunk number 15: article.Rnw:830-834
+### code chunk number 15: jss1313.Rnw:830-834
 ###################################################
 as.integer(2^31-1)
 as.integer(2^31 - 1) + as.integer(1)
@@ -125,20 +125,20 @@ class(2^31)
 
 
 ###################################################
-### code chunk number 16: article.Rnw:846-847
+### code chunk number 16: jss1313.Rnw:846-847
 ###################################################
 2^53 == (2^53 + 1)
 
 
 ###################################################
-### code chunk number 17: article.Rnw:898-900
+### code chunk number 17: jss1313.Rnw:898-900
 ###################################################
 msg <- serialize_pb(iris, NULL)
 identical(iris, unserialize_pb(msg))
 
 
 ###################################################
-### code chunk number 18: article.Rnw:928-931
+### code chunk number 18: jss1313.Rnw:928-931
 ###################################################
 datasets <- as.data.frame(data(package="datasets")$results)
 datasets$name <- sub("\\s+.*$", "", datasets$Item)
@@ -146,7 +146,7 @@ n <- nrow(datasets)
 
 
 ###################################################
-### code chunk number 19: article.Rnw:949-992
+### code chunk number 19: jss1313.Rnw:949-992
 ###################################################
 datasets$object.size <- unname(sapply(datasets$name, function(x) object.size(eval(as.name(x)))))
 
@@ -246,7 +246,7 @@ par("mar"=old.mar)
 
 
 ###################################################
-### code chunk number 21: article.Rnw:1231-1235
+### code chunk number 21: jss1313.Rnw:1231-1235
 ###################################################
 require(HistogramTools)
 readProtoFiles(package="HistogramTools")
@@ -255,7 +255,7 @@ plot(as.histogram(hist), main="")
 
 
 ###################################################
-### code chunk number 22: article.Rnw:1323-1330 (eval = FALSE)
+### code chunk number 22: jss1313.Rnw:1323-1330 (eval = FALSE)
 ###################################################
 ## library("RProtoBuf")
 ## library("httr")
@@ -267,7 +267,7 @@ plot(as.histogram(hist), main="")
 
 
 ###################################################
-### code chunk number 23: article.Rnw:1380-1396 (eval = FALSE)
+### code chunk number 23: jss1313.Rnw:1380-1396 (eval = FALSE)
 ###################################################
 ## library("httr")
 ## library("RProtoBuf")
@@ -288,7 +288,7 @@ plot(as.histogram(hist), main="")
 
 
 ###################################################
-### code chunk number 24: article.Rnw:1400-1403 (eval = FALSE)
+### code chunk number 24: jss1313.Rnw:1400-1403 (eval = FALSE)
 ###################################################
 ## fnargs <- unserialize_pb(inputmsg)
 ## val <- do.call(stats::rnorm, fnargs)
