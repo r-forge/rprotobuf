@@ -1,0 +1,73 @@
+From: Josh EmBree <jembree@ucla.edu>
+To: Dirk Eddelbuettel <edd@debian.org>
+Subject: JSS 1313 has finished pre-screening
+Date: Tue, 11 Mar 2014 11:23:54 -0700
+
+Dear author
+
+Your submission 
+
+  JSS 1313  
+
+has just finished the pre-screening stage. 
+
+As it does not meet all submission requirements of JSS, see
+   http://www.jstatsoft.org/instructions
+   http://www.jstatsoft.org/style
+we currently cannot process it further.
+
+In order to continue in the process there are a few changes that need to be
+made. Attached in this email is a comments file where you can find all the
+necessary changes.
+
+Thank you for considering JSS and contributing to free statistical software.
+
+Best regards,
+
+Jan de Leeuw
+Bettina Grün
+Achim Zeileis
+
+----------------------------------------------------------------------
+JSS 1313: Eddelbuettel, Stokely, Ooms
+
+RProtoBuf: Efficient Cross-Language Data Serialization in R
+
+
+For further instruction on JSS style requirements please see the JSS style
+manual(in particular section 2.1 Style Checklist) at 
+http://www.jstatsoft.org/downloads/JSSstyle.zip
+
+Please see FAQ at: http://www.jstatsoft.org/style
+And for further references please see RECENT JSS papers for detailed
+documentation and examples. 
+
+From the editorial team:
+
+o Not all software mentioned is actually cited. Please correct this. 
+
+o Also the replication materials could be 
+made more accessible.
+
+
+Manuscript:
+
+o \section, \subsection, etc. in sentence style
+o Annotations of figures/tables (including captions) should be in sentence style (*include period at end of caption).
+o Do not use additional formatting for specific words unless explicitly required by the JSS style guide, e.g., 
+o All table row/column headers should also be in sentence style.
+
+o For R-related manuscripts: The first argument of data() and library() should always be quoted, e.g., library("foo").
+o The code presented in the manuscript should not contain comments within the verbatim code. Instead the comments should be made in the normal LaTeX text.
+o In all cases, code input/output must fit within the normal text width of the manuscript.  Thus, code input should have appropriate line breaks and code output should preferably be generated with a suitable width (or otherwise edited).
+
+o As a reminder, please make sure that:
+  - \proglang, \pkg and \code have been used for highlighting throughout
+the paper (including titles and references), except where explicitly escaped.
+
+References:
+o Springer-Verlag (not: Springer)
+o Please make sure that all Software packages are \cite{}'d properly.
+o All references should be in title style. See FAQ <http://www.jstatsoft.org/style#faq>.
+
+----------------------------------------------------------------------
